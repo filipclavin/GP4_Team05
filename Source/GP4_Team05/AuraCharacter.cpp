@@ -50,9 +50,9 @@ void AAuraCharacter::QueueHeal(int amount)
 	_combinedStats->QueueHeal(amount);
 }
 
-void AAuraCharacter::QueueDamage(int amount, ElementTypes element)
+void AAuraCharacter::QueueDamage(int amount, ElementTypes element, UCharacterStats* stats)
 {
-	_combinedStats->QueueDamage(amount, element);
+	_combinedStats->QueueDamage(amount, element, stats);
 }
 
 // Called when the game starts or when spawned

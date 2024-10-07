@@ -2,6 +2,7 @@
 
 #include "LevelGenerator.h" 
 #include "Room.h"
+#include "RoomGenerationData.h"
 #include "Runtime/Engine/Classes/Engine/LevelStreaming.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,20 +14,40 @@ ALevelGenerator::ALevelGenerator()
 
 void ALevelGenerator::LoadNewRoom()
 {
+	_previousRoomInstance = _currentRoomInstance;
+	_unloadLastRoom = true;
+	_unloadDuration = 0.5f;
+	
 	_currentRoomIndex++;
-	if (_currentRoomIndex < _rooms.Num())
+	FLatentActionInfo info;
+	if (_currentRoomIndex < _numberOfRooms)
 	{
-		if (_currentRoomIndex > 0) {
-			_unloadLastRoom = true;
-			_unloadDuration = 0.5f;
-		}
+		int checkNumber = _currentRoomIndex % _numberOfRooms;
 
-		FLatentActionInfo info;
-		UGameplayStatics::LoadStreamLevel(GetWorld(), FName(_rooms[_currentRoomIndex]), true, false, info);
+		if (_currentRoomIndex % _numberOfRooms == _roomGenDataAsset->_numOfRoomsPerPOI) 
+		{
+			if(_currentPOIRoom < _roomGenDataAsset->_POIRoomInstances.Num())
+			{
+				_currentRoomInstance = _roomGenDataAsset->_POIRoomInstances[_currentPOIRoom];
+				UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _currentRoomInstance, true, false, info);
+			}
+			_currentPOIRoom++;
+		}
+		else 
+		{
+			_previousRoom = _selectedRoom;	
+			_selectedRoom = FMath::RandRange(0, _roomGenDataAsset->_regularRoomInstances.Num() - 1);
+			
+			if (_selectedRoom == _previousRoom)
+				_selectedRoom = _selectedRoom == _roomGenDataAsset->_regularRoomInstances.Num() - 1 ? 0 : +1;
+
+			_currentRoomInstance = _roomGenDataAsset->_regularRoomInstances[_selectedRoom];
+			UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _currentRoomInstance, true, false, info);
+		}
 	}
 	else 
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, GetName() + "End of Room list");
+		UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, true, false, info);
 	}
 }
 
@@ -35,7 +56,7 @@ void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 	if (newRoom == _bridgeRoom)
 		return;
 
-	if (_currentRoomIndex > 0) {
+	if (_currentRoomIndex > -1) {
 		newRoom->AnchorToRoom(_bridgeRoom->GetUnusedAnchor(), _bridgeRoom);
 	}
 	_currentRoom = newRoom;
@@ -50,75 +71,33 @@ void ALevelGenerator::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
-	if (_unloadLastRoom && _unloadDuration <= 0.0f && _currentRoomIndex > 0)
+	if (_unloadLastRoom && _unloadDuration <= 0.0f)
 	{
 		FLatentActionInfo info;
-		UGameplayStatics::UnloadStreamLevel(GetWorld(), FName(_rooms[_currentRoomIndex - 1]), info, false);
+		if(_previousRoomInstance != nullptr)
+			UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(GetWorld(), _previousRoomInstance, info, false);
 		_unloadLastRoom = false;
 	}
 
 	_unloadDuration -= _unloadDuration > 0.0f ? deltaTime : 0.0f;
 }
 
-void ALevelGenerator::GenerateLevelList()
+void ALevelGenerator::GenerateLevelList(URoomGenerationData* data)
 {
 	_bridgeRoom = Cast<ARoom>(UGameplayStatics::GetActorOfClass(GetWorld(), ARoom::StaticClass()));
 	_bridgeRoom->SetBridgeRoom();
 	_bridgeRoom->_levelGenerator = this;
 
-	TArray<FString> regularRooms;
-	TArray<FString> narrativeRooms;
+	if (data->_POIRoomInstances.IsEmpty())
+		return;
+														
+	_numberOfRooms    = data->_POIRoomInstances.Num() * (data->_numOfRoomsPerPOI + 1/*Count in the POI Room*/);
+				
+	FLatentActionInfo info;
+	UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), data->_startRoomInstance, true, false, info);
 
-	FString startRoom;
-	FString endRoom;
+	_currentRoomInstance = data->_startRoomInstance;
 
-	// Fetch the names of each sublevel and assign them to the correct string/list
-	const TArray<ULevelStreaming*>& streamedLevels = GetWorld()->GetStreamingLevels();
-	for (short i = 0; i < streamedLevels.Num(); i++)
-	{
-		FString levelName = streamedLevels[i]->GetWorldAssetPackageName();
-		if (levelName.Contains("Bridge"))
-			continue;
-		
-		if (levelName.Contains("Start"))
-		{
-			startRoom = levelName;
-			continue;
-		}
-
-		if (levelName.Contains("End"))
-		{
-			endRoom = levelName;
-			continue;
-		}
-
-		if (levelName.Contains("POI"))
-			narrativeRooms.Add(levelName);
-
-		else
-			regularRooms.Add(levelName);
-	}
-
-	_rooms.Add(startRoom);
-	
-	if (!narrativeRooms.IsEmpty()) 
-	{
-		int numberOfRegularRooms = _maxNumberOfRooms - narrativeRooms.Num();
-		numberOfRegularRooms /= narrativeRooms.Num();
-	
-		for (short i = 0; i < narrativeRooms.Num(); i++)
-		{
-			for (short j = 0; j < regularRooms.Num(); j++)
-			{
-				INT32 randomRoom = FMath::RandRange(0, regularRooms.Num() - 1);
-				_rooms.Add(regularRooms[j]);
-			}
-			_rooms.Add(narrativeRooms[i]);
-		}
-	}
-
-	_rooms.Add(endRoom);
-
-	LoadNewRoom();
+	_roomGenDataAsset = data;
 }
 

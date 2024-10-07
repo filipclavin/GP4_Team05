@@ -19,9 +19,10 @@ void ARoom::BeginPlay()
 
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 	_levelGenerator->SetCurrentRoom(this);
-	OnRoomLoad();
-
 	_colliderActiveOnSpawn = true;
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Begin Play!");
+
+	OnRoomLoad();
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

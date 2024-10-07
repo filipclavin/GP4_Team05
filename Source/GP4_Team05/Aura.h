@@ -78,7 +78,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float   _duration    = FLT_MAX; 	
 	// Tick Counter for how many times the aura should tick during it's duration.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) int     _tickCounter = 0;    
-	
+
+	//UPROPERTY(EditAnywhere) bool _
 	// Private aura values, used to affect the target entity after a certain duration.
 
 	// The tick duration of the aura, decided by Duration / TickCounter (if aura is infinite then define TickDuration manually) 
@@ -89,6 +90,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) float    _currentTick     = 0.0f;
 	 // How many stacks the aura has
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) int      _stackCount	= 1;
+
 
 	// Pooling information
 	// How much of this aura AuraHandler will pool, auras that appear less or are much shorter should have a lower pool count.
