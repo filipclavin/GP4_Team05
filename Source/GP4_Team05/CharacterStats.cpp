@@ -12,8 +12,6 @@ UCharacterStats::UCharacterStats()
 	}	
 }
 
-// Need to find a way to calculate this information after all buffs have been applied, as i said would be much
-// easier if Unreal acutally hade multiple different updates during the render frame that we could use
 int UCharacterStats::CalculateDamage(int damage, ElementTypes element)
 {
 	float newDamage = ((damage * _elementDamageDealt[element]) * _allDamageDealt) * IsCriticalStrike() ? 2 : 1;
@@ -29,7 +27,7 @@ void UCharacterStats::QueueHeal(int amount)
 	_intakeQueue.Add(data);
 }
 
-void UCharacterStats::QueueDamage(int amount, ElementTypes element)
+void UCharacterStats::QueueDamage(int amount, ElementTypes element, UCharacterStats* stats)
 {
 	IntakeData data;
 	data._amount = amount;
@@ -77,7 +75,11 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			switch (intake._type)
 			{
 			case IntakeData::Type::Damage:
-				newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
+				if(intake._stats)
+					newAmount = (intake._stats->CalculateDamage(intake._amount, intake._element) * _elementDamageTaken[intake._element]) * _allDamageTaken;
+				else
+					newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
+				
 				_currentHealth -= RoundToInt(newAmount);
 				break;
 			case IntakeData::Type::Heal:
@@ -95,8 +97,9 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 					_isAlive = false;
 					if (GEngine)
 						GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Aura Character is dead!"));
+					
+					break;
 				}
-				break;
 			}
 
 			if (_currentHealth > _maxHealth)

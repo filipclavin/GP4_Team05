@@ -19,7 +19,7 @@ public:
 	UFUNCTION(BlueprintCallable) int CalculateDamage(int damage, ElementTypes element);
 
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
-	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element);
+	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) int   _maxHealth     = 100;
 	UPROPERTY(BlueprintReadOnly)			    int   _currentHealth = 100;
@@ -49,9 +49,10 @@ protected:
 			Heal,
 		};
 
-		Type		 _type;
-		ElementTypes _element;
-		int			 _amount;
+		Type		     _type;
+		ElementTypes     _element;
+		UCharacterStats* _stats;
+		int			     _amount;
 	};
 			
 	TArray<IntakeData> _intakeQueue;
