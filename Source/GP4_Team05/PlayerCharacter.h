@@ -1,0 +1,101 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "AuraCharacter.h"
+#include "InputActionValue.h"
+#include "PlayerCharacter.generated.h"
+
+class USpringArmComponent;
+class UBoxComponent;
+class UCameraComponent;
+class UInputAction;
+class UInputMappingContext;
+struct FInputActionValue;
+
+/**
+ * 
+ */
+UCLASS()
+class GP4_TEAM05_API APlayerCharacter : public AAuraCharacter
+{
+	GENERATED_BODY()
+	APlayerCharacter();
+
+	
+private:
+
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _move;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _jump;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _look;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _attack;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _aim;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _dash;
+
+	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
+
+	
+	UPROPERTY(VisibleAnywhere) UCameraComponent*	_playerCameraComponent = nullptr;
+	UPROPERTY(VisibleAnywhere) USpringArmComponent* _cameraArmComponent = nullptr;
+	UPROPERTY(VisibleAnywhere) UBoxComponent*		_meleeHitbox = nullptr;
+
+	UPROPERTY(EditAnywhere, Category="Melee Stats") float _meleeCooldown	= 3.f;
+	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _meleeDamage		= 3.f;
+
+	float _meleeCooldownTimer = 0.f;
+
+	UPROPERTY(EditAnywhere, Category="Ranged Stats") float				  _rangeCooldown = 3.f;
+	UPROPERTY(EditAnywhere, Category="Ranged Stats") TSubclassOf<AActor> _projectilePrefab;
+
+	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashDamage		= 5;
+	UPROPERTY(EditAnywhere, Category="Dash Stats")	 float _dashDuration	= 0.2f;
+	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashLength		= 1000;
+	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashKnockBack	= 100;
+
+	FVector		 _dashTargetLocation = FVector::Zero();
+	FVector		 _dashStartLocation  = FVector::Zero();
+	FTimerHandle _dashHandle;
+
+	//curve for the dash easing
+	float easeInOutQuint(float x);
+	
+	float _rangeCooldownTimer = 0.f;
+
+	bool _aiming = false;
+
+	FVector _inputVector = FVector::Zero();
+	void ResetInputVector(const FInputActionValue& Value);
+	
+	void MoveForwards(float val);
+	void MoveSideways(float val);
+	void LookRight	 (float val);
+	void LookUp		 (float val);
+
+	void LookAction       (const FInputActionValue& Value);
+	void MoveAction       (const FInputActionValue& Value);
+	void JumpAction		  (const FInputActionValue& Value);
+	void MeleeAction	  (const FInputActionValue& Value);
+	void RangeAttackAction(const FInputActionValue& Value);
+	void BeginAimAction	  (const FInputActionValue& Value);
+	void StopAimAction	  (const FInputActionValue& Value);
+	void DashAction		  (const FInputActionValue& Value);
+
+	
+public:
+	UFUNCTION(BlueprintImplementableEvent) void MeleeAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void RangedAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void BeginAimEvent();
+	UFUNCTION(BlueprintImplementableEvent) void StopAimEvent();
+	UFUNCTION(BlueprintImplementableEvent) void DashEvent(FVector targetLocation);
+
+	UPROPERTY(VisibleAnywhere, Category="Dash Stats")bool CurrentlyDashing = false;
+
+	void BeginPlay()				   override;
+	void Tick	  (float DeltaSeconds) override;
+	
+protected:
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	
+};

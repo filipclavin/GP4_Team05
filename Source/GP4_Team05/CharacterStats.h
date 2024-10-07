@@ -1,0 +1,65 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "AuraDataInclude.h"
+#include "CharacterStats.generated.h"
+
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class GP4_TEAM05_API UCharacterStats : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:	
+	UCharacterStats();
+
+	UFUNCTION(BlueprintCallable) int CalculateDamage(int damage, ElementTypes element);
+
+	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
+	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) int   _maxHealth     = 100;
+	UPROPERTY(BlueprintReadOnly)			    int   _currentHealth = 100;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _movementSpeed = 600;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _jumpSpeed     = 420;
+	
+	// Damage calculation 
+	// (Damage * ElementDamageDealt) * AllDamageDealt  * crit = true ? 2 : 1 -> (DamageTaken * ElementDamageTaken) * AllDamageTaken
+
+	// Scalings
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool		   _isInvincible        = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float		   _critStrikeChance    = 0.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float		   _healingTaken	    = 1.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float		   _allDamageTaken      = 1.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float		   _allDamageDealt      = 1.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageTaken;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageDealt;
+
+	UPROPERTY(BlueprintReadOnly)  bool _isAlive = true;
+
+protected:
+	struct IntakeData 
+	{
+		enum class Type
+		{
+			Damage,
+			Heal,
+		};
+
+		Type		 _type;
+		ElementTypes _element;
+		int			 _amount;
+	};
+			
+	TArray<IntakeData> _intakeQueue;
+
+	int RoundToInt(float amount);
+	bool IsCriticalStrike();
+
+	virtual void BeginPlay() override;
+public:	
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;		
+};
