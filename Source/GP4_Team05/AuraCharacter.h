@@ -25,7 +25,7 @@ public:
 
 	// Queus damage into a list that gets handled at the end of the frame
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
-	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element);
+	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats = nullptr);
 
 	UFUNCTION(BlueprintCallable) UCharacterStats* GetStats()     { return _combinedStats; }
 	UFUNCTION(BlueprintCallable) UCharacterStats* GetBaseStats() { return _baseStats; }
@@ -38,23 +38,19 @@ protected:
 
 	void AddAura(UAura* aura);
 	// Saves the aura ID and where it is in the buff/debuff list for quick and easy access. 
-	TMap<INT32/*Aura ID*/, INT32/*Index number in list*/> _buffMap;
-	TMap<INT32/*Aura ID*/, INT32/*Index number in list*/> _debuffMap;
 
 	TMap<INT32/*Aura ID*/, TPair<AuraType, INT32>>     _auraIdMap;
 	TMap<FString/*Aura Name*/, TPair<AuraType, INT32>> _auraNameMap;
 
-	// Temporary buffs
 	TStaticArray<TArray<UAura*>, AuraType::AURA_TYPE_COUNT> _auraList;
-
-	TArray<UAura*> _debuffList;
-	TArray<UAura*> _buffList;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) AAuraHandler*  _auraHandler = nullptr;
 		
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UCharacterStats*			 _baseStats;
 	UPROPERTY(BlueprintReadWrite)				UCharacterStats*			 _combinedStats;
 											    UCharacterMovementComponent* _movementComponent;
+
+	// Ability list, Auras can fetch this data and change the settings of these abilities
 
 	// Aura updates in the order of Buffs -> Debuffs 
 	UFUNCTION(BlueprintCallable) void UpdateAuras(const float deltaTime);

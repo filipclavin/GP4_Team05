@@ -11,6 +11,8 @@ ARoom::ARoom()
 	_playerEnterTrigger = CreateDefaultSubobject<UBoxComponent>("Player Enter Trigger");
 	_playerEnterTrigger->AttachToComponent(scene, FAttachmentTransformRules::KeepRelativeTransform);
 	_playerEnterTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARoom::BeginOverlap);
+
+	
 }
 
 void ARoom::BeginPlay()
@@ -19,9 +21,9 @@ void ARoom::BeginPlay()
 
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 	_levelGenerator->SetCurrentRoom(this);
-	OnRoomLoad();
-
 	_colliderActiveOnSpawn = true;
+
+	OnRoomLoad();
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -34,8 +36,6 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 				return;
 		
 			if (!_levelGenerator) {
-
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, GetName() + " has overlapped with player witho");
 				FetchLevelGenerator();
 			}
 			

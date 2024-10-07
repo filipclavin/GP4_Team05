@@ -7,6 +7,7 @@
 #include "LevelGenerator.generated.h"
 
 class ARoom;
+class URoomGenerationData;
 class ULevelStreaming;
 
 UCLASS()
@@ -29,19 +30,27 @@ protected:
 
 	UPROPERTY(EditAnywhere) int     _maxNumberOfRooms;
 
-	ARoom* _currentRoom = nullptr;
-	ARoom* _bridgeRoom  = nullptr;
+	ARoom*				 _currentRoom	   = nullptr;
+	ARoom*				 _bridgeRoom	   = nullptr;
+	URoomGenerationData* _roomGenDataAsset = nullptr;
 
 private:
 	friend class AWorldGameMode;
 	
 	virtual void Tick(float deltaTime) override;
 
-	void GenerateLevelList();
+	void GenerateLevelList(URoomGenerationData* data);
 	
 	bool  _unloadLastRoom  = false;
 	float _unloadDuration = 1.0f;
 
-	TArray<FString> _rooms;
 	int _currentRoomIndex = -1;
+	int _currentPOIRoom   = 0;
+	int _numberOfRooms    = 0;
+
+	TSoftObjectPtr<UWorld> _currentRoomInstance;
+	TSoftObjectPtr<UWorld> _previousRoomInstance;
+
+	int  _selectedRoom = -1;
+	int  _previousRoom = -1;
 };

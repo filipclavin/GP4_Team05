@@ -23,11 +23,8 @@ public:
 	// Calls when room is loaded from LevelGenerator::LoadNextRoom
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnRoomLoad();
 	
-
-
 	void OnRoomLoad_Implementation() {}
 	void OnPlayerEnter_Implementation(){}
-
 
 	UFUNCTION() void BeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -53,9 +50,9 @@ protected:
 	bool _bridgeRoom      = false;
 	bool _hasEntered      = false;
 
-	UPROPERTY(EditAnywhere) bool				   _colliderActiveOnSpawn = false;
-	UPROPERTY(EditAnywhere) TArray<AActor*>        _anchors;
-	UPROPERTY(EditAnywhere) UBoxComponent*         _playerEnterTrigger;
+	UPROPERTY(EditAnywhere) bool			_colliderActiveOnSpawn = false;
+	UPROPERTY(EditAnywhere) TArray<AActor*> _anchors;
+	UPROPERTY(EditAnywhere) UBoxComponent*  _playerEnterTrigger;
 
 	UPROPERTY(BlueprintReadWrite) ALevelGenerator* _levelGenerator = nullptr;
 };
