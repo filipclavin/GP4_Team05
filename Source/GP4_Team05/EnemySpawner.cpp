@@ -81,8 +81,6 @@ void AEnemySpawner::SpawnNextWave()
 void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint)
 {
 	enemy->SetActorEnableCollision(true);
-	enemy->SetActorHiddenInGame(false);
-	enemy->SetActorTickEnabled(true);
 	enemy->SetActorLocation
 	(
 		spawnPoint,
@@ -90,6 +88,8 @@ void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint
 		nullptr,
 		ETeleportType::TeleportPhysics
 	);
+	enemy->SetActorHiddenInGame(false);
+	enemy->SetActorTickEnabled(true);
 	enemy->OnSpawned(this);
 }
 
