@@ -20,7 +20,6 @@ void ARoom::BeginPlay()
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 	_levelGenerator->SetCurrentRoom(this);
 	_colliderActiveOnSpawn = true;
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Begin Play!");
 
 	OnRoomLoad();
 }
@@ -35,8 +34,6 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 				return;
 		
 			if (!_levelGenerator) {
-
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, GetName() + " has overlapped with player witho");
 				FetchLevelGenerator();
 			}
 			
