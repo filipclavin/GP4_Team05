@@ -11,6 +11,8 @@ ARoom::ARoom()
 	_playerEnterTrigger = CreateDefaultSubobject<UBoxComponent>("Player Enter Trigger");
 	_playerEnterTrigger->AttachToComponent(scene, FAttachmentTransformRules::KeepRelativeTransform);
 	_playerEnterTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARoom::BeginOverlap);
+
+	
 }
 
 void ARoom::BeginPlay()

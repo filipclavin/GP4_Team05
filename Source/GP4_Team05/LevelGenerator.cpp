@@ -5,6 +5,7 @@
 #include "RoomGenerationData.h"
 #include "Runtime/Engine/Classes/Engine/LevelStreaming.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/LevelStreamingDynamic.h"
 
 
 ALevelGenerator::ALevelGenerator()
@@ -18,18 +19,22 @@ void ALevelGenerator::LoadNewRoom()
 	_unloadLastRoom = true;
 	_unloadDuration = 0.5f;
 	
+	//ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr()
+
+	bool success = false;
 	_currentRoomIndex++;
 	FLatentActionInfo info;
 	if (_currentRoomIndex < _numberOfRooms)
 	{
 		int checkNumber = _currentRoomIndex % _numberOfRooms;
-
+		
 		if (_currentRoomIndex % _numberOfRooms == _roomGenDataAsset->_numOfRoomsPerPOI) 
 		{
 			if(_currentPOIRoom < _roomGenDataAsset->_POIRoomInstances.Num())
 			{
 				_currentRoomInstance = _roomGenDataAsset->_POIRoomInstances[_currentPOIRoom];
-				UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _currentRoomInstance, true, false, info);
+				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), _currentRoomInstance, FTransform::Identity, success);
+				//UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _currentRoomInstance, true, false, info);
 			}
 			_currentPOIRoom++;
 		}
@@ -42,12 +47,14 @@ void ALevelGenerator::LoadNewRoom()
 				_selectedRoom = _selectedRoom == _roomGenDataAsset->_regularRoomInstances.Num() - 1 ? 0 : +1;
 
 			_currentRoomInstance = _roomGenDataAsset->_regularRoomInstances[_selectedRoom];
-			UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _currentRoomInstance, true, false, info);
+			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), _currentRoomInstance, FTransform::Identity, success);
+			//UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _currentRoomInstance, true, false, info);
 		}
 	}
 	else 
 	{
-		UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, true, false, info);
+		ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, FTransform::Identity, success);
+		//UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, true, false, info);
 	}
 }
 
@@ -74,8 +81,12 @@ void ALevelGenerator::Tick(float deltaTime)
 	if (_unloadLastRoom && _unloadDuration <= 0.0f)
 	{
 		FLatentActionInfo info;
-		if(_previousRoomInstance != nullptr)
-			UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(GetWorld(), _previousRoomInstance, info, false);
+		bool success = false;
+		if (_previousRoomInstance != nullptr)
+			//ULevelStreamingDynamic::Unload
+			////ULevelStreamingDynamic::(GetWorld(), _roomGenDataAsset->_endRoomInstance, FTransform::Identity, success);
+			//
+			//UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(GetWorld(), _previousRoomInstance, info, false);
 		_unloadLastRoom = false;
 	}
 
@@ -92,9 +103,16 @@ void ALevelGenerator::GenerateLevelList(URoomGenerationData* data)
 		return;
 														
 	_numberOfRooms    = data->_POIRoomInstances.Num() * (data->_numOfRoomsPerPOI + 1/*Count in the POI Room*/);
-				
+
+	//GetWorld()->StreamingLev();
+	//data->_startRoomInstance->
+
 	FLatentActionInfo info;
-	UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), data->_startRoomInstance, true, false, info);
+	bool success = false;
+	const FName LevelName = FName(*FPackageName::ObjectPathToPackageName(data->_startRoomInstance.ToString()));
+	//GetWorld()->GetLatentActionManager().;
+	//UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), data->_startRoomInstance, true, false, info);
+	ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), data->_startRoomInstance, FTransform::Identity, success);
 
 	_currentRoomInstance = data->_startRoomInstance;
 
