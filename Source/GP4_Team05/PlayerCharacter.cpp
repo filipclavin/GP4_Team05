@@ -13,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -28,6 +29,11 @@ APlayerCharacter::APlayerCharacter()
 
 	_meleeHitbox = CreateDefaultSubobject<UBoxComponent>("melee hitbox");
 	_meleeHitbox->SetupAttachment(GetCapsuleComponent());
+
+	_dashHitbox = CreateDefaultSubobject<USphereComponent>("dash hitbox");
+	_dashHitbox->SetupAttachment(RootComponent);
+
+	
 }
 
 
@@ -53,8 +59,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 	if (_attack)
 	{
-		Input->BindAction(_attack, ETriggerEvent::Started, this, &APlayerCharacter::MeleeAction);
-		Input->BindAction(_attack, ETriggerEvent::Started, this, &APlayerCharacter::RangeAttackAction);
+		Input->BindAction(_attack, ETriggerEvent::Completed, this, &APlayerCharacter::MeleeAction);
+		Input->BindAction(_attack, ETriggerEvent::Started,   this, &APlayerCharacter::BeginMeleeAction);
+		Input->BindAction(_attack, ETriggerEvent::Started,   this, &APlayerCharacter::RangeAttackAction);
 	}
 	if (_aim)
 	{
@@ -70,6 +77,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	_dashHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::HandleDashHits);
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -87,9 +96,16 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 	_meleeCooldownTimer += DeltaSeconds;
 	_rangeCooldownTimer	+= DeltaSeconds;
 
+	if (_chargingAttack)
+	{
+		_meleeHeavyTimer += DeltaSeconds;
+	}
+	
 	if (CurrentlyDashing)
 	{
-		SetActorLocation(FMath::Lerp(_dashStartLocation, _dashTargetLocation, easeInOutQuint(GetWorld()->GetTimerManager().GetTimerElapsed(_dashHandle)/_dashDuration)));
+		//Lerp the velocity to give some good easing -Gustav
+		GetMovementComponent()->Velocity = FMath::Lerp(FVector::Zero(), _dashDirection, easeInOutQuint
+			(GetWorld()->GetTimerManager().GetTimerElapsed(_dashHandle)/_dashDuration));
 	}
 }
 
@@ -154,22 +170,43 @@ void APlayerCharacter::JumpAction(const FInputActionValue& Value)
 	Jump();
 }
 
+void APlayerCharacter::BeginMeleeAction(const FInputActionValue& Value)
+{
+	if (_aiming) {return;}
+	if (_meleeCooldown > _meleeCooldownTimer){GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown"); return;}
 
+	_chargingAttack = true;
+	
+	BeginMeleeAttackEvent();
+}
 
 void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 {
+	if (!_chargingAttack){return;}
 	if (_aiming) {return;}
 	if (_meleeCooldown > _meleeCooldownTimer){GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown"); return;}
 	
 
-	_meleeCooldownTimer = 0;
+	
 
+	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
+
+	if (_heavyAttackMeleeTime < _meleeHeavyTimer)
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "heavy melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "light melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
+	}
+	_meleeCooldownTimer = 0;
+	_meleeHeavyTimer = 0;
+	_chargingAttack = false;
 	MeleeAttackEvent();
 	
 	TArray<AActor*> HitActors;
 	_meleeHitbox->GetOverlappingActors(HitActors);
 
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "melee");
 	
 	for (AActor* HitActor : HitActors)
 	{
@@ -178,7 +215,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 			if (HitActor->IsA<AAuraCharacter>())
 			{
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, HitActor->GetName() + " hit");
-				Cast<AAuraCharacter>(HitActor)->QueueDamage(_meleeDamage, PHYSICAL);
+				Cast<AAuraCharacter>(HitActor)->QueueDamage(_lightAttackMeleeDamage, PHYSICAL);
 			}
 		}
 		
@@ -236,57 +273,50 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 	
 	if (CurrentlyDashing){GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "already dashing");return;}
 
-	
-	TArray<FHitResult> dashHits;
-	FHitResult		   solidHit;
-
 	FVector dashDirection = _inputVector.Y*GetActorForwardVector()+_inputVector.X*GetActorRightVector(); 
 
 	if (dashDirection == FVector::Zero())
 	{
 		dashDirection = GetActorForwardVector();
 	}
-	
+
+	GetCapsuleComponent()->SetCollisionProfileName("HitWorldStaticOnly");
+
 	dashDirection.Normalize();
-
-	GetWorld()->SweepMultiByObjectType(dashHits, GetActorLocation(), GetActorLocation()+dashDirection * _dashLength,
-		GetActorRotation().Quaternion(),ECC_Pawn, FCollisionShape::MakeSphere(100.f));
-	GetWorld()->LineTraceSingleByObjectType(solidHit, GetActorLocation(), GetActorLocation()+dashDirection * 1000.f, ECC_WorldStatic);
-
-	FVector rightOfDash = dashDirection.Cross(FVector::UpVector);
-
-	//in order to prevent actors from getting hit multiple time, check a hashset if the actor has been hit before -Gustav
-	TSet<AActor*> hitActors;
 	
-	for(FHitResult DashHit : dashHits)
-	{
-		
-		AActor* HitActor = DashHit.GetActor();
-
-
-		if (!hitActors.Contains(HitActor))
-		{
-			if (HitActor->IsA<AAuraCharacter>() && HitActor != this)
-			{
-				//Cast<AAuraCharacter>(HitActor)->GetCharacterMovement()->AddImpulse(DashHit.Normal*-300000);
-				//HitActor->SetActorLocation(HitActor->GetActorLocation() + DashHit.Normal*_dashKnockBack*-1);
-            
-				FVector knockbackDirection = rand() % 2 ? rightOfDash:-rightOfDash;
-            			
-				HitActor->SetActorLocation(HitActor->GetActorLocation() + knockbackDirection*_dashKnockBack);
-				Cast<AAuraCharacter>(HitActor)->QueueDamage(_dashDamage, ElementTypes::PHYSICAL);
-			}
-			hitActors.Add(HitActor);
-		}
-	}
-
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(hitActors.Num()));
-	//SetActorLocation((dashDirection * 1000.f)+ GetActorLocation());
-
 	CurrentlyDashing = true;
-	_dashTargetLocation = solidHit.bBlockingHit ? solidHit.ImpactPoint : solidHit.TraceEnd;
-	//_dashTargetLocation = dashDirection * _dashLength + GetActorLocation();
-	_dashStartLocation  = GetActorLocation();
+	_dashDirection  = dashDirection*_dashSpeed;
 	
-	GetWorld()->GetTimerManager().SetTimer(_dashHandle, FTimerDelegate::CreateLambda([this] (){CurrentlyDashing = false;}), _dashDuration, false);
+	GetWorld()->GetTimerManager().SetTimer(_dashHandle, FTimerDelegate::CreateLambda([this] {APlayerCharacter::ResetDash();}), _dashDuration, false);
+}
+
+void APlayerCharacter::ResetDash()
+{
+	CurrentlyDashing = false;
+	GetCharacterMovement()->Velocity = FVector::Zero();
+	GetCapsuleComponent()->SetCollisionProfileName("Pawn");
+	_dashHitActors.Empty();
+}
+
+void APlayerCharacter::HandleDashHits(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,
+const FHitResult& SweepResult)
+{
+	
+	if (!_dashHitActors.Contains(OtherActor) && OtherActor != this && CurrentlyDashing)
+	{
+		FVector rightOfDash = _dashDirection.Cross(FVector::UpVector);
+		
+		FVector knockbackDirection = rand() % 2 ? rightOfDash:-rightOfDash;
+
+		knockbackDirection.Normalize();
+		
+		AAuraCharacter* HitCharacter = Cast<AAuraCharacter>(OtherActor);
+		
+		OtherActor->SetActorLocation(OtherActor->GetActorLocation() + knockbackDirection*_dashKnockBack);
+		HitCharacter->QueueDamage(_dashDamage, ElementTypes::PHYSICAL);
+
+		
+		_dashHitActors.Add(OtherActor);
+	}
 }

@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
+class USphereComponent;
 class USpringArmComponent;
 class UBoxComponent;
 class UCameraComponent;
@@ -37,25 +38,41 @@ private:
 
 	
 	UPROPERTY(VisibleAnywhere) UCameraComponent*	_playerCameraComponent = nullptr;
-	UPROPERTY(VisibleAnywhere) USpringArmComponent* _cameraArmComponent = nullptr;
-	UPROPERTY(VisibleAnywhere) UBoxComponent*		_meleeHitbox = nullptr;
+	UPROPERTY(VisibleAnywhere) USpringArmComponent* _cameraArmComponent    = nullptr;
+	UPROPERTY(VisibleAnywhere) UBoxComponent*		_meleeHitbox		   = nullptr;
+	UPROPERTY(VisibleAnywhere) USphereComponent*	_dashHitbox			   = nullptr;
 
-	UPROPERTY(EditAnywhere, Category="Melee Stats") float _meleeCooldown	= 3.f;
-	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _meleeDamage		= 3.f;
+	UPROPERTY(EditAnywhere, Category="Melee Stats") float _meleeCooldown		  = 3.f;
+	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _lightAttackMeleeDamage = 10.f;
+	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _heavyAttackMeleeDamage = 20.f;
+	//how long the attack must be charged before it becomes heavy
+	UPROPERTY(EditAnywhere, Category="Melee Stats") float _heavyAttackMeleeTime	  = 0.5f;
 
 	float _meleeCooldownTimer = 0.f;
+	float _meleeHeavyTimer    = 0.f;
+	bool  _chargingAttack	  = false;
 
 	UPROPERTY(EditAnywhere, Category="Ranged Stats") float				  _rangeCooldown = 3.f;
 	UPROPERTY(EditAnywhere, Category="Ranged Stats") TSubclassOf<AActor> _projectilePrefab;
 
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashDamage		= 5;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 float _dashDuration	= 0.2f;
-	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashLength		= 1000;
+	//UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashLength		= 1000;
+	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashSpeed		= 10000;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashKnockBack	= 100;
 
-	FVector		 _dashTargetLocation = FVector::Zero();
-	FVector		 _dashStartLocation  = FVector::Zero();
+	//FVector		 _dashTargetLocation = FVector::Zero();
+	//FVector		 _dashStartLocation  = FVector::Zero();
+	FVector		 _dashDirection  = FVector::Zero();
 	FTimerHandle _dashHandle;
+
+	//this is a failsafe to prevent actors from being hit multiple times
+	UPROPERTY()TSet<AActor*> _dashHitActors;
+
+	UFUNCTION()
+	void HandleDashHits(UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndexbool, bool bFromSweep,const FHitResult& SweepResult);
 
 	//curve for the dash easing
 	float easeInOutQuint(float x);
@@ -76,14 +93,18 @@ private:
 	void MoveAction       (const FInputActionValue& Value);
 	void JumpAction		  (const FInputActionValue& Value);
 	void MeleeAction	  (const FInputActionValue& Value);
+	void BeginMeleeAction (const FInputActionValue& Value);
 	void RangeAttackAction(const FInputActionValue& Value);
 	void BeginAimAction	  (const FInputActionValue& Value);
 	void StopAimAction	  (const FInputActionValue& Value);
 	void DashAction		  (const FInputActionValue& Value);
 
+	void ResetDash		  ();
+
 	
 public:
 	UFUNCTION(BlueprintImplementableEvent) void MeleeAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void BeginMeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void RangedAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginAimEvent();
 	UFUNCTION(BlueprintImplementableEvent) void StopAimEvent();
