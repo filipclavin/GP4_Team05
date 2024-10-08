@@ -35,8 +35,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float		   _healingTaken	    = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float		   _allDamageTaken      = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float		   _allDamageDealt      = 1.0f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageTaken;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageDealt;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageTaken	= {};
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageDealt	= {};
 
 	UPROPERTY(BlueprintReadOnly)  bool _isAlive = true;
 
