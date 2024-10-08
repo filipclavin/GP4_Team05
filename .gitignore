@@ -83,3 +83,5 @@ DerivedDataCache/*
 *.csproj
 *.sln.DotSettings
 *.sln.DotSettings.user
+.editorconfig
+shadertoolsconfig.json
