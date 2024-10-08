@@ -1,4 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -60,6 +61,10 @@ private:
 	//UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashLength		= 1000;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashSpeed		= 10000;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashKnockBack	= 100;
+
+	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _Ligtningdamage	= 10;
+	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _spreadRadius	= 100;
+	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _range			= 3000;
 
 	//FVector		 _dashTargetLocation = FVector::Zero();
 	//FVector		 _dashStartLocation  = FVector::Zero();

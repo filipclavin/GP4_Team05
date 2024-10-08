@@ -15,6 +15,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -230,25 +231,62 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	_rangeCooldownTimer = 0;
 
 	RangedAttackEvent();
-	
-	if (_projectilePrefab)
-	{
-		FVector AimStart;
-		FRotator CamRot;
-		GetController<APlayerController>()->GetPlayerViewPoint(AimStart, CamRot);
-        
-		FVector CamForward = CamRot.Quaternion().GetForwardVector();
-        		
-		FHitResult AimHit;
-		GetWorld()->LineTraceSingleByChannel(AimHit,AimStart, AimStart + CamForward*10000.f,ECC_Visibility);
-		
-		FVector AimPoint = AimHit.bBlockingHit ? AimHit.Location: AimHit.TraceEnd;
+	//for now i will convert the ranged attack to arcing surge
 
-		FVector BulletOrg = GetActorLocation() + GetActorForwardVector()*200.f;
-		FVector BulletDir = AimPoint - BulletOrg;
+	TArray<AActor*>	lightningHits;
+	TArray<AActor*>	alreadyHitActors;
+	TQueue<AActor*> ActorsToProcess;
+
+	UClass* AuraCharacterClass = AAuraCharacter::StaticClass();
+	
+	TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
+	traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+	
+	FHitResult lightningHit;
+	GetWorld()->LineTraceSingleByObjectType(lightningHit, _playerCameraComponent->GetComponentToWorld().GetLocation() + _playerCameraComponent->GetForwardVector()*
+		GetCapsuleComponent()->GetScaledCapsuleHalfHeight()*2,_playerCameraComponent->GetComponentToWorld().GetLocation() + _playerCameraComponent->GetForwardVector()*_range,ECC_Pawn);
+
+	if (!lightningHit.bBlockingHit){return;}
+	
+	if (lightningHit.GetActor()->IsA<AAuraCharacter>())
+	{
+		AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(lightningHit.GetActor());
 		
-		GetWorld()->SpawnActor<AActor>(_projectilePrefab,GetActorLocation(),UKismetMathLibrary::MakeRotFromX(BulletDir));
+		alreadyHitActors.Add(hitCharacter);
+		ActorsToProcess.Enqueue(hitCharacter);
+
+		while (!ActorsToProcess.IsEmpty())
+		{
+			lightningHits.Empty();
+			AActor* Actor;
+			ActorsToProcess.Dequeue(Actor);
+			
+			UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Actor->GetActorLocation(), _spreadRadius,
+				traceObjectTypes, AuraCharacterClass, alreadyHitActors, lightningHits);
+			DrawDebugSphere(GetWorld(), Actor->GetActorLocation(), _spreadRadius, 12, FColor::Red, true, 4.0f);
+
+			for (AActor* hitActor : lightningHits)
+			{
+				DrawDebugLine(GetWorld(), Actor->GetActorLocation(), hitActor->GetActorLocation(), FColor::Yellow, true, 4, 0, 1);
+				alreadyHitActors.Add(hitActor);
+				ActorsToProcess.Enqueue(hitActor);
+			}
+			
+		}
+
+		for (AActor* hitActor : alreadyHitActors)
+		{
+			if (hitActor != this)
+			{
+				//TODO change to lightning when its ready
+				Cast<AAuraCharacter>(hitActor)->QueueDamage(_Ligtningdamage, ElementTypes::WATER);
+				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
+			}
+			
+		}
+		
 	}
+	
 }
 
 
@@ -299,8 +337,7 @@ void APlayerCharacter::ResetDash()
 }
 
 void APlayerCharacter::HandleDashHits(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,
-const FHitResult& SweepResult)
+UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const FHitResult& SweepResult)
 {
 	
 	if (!_dashHitActors.Contains(OtherActor) && OtherActor != this && CurrentlyDashing)
