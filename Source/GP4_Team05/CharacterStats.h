@@ -51,7 +51,7 @@ protected:
 
 		Type		     _type;
 		ElementTypes     _element;
-		UCharacterStats* _stats;
+		UCharacterStats* _stats = nullptr;
 		int			     _amount;
 	};
 			

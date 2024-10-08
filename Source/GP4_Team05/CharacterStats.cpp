@@ -9,7 +9,7 @@ UCharacterStats::UCharacterStats()
 	{
 		_elementDamageDealt.Add(1.0f);
 		_elementDamageTaken.Add(1.0f);	
-	}	
+	}			
 }
 
 int UCharacterStats::CalculateDamage(int damage, ElementTypes element)
@@ -33,6 +33,7 @@ void UCharacterStats::QueueDamage(int amount, ElementTypes element, UCharacterSt
 	data._amount = amount;
 	data._type = IntakeData::Type::Damage;
 	data._element = element;
+	data._stats = stats;
 	_intakeQueue.Add(data);
 }
 
