@@ -14,7 +14,7 @@ UCharacterStats::UCharacterStats()
 
 int UCharacterStats::CalculateDamage(int damage, ElementTypes element)
 {
-	float newDamage = ((damage * _elementDamageDealt[element]) * _allDamageDealt) * IsCriticalStrike() ? 2 : 1;
+	float newDamage = ((damage * _elementDamageDealt.IsEmpty() ? 1.0f : _elementDamageDealt[element]) * _allDamageDealt) * IsCriticalStrike() ? 2 : 1;
 	return RoundToInt(newDamage);
 }
 
