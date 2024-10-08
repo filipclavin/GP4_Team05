@@ -73,6 +73,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		Input->BindAction(_dash, ETriggerEvent::Started, this, &APlayerCharacter::DashAction);
 	}
+	if (_fireCone)
+	{
+		Input->BindAction(_fireCone, ETriggerEvent::Ongoing, this, &APlayerCharacter::FireConeAction);
+	}
 }
 
 void APlayerCharacter::BeginPlay()
@@ -355,5 +359,34 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 
 		
 		_dashHitActors.Add(OtherActor);
+	}
+}
+
+void APlayerCharacter::FireConeAction(const FInputActionValue& Value)
+{
+	TArray<AActor*> HitActors;
+	TArray<AActor*> IgnoredActors;
+	
+	TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
+	traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+	
+	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), _playerCameraComponent->GetComponentLocation(), _rangeOfFireCone,
+				traceObjectTypes, AAuraCharacter::StaticClass(), IgnoredActors, HitActors);
+	
+	for (AActor* HitActor : HitActors)
+	{
+		if (HitActor != this)
+		{
+			FVector hitActorRelativeLoc = (HitActor->GetActorLocation()-_playerCameraComponent->GetComponentLocation());
+			hitActorRelativeLoc.Normalize();
+			float hitActorDotProduct = FVector::DotProduct(hitActorRelativeLoc,_playerCameraComponent->GetForwardVector());
+
+
+			if (hitActorDotProduct > 1-_widthOfFireConeRadians)
+			{
+				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow,FString::SanitizeFloat(hitActorDotProduct));
+			}
+			
+		}
 	}
 }
