@@ -48,8 +48,16 @@ private:
 	int _currentPOIRoom   = 0;
 	int _numberOfRooms    = 0;
 
-	TSoftObjectPtr<UWorld> _currentRoomInstance;
-	TSoftObjectPtr<UWorld> _previousRoomInstance;
+	//TSoftObjectPtr<UWorld> _currentRoomInstance;
+	//TSoftObjectPtr<UWorld> _previousRoomInstance;
+
+	int _unloadIndex = -1;
+
+	FString _currentRoomInstance;
+	FString _previousRoomInstance;
+
+	//int _currentRoomInstance;
+	//int _previousRoomInstance;
 
 	int  _selectedRoom = -1;
 	int  _previousRoom = -1;
