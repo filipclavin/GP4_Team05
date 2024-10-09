@@ -15,6 +15,9 @@ ALevelGenerator::ALevelGenerator()
 
 void ALevelGenerator::LoadNewRoom()
 {
+	if (!_bridgeRoom)
+		return;
+
 	_unloadLastRoom = true;
 	_unloadDuration = 0.1f;
 
@@ -56,7 +59,7 @@ void ALevelGenerator::LoadNewRoom()
 
 void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 {
-	if (newRoom == _bridgeRoom)
+	if (newRoom == _bridgeRoom || !_bridgeRoom)
 		return;
 
 	if (_currentRoomIndex > -1) {
@@ -96,6 +99,12 @@ void ALevelGenerator::Tick(float deltaTime)
 void ALevelGenerator::GenerateLevelList(URoomGenerationData* data)
 {
 	_bridgeRoom = Cast<ARoom>(UGameplayStatics::GetActorOfClass(GetWorld(), ARoom::StaticClass()));
+	if(!_bridgeRoom)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, "OBS! No BridgeRoom available, Level Generation will not be active!");
+		return;
+	}
 	_bridgeRoom->SetBridgeRoom();
 	_bridgeRoom->_levelGenerator = this;
 
