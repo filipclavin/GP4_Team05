@@ -9,7 +9,7 @@ enum AuraType : uint8
 	BUFF,
 	// Debuff indicates that this Aura decreases speciic stats or effects the AuraCharacter in a negative way 
 	DEBUFF,
-	// Effect only runs OnAuraCast and OnAuraAdd and is removed immediatly (Note that OnAuraRemoved is not called)
+	// Effects is at the moment not super well defined, will update when EFFECT has a purpose
 	EFFECT,
 	// Used for arrays only in code, THIS IS NOT AN ACTUALY AURA TYPE!
 	AURA_TYPE_COUNT
@@ -19,10 +19,10 @@ UENUM(BlueprintType)
 enum ElementTypes : uint8
 {
 	PHYSICAL,
-	WATER,
 	FIRE,
+	LIGHTNING,
+	WATER,
 	EARTH,
-	AIR,
 	// Count is only for coding usages!
 	ELEMENT_TYPE_COUNT
 };
