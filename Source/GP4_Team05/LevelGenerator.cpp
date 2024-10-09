@@ -15,11 +15,8 @@ ALevelGenerator::ALevelGenerator()
 
 void ALevelGenerator::LoadNewRoom()
 {
-	_previousRoomInstance = _currentRoomInstance;
 	_unloadLastRoom = true;
-	_unloadDuration = 0.5f;
-	
-	//ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr()
+	_unloadDuration = 0.1f;
 
 	bool success = false;
 	_currentRoomIndex++;
@@ -36,7 +33,6 @@ void ALevelGenerator::LoadNewRoom()
 			{
 				levelInstance = _roomGenDataAsset->_POIRoomInstances[_currentPOIRoom];
 				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, FTransform::Identity, success);
-				//_currentRoomInstance = levelInstance->GetName();
 			}
 			_currentPOIRoom++;
 		}
@@ -50,14 +46,11 @@ void ALevelGenerator::LoadNewRoom()
 
 			levelInstance = _roomGenDataAsset->_regularRoomInstances[_selectedRoom];
 			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, FTransform::Identity, success);
-			//_currentRoomInstance = levelInstance->GetName();
 		}
 	}
 	else 
 	{
 		ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, FTransform::Identity, success);
-		_currentRoomInstance = levelInstance->GetName();
-		//UGameplayStatics::LoadStreamLevelBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, true, false, info);
 	}
 }
 
@@ -81,12 +74,19 @@ void ALevelGenerator::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
+	if (_removeInstanceFromList) 
+	{
+		GetWorld()->RemoveStreamingLevelAt(_unloadIndex);
+		_removeInstanceFromList = false;
+	}
+
 	if (_unloadLastRoom && _unloadDuration <= 0.0f)
 	{
 		FLatentActionInfo info;
 		const TArray<ULevelStreaming*>& levels = GetWorld()->GetStreamingLevels();
 		UGameplayStatics::UnloadStreamLevel(GetWorld(), levels[_unloadIndex]->GetWorldAssetPackageFName(), info, false);
-		_unloadIndex++;
+		_removeInstanceFromList = true;
+		//_unloadIndex++;
 		_unloadLastRoom = false;
 	}
 
@@ -102,7 +102,7 @@ void ALevelGenerator::GenerateLevelList(URoomGenerationData* data)
 	if (data->_POIRoomInstances.IsEmpty())
 		return;
 														
-	_numberOfRooms    = data->_POIRoomInstances.Num() * (data->_numOfRoomsPerPOI + 1/*Count in the POI Room*/);
+	_numberOfRooms = data->_POIRoomInstances.Num() * (data->_numOfRoomsPerPOI + 1/*Count in the POI Room*/);
 
 	FLatentActionInfo info;
 	bool success = false;

@@ -19,8 +19,8 @@ public:
 	// Sets default values for this actor's properties
 	ALevelGenerator();
 
-	// This function is called when entering a corridor collider, or a new room. will see what I decide.
-	UFUNCTION(BlueprintCallable) void LoadNewRoom();
+	// This function is called when entering a bridge collider, or a new room. will see what I decide.
+	void LoadNewRoom();
 
 	void SetCurrentRoom(ARoom* newRoom);
 	ARoom* GetBridgeRoom() { return _bridgeRoom; }
@@ -41,24 +41,13 @@ private:
 
 	void GenerateLevelList(URoomGenerationData* data);
 	
-	bool  _unloadLastRoom  = false;
-	float _unloadDuration = 1.0f;
-
-	int _currentRoomIndex = -1;
-	int _currentPOIRoom   = 0;
-	int _numberOfRooms    = 0;
-
-	//TSoftObjectPtr<UWorld> _currentRoomInstance;
-	//TSoftObjectPtr<UWorld> _previousRoomInstance;
-
-	int _unloadIndex = -1;
-
-	FString _currentRoomInstance;
-	FString _previousRoomInstance;
-
-	//int _currentRoomInstance;
-	//int _previousRoomInstance;
-
-	int  _selectedRoom = -1;
-	int  _previousRoom = -1;
+	bool  _unloadLastRoom         = false;
+	bool  _removeInstanceFromList = false;
+	float _unloadDuration         = 1.0f;
+	int   _currentRoomIndex       = -1;
+	int   _currentPOIRoom         = 0;
+	int   _numberOfRooms          = 0;
+	int   _unloadIndex            = -1;
+	int   _selectedRoom           = -1;
+	int   _previousRoom           = -1;
 };

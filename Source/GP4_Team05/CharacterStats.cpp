@@ -81,6 +81,7 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				else
 					newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
 				
+				intake._stats = nullptr;
 				_currentHealth -= RoundToInt(newAmount);
 				break;
 			case IntakeData::Type::Heal:
