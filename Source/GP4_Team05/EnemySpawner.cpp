@@ -146,8 +146,9 @@ void AEnemySpawner::BeginPlay()
 			}
 		}
 	}
-	
-	SpawnNextWave();
+
+	if (_waves.Num() > 0)
+		SpawnNextWave();
 }
 
 // Called every frame
