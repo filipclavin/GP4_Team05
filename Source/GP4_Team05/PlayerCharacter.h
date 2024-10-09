@@ -8,6 +8,7 @@
 #include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
+class AProjectileBaseClass;
 class USphereComponent;
 class USpringArmComponent;
 class UBoxComponent;
@@ -34,7 +35,6 @@ private:
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _attack;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _aim;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _dash;
-	UPROPERTY(EditAnywhere, Category=input) UInputAction* _fireCone;
 
 	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
 
@@ -55,7 +55,7 @@ private:
 	bool  _chargingAttack	  = false;
 
 	UPROPERTY(EditAnywhere, Category="Ranged Stats") float				  _rangeCooldown = 3.f;
-	UPROPERTY(EditAnywhere, Category="Ranged Stats") TSubclassOf<AActor> _projectilePrefab;
+	
 
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashDamage		= 5;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 float _dashDuration	= 0.2f;
@@ -67,14 +67,13 @@ private:
 	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _spreadRadius	= 100;
 	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _range			= 3000;
 
-	
-	UPROPERTY(EditAnywhere, Category="Inferno Cascade") int _widthOfFireCone = 30;
-	UPROPERTY(EditAnywhere, Category="Inferno Cascade") int _rangeOfFireCone = 400;
+	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _electricProjectile;
+	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _fireProjectile;
 
-	float _widthOfFireConeRadians = _widthOfFireCone/(180.0/3.141592653589793238463);
+	TArray<AProjectileBaseClass*> _pooledElectricProjectiles;
+	int							  _electricProjectileToUse;
+	TArray<AProjectileBaseClass*> _pooledFireProjectiles;
 	
-	//FVector		 _dashTargetLocation = FVector::Zero();
-	//FVector		 _dashStartLocation  = FVector::Zero();
 	FVector		 _dashDirection  = FVector::Zero();
 	FTimerHandle _dashHandle;
 
@@ -110,7 +109,6 @@ private:
 	void BeginAimAction	  (const FInputActionValue& Value);
 	void StopAimAction	  (const FInputActionValue& Value);
 	void DashAction		  (const FInputActionValue& Value);
-	void FireConeAction	  (const FInputActionValue& Value);
 
 	void ResetDash		  ();
 
@@ -121,7 +119,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent) void RangedAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginAimEvent();
 	UFUNCTION(BlueprintImplementableEvent) void StopAimEvent();
-	UFUNCTION(BlueprintImplementableEvent) void DashEvent(FVector targetLocation);
+	UFUNCTION(BlueprintImplementableEvent) void DashEvent();
 	UFUNCTION(BlueprintImplementableEvent) void FireConeEvent();
 
 	UPROPERTY(VisibleAnywhere, Category="Dash Stats")bool CurrentlyDashing = false;

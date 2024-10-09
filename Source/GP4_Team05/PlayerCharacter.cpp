@@ -16,6 +16,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectileBaseClass.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -73,10 +74,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		Input->BindAction(_dash, ETriggerEvent::Started, this, &APlayerCharacter::DashAction);
 	}
-	if (_fireCone)
-	{
-		Input->BindAction(_fireCone, ETriggerEvent::Ongoing, this, &APlayerCharacter::FireConeAction);
-	}
 }
 
 void APlayerCharacter::BeginPlay()
@@ -91,6 +88,14 @@ void APlayerCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(_defaultInputMapping.LoadSynchronous(), 0);
 		}
+	}
+
+	//create a semi projectile pool. considering the relatively close quarters a few seconds should be enough to 
+	for (int i = 0; i < 10; i++)
+	{
+		_pooledElectricProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_electricProjectile));
+		_pooledElectricProjectiles[i]->SpawnProjectile(0,0,0,0);
+		_pooledElectricProjectiles[i]->DespawnProjectile();
 	}
 }
 
@@ -134,9 +139,6 @@ void APlayerCharacter::ResetInputVector(const FInputActionValue& Value)
 	_inputVector = FVector::Zero();
 }
 
-
-
-
 void APlayerCharacter::MoveForwards(float val)
 {
 	AddMovementInput(GetActorForwardVector(), val);
@@ -146,9 +148,6 @@ void APlayerCharacter::MoveSideways(float val)
 {
 	AddMovementInput(GetActorRightVector(), val);
 }
-
-
-
 
 void APlayerCharacter::LookAction(const FInputActionValue& Value)
 {
@@ -167,8 +166,6 @@ void APlayerCharacter::LookUp(float val)
 {
 	AddControllerPitchInput(val);
 }
-
-
 
 void APlayerCharacter::JumpAction(const FInputActionValue& Value)
 {
@@ -233,64 +230,42 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	if (_rangeCooldown > _rangeCooldownTimer) {GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown");return;}
 	
 	_rangeCooldownTimer = 0;
-
+	
 	RangedAttackEvent();
-	//for now i will convert the ranged attack to arcing surge
 
-	TArray<AActor*>	lightningHits;
-	TArray<AActor*>	alreadyHitActors;
-	TQueue<AActor*> ActorsToProcess;
 
-	UClass* AuraCharacterClass = AAuraCharacter::StaticClass();
-	
-	TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
-	traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
-	
-	FHitResult lightningHit;
-	GetWorld()->LineTraceSingleByObjectType(lightningHit, _playerCameraComponent->GetComponentToWorld().GetLocation() + _playerCameraComponent->GetForwardVector()*
-		GetCapsuleComponent()->GetScaledCapsuleHalfHeight()*2,_playerCameraComponent->GetComponentToWorld().GetLocation() + _playerCameraComponent->GetForwardVector()*_range,ECC_Pawn);
+	FVector AimStart;
+	FRotator CamRot;
+	GetController<APlayerController>()->GetPlayerViewPoint(AimStart, CamRot);
 
-	if (!lightningHit.bBlockingHit){return;}
-	
-	if (lightningHit.GetActor()->IsA<AAuraCharacter>())
-	{
-		AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(lightningHit.GetActor());
+	FVector CamForward = CamRot.Quaternion().GetForwardVector();
 		
-		alreadyHitActors.Add(hitCharacter);
-		ActorsToProcess.Enqueue(hitCharacter);
+	FHitResult AimHit;
+	GetWorld()->LineTraceSingleByChannel(AimHit,AimStart, AimStart +
+		CamForward*_pooledElectricProjectiles[_electricProjectileToUse]->_projectileRange,
+		ECC_Visibility);
+	
+		
+	FVector AiMPoint = AimHit.bBlockingHit ? AimHit.Location: AimHit.TraceEnd;
 
-		while (!ActorsToProcess.IsEmpty())
-		{
-			lightningHits.Empty();
-			AActor* Actor;
-			ActorsToProcess.Dequeue(Actor);
-			
-			UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Actor->GetActorLocation(), _spreadRadius,
-				traceObjectTypes, AuraCharacterClass, alreadyHitActors, lightningHits);
-			DrawDebugSphere(GetWorld(), Actor->GetActorLocation(), _spreadRadius, 12, FColor::Red, true, 4.0f);
+	FVector BulletOrg = GetActorLocation() + GetActorForwardVector()*200.f;
+	FVector BulletDir = AiMPoint - BulletOrg;
+		
+	
+	
+	_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
+	(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
 
-			for (AActor* hitActor : lightningHits)
-			{
-				DrawDebugLine(GetWorld(), Actor->GetActorLocation(), hitActor->GetActorLocation(), FColor::Yellow, true, 4, 0, 1);
-				alreadyHitActors.Add(hitActor);
-				ActorsToProcess.Enqueue(hitActor);
-			}
-			
-		}
+	_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(0,0,0,0);
 
-		for (AActor* hitActor : alreadyHitActors)
-		{
-			if (hitActor != this)
-			{
-				//TODO change to lightning when its ready
-				Cast<AAuraCharacter>(hitActor)->QueueDamage(_Ligtningdamage, ElementTypes::WATER);
-				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
-			}
-			
-		}
+	_electricProjectileToUse++;
+
+	if (_electricProjectileToUse > _pooledElectricProjectiles.Num()-1)
+	{
+		_electricProjectileToUse = 0;
 		
 	}
-	
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
 }
 
 
@@ -362,31 +337,4 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 	}
 }
 
-void APlayerCharacter::FireConeAction(const FInputActionValue& Value)
-{
-	TArray<AActor*> HitActors;
-	TArray<AActor*> IgnoredActors;
-	
-	TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
-	traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
-	
-	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), _playerCameraComponent->GetComponentLocation(), _rangeOfFireCone,
-				traceObjectTypes, AAuraCharacter::StaticClass(), IgnoredActors, HitActors);
-	
-	for (AActor* HitActor : HitActors)
-	{
-		if (HitActor != this)
-		{
-			FVector hitActorRelativeLoc = (HitActor->GetActorLocation()-_playerCameraComponent->GetComponentLocation());
-			hitActorRelativeLoc.Normalize();
-			float hitActorDotProduct = FVector::DotProduct(hitActorRelativeLoc,_playerCameraComponent->GetForwardVector());
 
-
-			if (hitActorDotProduct > 1-_widthOfFireConeRadians)
-			{
-				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow,FString::SanitizeFloat(hitActorDotProduct));
-			}
-			
-		}
-	}
-}
