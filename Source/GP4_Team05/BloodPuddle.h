@@ -29,7 +29,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Visual")
 	class UMaterialInstanceDynamic* _dynamicMaterial;	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade")
-	float _fadeSpeed;
+	float _fadeSpeedStart;  // Fade speed at the start
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade")
+	float _fadeSpeedEnd;  // Faster fade speed towards the end
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade")
+	float _shrinkSpeed;  // Shrink speed over time
+
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade") float _fadeSpeed;
+		
 	// Percent of total health this puddle heals (e.g., 30% of max health)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
 	float _healingPercentage;
@@ -57,9 +64,12 @@ protected:
 	
 	void FadeOut(float DeltaTime);
 	void ApplyHealing(float DeltaTime);
+	void ShrinkPuddle(float DeltaTime);
 	
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = "BloodPuddle")
+	static ABloodPuddle* SpawnPuddle(UWorld* World, FVector Location, FRotator Rotation);
 
 };
