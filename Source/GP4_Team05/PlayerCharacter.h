@@ -1,4 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -33,6 +34,7 @@ private:
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _attack;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _aim;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _dash;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _fireCone;
 
 	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
 
@@ -61,6 +63,16 @@ private:
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashSpeed		= 10000;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashKnockBack	= 100;
 
+	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _Ligtningdamage	= 10;
+	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _spreadRadius	= 100;
+	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _range			= 3000;
+
+	
+	UPROPERTY(EditAnywhere, Category="Inferno Cascade") int _widthOfFireCone = 30;
+	UPROPERTY(EditAnywhere, Category="Inferno Cascade") int _rangeOfFireCone = 400;
+
+	float _widthOfFireConeRadians = _widthOfFireCone/(180.0/3.141592653589793238463);
+	
 	//FVector		 _dashTargetLocation = FVector::Zero();
 	//FVector		 _dashStartLocation  = FVector::Zero();
 	FVector		 _dashDirection  = FVector::Zero();
@@ -98,6 +110,7 @@ private:
 	void BeginAimAction	  (const FInputActionValue& Value);
 	void StopAimAction	  (const FInputActionValue& Value);
 	void DashAction		  (const FInputActionValue& Value);
+	void FireConeAction	  (const FInputActionValue& Value);
 
 	void ResetDash		  ();
 
@@ -109,6 +122,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent) void BeginAimEvent();
 	UFUNCTION(BlueprintImplementableEvent) void StopAimEvent();
 	UFUNCTION(BlueprintImplementableEvent) void DashEvent(FVector targetLocation);
+	UFUNCTION(BlueprintImplementableEvent) void FireConeEvent();
 
 	UPROPERTY(VisibleAnywhere, Category="Dash Stats")bool CurrentlyDashing = false;
 
