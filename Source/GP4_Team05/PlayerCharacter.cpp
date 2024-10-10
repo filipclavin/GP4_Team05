@@ -63,7 +63,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		Input->BindAction(_attack, ETriggerEvent::Completed, this, &APlayerCharacter::MeleeAction);
 		Input->BindAction(_attack, ETriggerEvent::Started,   this, &APlayerCharacter::BeginMeleeAction);
-		Input->BindAction(_attack, ETriggerEvent::Started,   this, &APlayerCharacter::RangeAttackAction);
+		//Input->BindAction(_attack, ETriggerEvent::Started,   this, &APlayerCharacter::RangeAttackAction);
 	}
 	if (_aim)
 	{
@@ -73,6 +73,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (_dash)
 	{
 		Input->BindAction(_dash, ETriggerEvent::Started, this, &APlayerCharacter::DashAction);
+	}
+	if (_fireSelect && _lightningSelect && _rangeAttack)
+	{
+		Input->BindAction(_fireSelect,		ETriggerEvent::Started, this, &APlayerCharacter::FireAction);
+		Input->BindAction(_lightningSelect, ETriggerEvent::Started, this, &APlayerCharacter::lightningAction);
+		Input->BindAction(_rangeAttack,		ETriggerEvent::Started, this, &APlayerCharacter::RangeAttackAction);
 	}
 }
 
@@ -223,6 +229,17 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 		
 	}
 }
+
+void APlayerCharacter::lightningAction(const FInputActionValue& Value)
+{
+	_selectedProjectile = _electricProjectile;
+}
+
+void APlayerCharacter::FireAction(const FInputActionValue& Value)
+{
+	_selectedProjectile = _fireProjectile;
+}
+
 
 void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 {

@@ -35,6 +35,9 @@ private:
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _attack;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _aim;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _dash;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _lightningSelect;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _fireSelect;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _rangeAttack;
 
 	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
 
@@ -69,6 +72,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _electricProjectile;
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _fireProjectile;
+
+	TSubclassOf<AProjectileBaseClass> _selectedProjectile = _electricProjectile;
+
+	
 
 	TArray<AProjectileBaseClass*> _pooledElectricProjectiles;
 	int							  _electricProjectileToUse;
@@ -109,6 +116,8 @@ private:
 	void BeginAimAction	  (const FInputActionValue& Value);
 	void StopAimAction	  (const FInputActionValue& Value);
 	void DashAction		  (const FInputActionValue& Value);
+	void FireAction		  (const FInputActionValue& Value);
+	void lightningAction  (const FInputActionValue& Value);
 
 	void ResetDash		  ();
 
