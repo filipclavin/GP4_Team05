@@ -37,6 +37,7 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	UpdateAuras(DeltaSeconds);
 	
 	UpdateTickInterval();
 

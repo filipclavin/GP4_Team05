@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ProjectileBaseClass.generated.h"
 
+class AAuraCharacter;
 class USphereComponent;
 
 UCLASS()
@@ -43,6 +44,8 @@ public:
 	void DespawnProjectile();
 
 	UFUNCTION()
-	void HitEnemies(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	virtual void HitEnemies(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const FHitResult& SweepResult);
+
+	virtual void DealDamage(TArray<AActor*> hitCharacter);
 };

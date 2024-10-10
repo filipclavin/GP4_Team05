@@ -109,26 +109,32 @@ void AProjectileBaseClass::HitEnemies(UPrimitiveComponent* OverlappedComponent,A
 
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(numberOfForks) +" of " +FString::FromInt(_projectileForking));
 
-	numberOfForks = 0;
+	DealDamage(alreadyHitActors);
 	
-	for (AActor* hitActor : alreadyHitActors)
-	{
-		
-		if (hitActor != this)
-		{
-			if (numberOfForks >= _projectileForking)
-			{
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "limit Reached");
-			break;
-			}
-			
-			//TODO change to lightning when its ready
-			Cast<AAuraCharacter>(hitActor)->QueueDamage(_projectileDamage, ElementTypes::WATER);
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
-			numberOfForks++;
-		}
-			
-	}
 	
 }
 
+void AProjectileBaseClass::DealDamage(TArray<AActor*> hitCharacter)
+{
+	int numberOfForks = 0;
+	
+	for (AActor* hitActor : hitCharacter)
+    	{
+    		
+    		if (hitActor != this)
+    		{
+    			//TODO change to lightning when its ready
+    			Cast<AAuraCharacter>(hitActor)->QueueDamage(_projectileDamage, ElementTypes::WATER);
+    			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
+    			numberOfForks++;
+    			
+    			
+    			if (numberOfForks >= _projectileForking)
+    			{
+    			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "limit Reached");
+    			break;
+    			}
+    		}
+    			
+    	}
+}
