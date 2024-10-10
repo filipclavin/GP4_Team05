@@ -102,6 +102,9 @@ void APlayerCharacter::BeginPlay()
 		_pooledElectricProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_electricProjectile));
 		_pooledElectricProjectiles[i]->SpawnProjectile(0,0,0,0);
 		_pooledElectricProjectiles[i]->DespawnProjectile();
+		_pooledFireProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_electricProjectile));
+		_pooledFireProjectiles[i]->SpawnProjectile(0,0,0,0);
+		_pooledFireProjectiles[i]->DespawnProjectile();
 	}
 }
 
@@ -232,24 +235,30 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 
 void APlayerCharacter::lightningAction(const FInputActionValue& Value)
 {
-	_selectedProjectile = _electricProjectile;
+	_useElectric = true;
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "using electricity");
 }
 
 void APlayerCharacter::FireAction(const FInputActionValue& Value)
 {
-	_selectedProjectile = _fireProjectile;
+	_useElectric = false;
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "using fire");
 }
 
 
 void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 {
-	if (!_aiming) {return;}
+	
 	if (_rangeCooldown > _rangeCooldownTimer) {GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown");return;}
 	
 	_rangeCooldownTimer = 0;
 	
 	RangedAttackEvent();
 
+	int projectileRange;
+	
+	if (_useElectric){projectileRange = _pooledElectricProjectiles[_electricProjectileToUse]->_projectileRange;}
+	else{projectileRange = _pooledFireProjectiles[_fireProjectileToUse]->_projectileRange;}
 
 	FVector AimStart;
 	FRotator CamRot;
@@ -259,30 +268,46 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		
 	FHitResult AimHit;
 	GetWorld()->LineTraceSingleByChannel(AimHit,AimStart, AimStart +
-		CamForward*_pooledElectricProjectiles[_electricProjectileToUse]->_projectileRange,
-		ECC_Visibility);
+		CamForward*projectileRange,ECC_Visibility);
 	
-		
+	
 	FVector AiMPoint = AimHit.bBlockingHit ? AimHit.Location: AimHit.TraceEnd;
 
 	FVector BulletOrg = GetActorLocation() + GetActorForwardVector()*200.f;
 	FVector BulletDir = AiMPoint - BulletOrg;
-		
-	
-	
-	_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
-	(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
 
-	_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(0,0,0,0);
 
-	_electricProjectileToUse++;
-
-	if (_electricProjectileToUse > _pooledElectricProjectiles.Num()-1)
+	if (_useElectric)
 	{
-		_electricProjectileToUse = 0;
-		
+		_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
+		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
+        
+		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(0,0,0,0);
+        
+		_electricProjectileToUse++;
+        
+		if (_electricProjectileToUse > _pooledElectricProjectiles.Num()-1)
+		{
+			_electricProjectileToUse = 0;
+		}
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
 	}
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
+	else
+	{
+		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
+		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
+        
+		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(0,0,0,0);
+        
+		_fireProjectileToUse++;
+        
+		if (_fireProjectileToUse > _pooledFireProjectiles.Num()-1)
+		{
+			_electricProjectileToUse = 0;
+		}
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
+	}
+	
 }
 
 

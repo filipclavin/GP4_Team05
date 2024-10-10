@@ -73,13 +73,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _electricProjectile;
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _fireProjectile;
 
-	TSubclassOf<AProjectileBaseClass> _selectedProjectile = _electricProjectile;
+	bool _useElectric = true;
 
 	
 
 	TArray<AProjectileBaseClass*> _pooledElectricProjectiles;
 	int							  _electricProjectileToUse;
 	TArray<AProjectileBaseClass*> _pooledFireProjectiles;
+	int							  _fireProjectileToUse;
 	
 	FVector		 _dashDirection  = FVector::Zero();
 	FTimerHandle _dashHandle;
