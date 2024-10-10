@@ -18,6 +18,8 @@ public:
 
 	void FireExplosion(FVector explodeOrigin);
 
+	void dealFireDamage(AAuraCharacter* Character);
+
 	UPROPERTY(EditDefaultsOnly, Category="Explosion Sats") int _explosionRange  = 300;
 	UPROPERTY(EditDefaultsOnly, Category="Explosion Sats") int _explosionDamage = _projectileDamage;
 };
