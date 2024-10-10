@@ -3,6 +3,7 @@
 #include "AuraDataInclude.h"
 #include "AuraCharacter.h"
 #include "AuraHandler.h"
+#include "ExplosiveBarrel.h"
 #include "Kismet/GameplayStatics.h"
 
 void AFireProjectile::BeginPlay()
@@ -31,10 +32,8 @@ void AFireProjectile::DealDamage(TArray<AActor*> hitCharacter)
 		if (hitActor != this)
 		{
 			
-			AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(hitActor);
+			dealFireDamage(Cast<AAuraCharacter>(hitActor));
 			
-			hitCharacter->QueueDamage(_projectileDamage, ElementTypes::FIRE);
-			_handler->CastAuraByName("FIRE", hitCharacter, nullptr);
 			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
 			numberOfForks++;
 
@@ -66,9 +65,21 @@ void AFireProjectile::FireExplosion(FVector explodeOrigin)
 
 	for (AActor* HitEnemyActor : hitEnemies)
 	{
-		AAuraCharacter* Character = Cast<AAuraCharacter>(HitEnemyActor);
+		dealFireDamage(Cast<AAuraCharacter>(HitEnemyActor));
 		
-		Character->QueueDamage(_explosionDamage, ElementTypes::FIRE);
-		_handler->CastAuraByName("FIRE", Character, nullptr);
+		
 	}
+}
+
+void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
+{
+	if (Character->IsA<AExplosiveBarrel>())
+	{
+		Cast<AExplosiveBarrel>(Character)->Despawn();
+		FireExplosion(Character->GetActorLocation());
+		return;
+	}
+	
+	Character->QueueDamage(_explosionDamage, ElementTypes::FIRE);
+	_handler->CastAuraByName("FIRE", Character, nullptr);
 }
