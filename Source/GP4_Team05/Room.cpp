@@ -20,10 +20,13 @@ void ARoom::BeginPlay()
 	Super::BeginPlay();
 
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
-	_levelGenerator->SetCurrentRoom(this);
-	_colliderActiveOnSpawn = true;
+	if (_levelGenerator) 
+	{
+		_levelGenerator->SetCurrentRoom(this);
+		_colliderActiveOnSpawn = true;
 
-	OnRoomLoad();
+		OnRoomLoad();
+	}
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

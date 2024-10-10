@@ -73,7 +73,7 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 		}
 	}
 	else
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Invalid Aura ID or AuraList is empty!"));
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Invalid Aura Name or AuraList is empty!"));
 }
 
 void AAuraHandler::FetchAllAurasAttached()

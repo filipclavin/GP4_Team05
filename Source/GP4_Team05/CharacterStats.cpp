@@ -12,6 +12,17 @@ UCharacterStats::UCharacterStats()
 	}			
 }
 
+void UCharacterStats::SetCharacterLevel(int level)
+{
+	int levelDelta = level - _currentLevel;
+	for (int i = 0; i < levelDelta; i++)
+	{
+		_maxHealth      *= _healthScaling;
+		_movementSpeed  *= _speedScaling;
+		_allDamageDealt *= _damageDealtScaling;
+	}
+}
+
 int UCharacterStats::CalculateDamage(int damage, ElementTypes element)
 {
 	float newDamage = ((damage * _elementDamageDealt.IsEmpty() ? 1.0f : _elementDamageDealt[element]) * _allDamageDealt) * IsCriticalStrike() ? 2 : 1;
