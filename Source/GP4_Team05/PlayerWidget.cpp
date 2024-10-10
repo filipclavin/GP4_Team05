@@ -89,13 +89,16 @@ void UPlayerWidget::UpdateAuras(const TArray<UAura*>& list, TArray<AuraTrackerDa
 	{
 		if (i < num)
 		{
-			AuraTrackerData& data = trackerData[i];
-			data._verticalBox->SetRenderOpacity(1.0f);
+			// Only display buff Icon if it the Aura has one
+			if (list[i]->GetIcon()) {
+				AuraTrackerData& data = trackerData[i];
+				data._verticalBox->SetRenderOpacity(1.0f);
 
-			FString duration = FString::SanitizeFloat(Precision(list[i]->GetDuration(), 2));
-			data._text->SetText(FText::FromString(duration));
+				FString duration = FString::SanitizeFloat(Precision(list[i]->GetDuration(), 2));
+				data._text->SetText(FText::FromString(duration));
 
-			data._image->SetBrushFromTexture(list[i]->GetIcon(), false);
+				data._image->SetBrushFromTexture(list[i]->GetIcon(), false);
+			}
 		}
 		else
 		{

@@ -16,10 +16,13 @@ class GP4_TEAM05_API UCharacterStats : public UActorComponent
 public:	
 	UCharacterStats();
 
+	void SetCharacterLevel(int level);
+
 	UFUNCTION(BlueprintCallable) int CalculateDamage(int damage, ElementTypes element);
 
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
 	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats);
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) int   _maxHealth     = 100;
 	UPROPERTY(BlueprintReadOnly)			    int   _currentHealth = 100;
@@ -55,6 +58,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageDealt	= {};
 
 	UPROPERTY(BlueprintReadOnly)  bool _isAlive = true;
+	
+	UPROPERTY(EditAnywhere) float _healthScaling      = 1.0f;
+	UPROPERTY(EditAnywhere) float _speedScaling       = 1.0f;
+	UPROPERTY(EditAnywhere) float _damageDealtScaling = 1.0f;
+
 
 protected:
 	struct IntakeData 
@@ -75,6 +83,8 @@ protected:
 
 	int RoundToInt(float amount);
 	bool IsCriticalStrike();
+
+	int _currentLevel;
 
 	virtual void BeginPlay() override;
 public:	
