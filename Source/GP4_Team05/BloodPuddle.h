@@ -70,6 +70,6 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable, Category = "BloodPuddle")
-	static ABloodPuddle* SpawnPuddle(UWorld* World, FVector Location, FRotator Rotation);
+	static ABloodPuddle* SpawnPuddle(AActor* Actor);
 
 };

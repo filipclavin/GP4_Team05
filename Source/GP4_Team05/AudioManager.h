@@ -21,7 +21,7 @@ struct FSoundEntry
     USoundBase* Sound;
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class GP4_TEAM05_API UAudioManager : public UObject
 {
 	GENERATED_BODY()

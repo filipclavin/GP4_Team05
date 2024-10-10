@@ -127,11 +127,17 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 					
 	}
 }
-ABloodPuddle* ABloodPuddle::SpawnPuddle(UWorld* World, FVector Location, FRotator Rotation)
+ABloodPuddle* ABloodPuddle::SpawnPuddle(AActor* Actor)
 {
-	if (World)
+	if (Actor)
 	{
-		return World->SpawnActor<ABloodPuddle>(ABloodPuddle::StaticClass(), Location, Rotation);
+		UWorld* World = Actor->GetWorld();
+		if (World)
+		{
+			FVector Location = Actor->GetActorLocation();
+			FRotator Rotation = Actor->GetActorRotation();
+			return World->SpawnActor<ABloodPuddle>(ABloodPuddle::StaticClass(), Location, Rotation);
+		}
 	}
 	return nullptr;
 }
