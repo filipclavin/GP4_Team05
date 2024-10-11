@@ -121,7 +121,7 @@ void AProjectileBaseClass::DealDamage(TArray<AActor*> hitCharacter)
 	for (AActor* hitActor : hitCharacter)
     	{
     		
-    		if (hitActor != this)
+    		if (hitActor->IsA<AAuraCharacter>())
     		{
     			//TODO change to lightning when its ready
     			Cast<AAuraCharacter>(hitActor)->QueueDamage(_projectileDamage, ElementTypes::WATER);
