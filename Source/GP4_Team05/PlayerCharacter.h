@@ -88,6 +88,8 @@ private:
 	//this is a failsafe to prevent actors from being hit multiple times
 	UPROPERTY()TSet<AActor*> _dashHitActors;
 
+	float _damageTakenStorage = 1;
+	
 	UFUNCTION()
 	void HandleDashHits(UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor, UPrimitiveComponent* OtherComp,

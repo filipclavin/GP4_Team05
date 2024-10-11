@@ -122,6 +122,7 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 	
 	if (CurrentlyDashing)
 	{
+		
 		//Lerp the velocity to give some good easing -Gustav
 		GetMovementComponent()->Velocity = FMath::Lerp(FVector::Zero(), _dashDirection, easeInOutQuint
 			(GetWorld()->GetTimerManager().GetTimerElapsed(_dashHandle)/_dashDuration));
@@ -345,6 +346,8 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 	
 	CurrentlyDashing = true;
 	_dashDirection  = dashDirection*_dashSpeed;
+	_damageTakenStorage = GetStats()->_allDamageTaken;
+	GetStats()->_allDamageTaken = 0;
 	
 	GetWorld()->GetTimerManager().SetTimer(_dashHandle, FTimerDelegate::CreateLambda([this] {APlayerCharacter::ResetDash();}), _dashDuration, false);
 }
@@ -355,6 +358,7 @@ void APlayerCharacter::ResetDash()
 	GetCharacterMovement()->Velocity = FVector::Zero();
 	GetCapsuleComponent()->SetCollisionProfileName("Pawn");
 	_dashHitActors.Empty();
+	GetStats()->_allDamageTaken = _damageTakenStorage;
 }
 
 void APlayerCharacter::HandleDashHits(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
