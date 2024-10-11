@@ -33,6 +33,8 @@ public:
 	UFUNCTION(BlueprintCallable) const TArray<UAura*>& GetAffectedBuffs()   { return _auraList[BUFF]; }
 	UFUNCTION(BlueprintCallable) const TArray<UAura*>& GetAffectedDebuffs() { return _auraList[DEBUFF]; }
 
+	bool IsPlayer() { return _isPlayer; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -49,6 +51,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UCharacterStats*			 _baseStats;
 	UPROPERTY(BlueprintReadWrite)				UCharacterStats*			 _combinedStats;
 											    UCharacterMovementComponent* _movementComponent;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)  bool _isPlayer = false;
 
 	// Ability list, Auras can fetch this data and change the settings of these abilities
 

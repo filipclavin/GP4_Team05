@@ -37,6 +37,9 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 			AAuraCharacter* check = Cast<AAuraCharacter>(OtherActor);
 			if (!check)
 				return;
+
+			if (!check->IsPlayer())
+				return;
 		
 			if (!_levelGenerator) {
 				FetchLevelGenerator();
