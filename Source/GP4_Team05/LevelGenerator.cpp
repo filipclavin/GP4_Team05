@@ -77,11 +77,11 @@ void ALevelGenerator::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
-	if (_removeInstanceFromList) 
-	{
-		GetWorld()->RemoveStreamingLevelAt(_unloadIndex);
-		_removeInstanceFromList = false;
-	}
+	//if (_removeInstanceFromList) 
+	//{
+	//	GetWorld()->RemoveStreamingLevelAt(_unloadIndex);
+	//	_removeInstanceFromList = false;
+	//}
 
 	if (_unloadLastRoom && _unloadDuration <= 0.0f)
 	{
@@ -89,7 +89,7 @@ void ALevelGenerator::Tick(float deltaTime)
 		const TArray<ULevelStreaming*>& levels = GetWorld()->GetStreamingLevels();
 		UGameplayStatics::UnloadStreamLevel(GetWorld(), levels[_unloadIndex]->GetWorldAssetPackageFName(), info, false);
 		_removeInstanceFromList = true;
-		//_unloadIndex++;
+		_unloadIndex++;
 		_unloadLastRoom = false;
 	}
 
