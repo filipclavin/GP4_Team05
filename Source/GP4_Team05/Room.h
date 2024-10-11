@@ -22,6 +22,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnPlayerEnter();
 	// Calls when room is loaded from LevelGenerator::LoadNextRoom
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnRoomLoad();
+	UFUNCTION(BlueprintCallable) void OnRoomComplete();
 	
 	void OnRoomLoad_Implementation() {}
 	void OnPlayerEnter_Implementation(){}
@@ -35,9 +36,12 @@ public:
 		const FHitResult& SweepResult
 	);
 	
+	void ActivateRoom();
+	
 	void AnchorToRoom(const AActor* anchor, const ARoom* room);
 	AActor* GetUnusedAnchor();
 	AActor* GetOccupiedAnchor();
+
 
 	void SetBridgeRoom() { _bridgeRoom = true; }
 protected:
@@ -45,10 +49,12 @@ protected:
 
 	void FetchLevelGenerator();
 
+	float _testDuration = 2.0f;
 	// Int to check which anchor we came from
 	INT32 _occupiedAnchor = -1;
 	bool _bridgeRoom      = false;
 	bool _hasEntered      = false;
+	bool _roomIsCompleted = false;
 
 	UPROPERTY(EditAnywhere) bool			_colliderActiveOnSpawn = false;
 	UPROPERTY(EditAnywhere) TArray<AActor*> _anchors;

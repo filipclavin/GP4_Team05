@@ -19,7 +19,7 @@ void ALevelGenerator::LoadNewRoom()
 		return;
 
 	_unloadLastRoom = true;
-	_unloadDuration = 0.1f;
+	_unloadDuration = 1.0f;
 
 	bool success = false;
 	_currentRoomIndex++;
@@ -66,6 +66,8 @@ void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 		newRoom->AnchorToRoom(_bridgeRoom->GetUnusedAnchor(), _bridgeRoom);
 	}
 	_currentRoom = newRoom;
+
+	//newRoom->SetActorHiddenInGame(false);
 }
 
 void ALevelGenerator::BeginPlay()
@@ -77,20 +79,24 @@ void ALevelGenerator::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
-	//if (_removeInstanceFromList) 
-	//{
-	//	GetWorld()->RemoveStreamingLevelAt(_unloadIndex);
-	//	_removeInstanceFromList = false;
-	//}
-
 	if (_unloadLastRoom && _unloadDuration <= 0.0f)
 	{
+		_currentRoom->ActivateRoom();
+
 		FLatentActionInfo info;
 		const TArray<ULevelStreaming*>& levels = GetWorld()->GetStreamingLevels();
 		UGameplayStatics::UnloadStreamLevel(GetWorld(), levels[_unloadIndex]->GetWorldAssetPackageFName(), info, false);
 		_removeInstanceFromList = true;
 		_unloadIndex++;
 		_unloadLastRoom = false;
+	}
+
+	// This is for testing purposes, should be remvoed when remove can be completed via objective
+	if (_currentRoom->_hasEntered) 
+	{
+		_currentRoom->_testDuration -= deltaTime;
+		if (_currentRoom->_testDuration <= 0.0f)
+			_currentRoom->OnRoomComplete();
 	}
 
 	_unloadDuration -= _unloadDuration > 0.0f ? deltaTime : 0.0f;

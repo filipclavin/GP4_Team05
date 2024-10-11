@@ -11,8 +11,6 @@ ARoom::ARoom()
 	_playerEnterTrigger = CreateDefaultSubobject<UBoxComponent>("Player Enter Trigger");
 	_playerEnterTrigger->AttachToComponent(scene, FAttachmentTransformRules::KeepRelativeTransform);
 	_playerEnterTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARoom::BeginOverlap);
-
-	
 }
 
 void ARoom::BeginPlay()
@@ -22,11 +20,26 @@ void ARoom::BeginPlay()
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 	if (_levelGenerator) 
 	{
-		_levelGenerator->SetCurrentRoom(this);
-		_colliderActiveOnSpawn = true;
+		if (_colliderActiveOnSpawn)
+			OnRoomComplete();
 
+		if (_bridgeRoom)
+			_colliderActiveOnSpawn = true; 
+
+		_levelGenerator->SetCurrentRoom(this);
 		OnRoomLoad();
 	}
+}
+
+void ARoom::OnRoomComplete()
+{
+	if (!_roomIsCompleted) {
+		_levelGenerator->GetBridgeRoom()->_occupiedAnchor = -1;
+		_levelGenerator->GetBridgeRoom()->AnchorToRoom(GetUnusedAnchor(), this);
+		_levelGenerator->GetBridgeRoom()->_hasEntered = false;
+		_roomIsCompleted = true;
+	}
+	
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -44,21 +57,26 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 			if (!_levelGenerator) {
 				FetchLevelGenerator();
 			}
-			
+
 			_hasEntered = true;
 
 			if (_bridgeRoom)
 				_levelGenerator->LoadNewRoom();
 			else
 			{
-				_levelGenerator->GetBridgeRoom()->_occupiedAnchor = -1;
-				_levelGenerator->GetBridgeRoom()->_hasEntered	  = false;
-				_levelGenerator->GetBridgeRoom()->AnchorToRoom(GetUnusedAnchor(), this);	
+				_testDuration = 2.0f;
+				 GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, TEXT("Player Enter"));
 			}
 
 			OnPlayerEnter();
 		}
 	}
+}
+
+void ARoom::ActivateRoom()
+{
+	_colliderActiveOnSpawn = true;
+	//SetActorHiddenInGame(false);
 }
 
 void ARoom::AnchorToRoom(const AActor* anchor, const ARoom* room)
@@ -76,7 +94,7 @@ void ARoom::AnchorToRoom(const AActor* anchor, const ARoom* room)
 
 		FRotator newRotation;
 
-		newRotation = anchor->GetActorRotation() + selectedAnchor->GetActorRotation();
+		newRotation = anchor->GetActorRotation() - selectedAnchor->GetActorRotation();
 		SetActorRotation(newRotation - FRotator(0.0f, 180.0f, 0.0f));
 	}
 	else
@@ -91,6 +109,8 @@ AActor* ARoom::GetUnusedAnchor()
 		if (newAnchor == _occupiedAnchor)
 			newAnchor = newAnchor >= _anchors.Num() - 1 ? 0 : newAnchor + 1;
 		
+		GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, "Fetch unused anchor for room '" + GetName() + "'");
+
 		if(_occupiedAnchor < 0)
 			_occupiedAnchor = newAnchor;
 
