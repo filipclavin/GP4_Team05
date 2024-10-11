@@ -48,7 +48,9 @@ void ALevelGenerator::LoadNewRoom()
 				_selectedRoom = _selectedRoom == _roomGenDataAsset->_regularRoomInstances.Num() - 1 ? 0 : +1;
 
 			levelInstance = _roomGenDataAsset->_regularRoomInstances[_selectedRoom];
-			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, FTransform::Identity, success);
+			FTransform transform;
+			transform.SetTranslation({ 0.0f, 0.0f, 10000.0f });
+			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, transform, success);
 		}
 	}
 	else 
