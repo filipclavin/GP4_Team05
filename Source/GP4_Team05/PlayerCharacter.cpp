@@ -102,7 +102,7 @@ void APlayerCharacter::BeginPlay()
 		_pooledElectricProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_electricProjectile));
 		_pooledElectricProjectiles[i]->SpawnProjectile(0,0,0,0);
 		_pooledElectricProjectiles[i]->DespawnProjectile();
-		_pooledFireProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_electricProjectile));
+		_pooledFireProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_fireProjectile));
 		_pooledFireProjectiles[i]->SpawnProjectile(0,0,0,0);
 		_pooledFireProjectiles[i]->DespawnProjectile();
 	}
@@ -304,9 +304,9 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
         
 		if (_fireProjectileToUse > _pooledFireProjectiles.Num()-1)
 		{
-			_electricProjectileToUse = 0;
+			_fireProjectileToUse = 0;
 		}
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_fireProjectileToUse));
 	}
 	
 }

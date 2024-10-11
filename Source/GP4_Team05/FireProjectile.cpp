@@ -75,9 +75,19 @@ void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
 {
 	if (Character->IsA<AExplosiveBarrel>())
 	{
-		Cast<AExplosiveBarrel>(Character)->Despawn();
-		FireExplosion(Character->GetActorLocation());
-		return;
+		AExplosiveBarrel* barrel = Cast<AExplosiveBarrel>(Character);
+		if (!barrel->_oilSpilled)
+		{
+			barrel->Despawn();
+			FireExplosion(Character->GetActorLocation());
+			return;
+		}
+		else
+		{
+			barrel->SetFire();
+			return;
+		}
+		
 	}
 	
 	Character->QueueDamage(_explosionDamage, ElementTypes::FIRE);
