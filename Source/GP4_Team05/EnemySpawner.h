@@ -51,7 +51,7 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 	 * where room depth starts at 0.
 	 *
 	 * May be overridden by individual enemy groups. */
-	UPROPERTY(EditAnywhere) float DepthScalingFactor = 0.0f;
+	UPROPERTY(EditAnywhere) float _depthScalingFactor = 0.0f;
 	
 	int32			_currentWaveIndex = -1;
 	FTimerHandle	_waveTimer;
@@ -74,7 +74,7 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 	void DespawnEnemy(ABaseEnemyClass* enemy);
 	void PrepareEnemy(FEnemyGroup& group);
 	void PrepareEnemies();
-	int ApplyRoomDepthMultiplier(int count) const;
+	int ApplyRoomDepthMultiplier(int count, float depthScalingFactor ) const;
 	
 public:	
 	// Sets default values for this actor's properties
