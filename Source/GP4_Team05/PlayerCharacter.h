@@ -17,6 +17,15 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 
+USTRUCT()
+struct FPlayerUpgrades
+{
+	GENERATED_BODY()
+	UPROPERTY(EditDefaultsOnly) int   LightMeleeDamage = 0;
+	UPROPERTY(EditDefaultsOnly) int	  HeavyMeleeDamage = 0;
+	UPROPERTY(EditDefaultsOnly) float BloodAbsorb	   = 0;
+	UPROPERTY(EditDefaultsOnly) int   DashSpeed		   = 0;
+};
 /**
  * 
  */
@@ -141,6 +150,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _fireLevel		= 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _electricLevel = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _bloodLevel    = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _playerLevel   = 0;
+
+	UPROPERTY(EditDefaultsOnly, Category=Upgrade) TArray<FPlayerUpgrades> Upgrades;
+
+	UFUNCTION(BlueprintCallable) void UpgradePlayer();
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

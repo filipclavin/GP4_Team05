@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "ChaosManager.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
@@ -385,3 +386,20 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 }
 
 
+void APlayerCharacter::UpgradePlayer()
+{
+	if (Upgrades.Num() > _playerLevel)
+	{
+		GetStats()->_healingTaken += Upgrades[_playerLevel].BloodAbsorb;
+     	GetComponentByClass<UChaosManager>()->_chaosBloodGain += Upgrades[_playerLevel].BloodAbsorb;
+     	_dashSpeed += Upgrades[_playerLevel].DashSpeed;
+     	_lightAttackMeleeDamage += Upgrades[_playerLevel].LightMeleeDamage;
+     	_heavyAttackMeleeDamage += Upgrades[_playerLevel].HeavyMeleeDamage;
+     	_playerLevel++;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "out of upgrades");
+	}
+	
+}
