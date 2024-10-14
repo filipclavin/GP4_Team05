@@ -8,6 +8,7 @@
 
 class ABaseEnemyClass;
 class ASpawnArea;
+class UChaosManager;
 class UNavigationSystemV1;
 
 USTRUCT()
@@ -40,6 +41,7 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 	FTimerHandle	_waveTimer;
 
 	UPROPERTY() ACharacter*				_player = nullptr;
+	UPROPERTY() UChaosManager*			_chaosManager = nullptr;
 	UPROPERTY() UNavigationSystemV1*	_navSys = nullptr;
 
 	TMap<TSubclassOf<ABaseEnemyClass>, TSet<ABaseEnemyClass*>> _enemyPools;

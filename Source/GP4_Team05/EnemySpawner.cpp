@@ -5,6 +5,7 @@
 
 #include "BaseEnemyClass.h"
 #include "SpawnArea.h"
+#include "ChaosManager.h"
 #include "NavigationSystem.h"
 #include "AI/NavigationSystemBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -66,8 +67,10 @@ void AEnemySpawner::SpawnNextWave()
 		pool = pool.Difference(toRemoveFromPool);
 		
 	}
-	
-	if (_currentWaveIndex == _waves.Num()) return;
+
+	if (_chaosManager->_chaosFull) return;
+
+	if (_currentWaveIndex == _waves.Num()) _currentWaveIndex = -1;
 	
 	GetWorld()->GetTimerManager().SetTimer(
 		_waveTimer,
@@ -115,6 +118,7 @@ void AEnemySpawner::BeginPlay()
 	Super::BeginPlay();
 
 	_player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	_chaosManager = _player->FindComponentByClass<UChaosManager>();
 	_navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(_player);
 
 	FActorSpawnParameters spawnParams;
