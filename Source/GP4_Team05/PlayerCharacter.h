@@ -124,7 +124,9 @@ private:
 
 	void ResetDash		  ();
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _fireLevel		= 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _electricLevel = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _bloodLevel    = 0;
 public:
 	UFUNCTION(BlueprintImplementableEvent) void MeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginMeleeAttackEvent();
