@@ -59,14 +59,18 @@ void AProjectileBaseClass::SpawnProjectile(int upgradeAmount)
 			additionalDamage		+= upgradeStatIncreases[i].additionalDamage;
 			additionalForkAmount	+= upgradeStatIncreases[i].additionalForkAmount;
 			additionalExplodeRadius += upgradeStatIncreases[i].additionalExplosionRadius;
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Upgraded");
 		}
 	}
 	
-	_startLocation	   = GetActorLocation();
-	_projectileSpeed   = _baseProjectileSpeed   + additionalSpeed;
-	_projectileRange   = _baseProjectileRange   + additionalRange;
-	_projectileDamage  = _baseProjectileDamage  + additionalDamage;
-	_projectileForking = _baseProjectileForking + additionalForkAmount;
+	_startLocation			   = GetActorLocation();
+	_projectileSpeed		   = _baseProjectileSpeed			+ additionalSpeed;
+	_projectileRange    	   = _baseProjectileRange			+ additionalRange;
+	_projectileDamage		   = _baseProjectileDamage			+ additionalDamage;
+	_projectileForking		   = _baseProjectileForking			+ additionalForkAmount;
+	_projectileExplosionRadius = _baseProjectileExplosionRadius + additionalExplodeRadius;
+
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "forking: " + FString::FromInt(_projectileForking));
 }
 
 void AProjectileBaseClass::DespawnProjectile()

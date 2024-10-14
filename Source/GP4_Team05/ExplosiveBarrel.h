@@ -31,6 +31,10 @@ public:
 	UFUNCTION(BlueprintCallable) void EndFire();
 
 	void SpreadFire();
+	void Explode   ();
+
+	UPROPERTY(EditDefaultsOnly, Category="explosion") int explosionRadius = 300;
+	UPROPERTY(EditDefaultsOnly, Category="explosion") int explosionDamage = 20;
 
 
 	UFUNCTION(BlueprintImplementableEvent) void SpillOilEvent();

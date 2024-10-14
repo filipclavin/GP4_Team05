@@ -59,9 +59,9 @@ void AFireProjectile::FireExplosion(FVector explodeOrigin)
 	traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 
 	
-	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), explodeOrigin, _explosionRange,
+	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), explodeOrigin, _projectileExplosionRadius,
 		traceObjectTypes, AAuraCharacter::StaticClass(), IgnoreArray, hitEnemies);
-	DrawDebugSphere(GetWorld(), explodeOrigin, _explosionRange, 12, FColor::Red, true, 4.0f);
+	DrawDebugSphere(GetWorld(), explodeOrigin, _projectileExplosionRadius, 12, FColor::Red, true, 4.0f);
 
 	for (AActor* HitEnemyActor : hitEnemies)
 	{
@@ -78,8 +78,8 @@ void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
 		AExplosiveBarrel* barrel = Cast<AExplosiveBarrel>(Character);
 		if (!barrel->_oilSpilled)
 		{
+			barrel->Explode();
 			barrel->Despawn();
-			FireExplosion(Character->GetActorLocation());
 			return;
 		}
 		else
