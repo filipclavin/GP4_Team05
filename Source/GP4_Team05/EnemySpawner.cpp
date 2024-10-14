@@ -21,6 +21,18 @@ void AEnemySpawner::SpawnNextWave()
 	{
 		if (group.Count == 0) continue;
 
+		if (!group.EnemyClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Enemy group has no enemy class assigned!"));
+			continue;
+		}
+
+		if (!group.SpawnArea)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Enemy group has no spawn area assigned!"));
+			continue;
+		}
+			
 		int finalCount = ApplyRoomDepthMultiplier
 		(
 			group.Count,
