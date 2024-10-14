@@ -124,9 +124,6 @@ private:
 
 	void ResetDash		  ();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _fireLevel		= 0;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _electricLevel = 0;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _bloodLevel    = 0;
 public:
 	UFUNCTION(BlueprintImplementableEvent) void MeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginMeleeAttackEvent();
@@ -141,6 +138,9 @@ public:
 	void BeginPlay()				   override;
 	void Tick	  (float DeltaSeconds) override;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _fireLevel		= 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _electricLevel = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _bloodLevel    = 0;
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
