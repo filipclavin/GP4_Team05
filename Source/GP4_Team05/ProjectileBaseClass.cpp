@@ -37,11 +37,30 @@ void AProjectileBaseClass::Tick(float DeltaTime)
 	}
 }
 
-void AProjectileBaseClass::SpawnProjectile(int additionalSpeed, int additionalRange, int additionalForkAmount, int additionalDamage)
+void AProjectileBaseClass::SpawnProjectile(int upgradeAmount)
 {
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
+	
+	int additionalSpeed			= 0;
+	int additionalRange			= 0;
+	int additionalDamage		= 0;
+	int additionalForkAmount	= 0;
+	int additionalExplodeRadius = 0;
+	_upgradeAmount = upgradeAmount;
+
+	for (int i = 0; i < upgradeAmount; i++)
+	{
+		if (upgradeStatIncreases.Num() > i)
+		{	
+			additionalSpeed			+= upgradeStatIncreases[i].additionalSpeed;
+			additionalRange			+= upgradeStatIncreases[i].additionalRange;
+			additionalDamage		+= upgradeStatIncreases[i].additionalDamage;
+			additionalForkAmount	+= upgradeStatIncreases[i].additionalForkAmount;
+			additionalExplodeRadius += upgradeStatIncreases[i].additionalExplosionRadius;
+		}
+	}
 	
 	_startLocation	   = GetActorLocation();
 	_projectileSpeed   = _baseProjectileSpeed   + additionalSpeed;
