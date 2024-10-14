@@ -280,9 +280,9 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 
 	if (_useElectric)
 	{
-		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel);
 		_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
+		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel);
         
         
 		_electricProjectileToUse++;
@@ -296,9 +296,9 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	else
 	{
 		
-		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel);
 		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
+		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel);
         
         
 		_fireProjectileToUse++;
