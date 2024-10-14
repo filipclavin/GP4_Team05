@@ -21,6 +21,18 @@ void AEnemySpawner::SpawnNextWave()
 	{
 		if (group.Count == 0) continue;
 
+		if (!group.EnemyClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Enemy group has no enemy class assigned!"));
+			continue;
+		}
+
+		if (!group.SpawnArea)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Enemy group has no spawn area assigned!"));
+			continue;
+		}
+			
 		int finalCount = ApplyRoomDepthMultiplier
 		(
 			group.Count,
@@ -166,6 +178,8 @@ void AEnemySpawner::PrepareEnemies()
 
 int AEnemySpawner::ApplyRoomDepthMultiplier(int count, float depthScalingFactor) const
 {
+	if (_levelGenerator == nullptr) return count;
+	
 	return count + count * _levelGenerator->GetRoomDepth() * depthScalingFactor;
 }
 
@@ -176,11 +190,14 @@ void AEnemySpawner::BeginPlay()
 
 	_player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	_chaosManager = _player->FindComponentByClass<UChaosManager>();
-	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
+	if (AActor* levelGenerator = UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()))
+	{
+		_levelGenerator = Cast<ALevelGenerator>(levelGenerator);
+	}
 	_navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(_player);
 
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	//PrepareEnemies();
+	PrepareEnemies();
 
 	if (_waves.Num() > 0)
 		SpawnNextWave();

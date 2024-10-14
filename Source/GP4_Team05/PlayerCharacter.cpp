@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "ChaosManager.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
@@ -74,10 +75,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		Input->BindAction(_dash, ETriggerEvent::Started, this, &APlayerCharacter::DashAction);
 	}
-	if (_fireSelect && _lightningSelect && _rangeAttack)
+	if (_fireSelect && _lightningSelect && _rangeAttack && _bloodSelect)
 	{
 		Input->BindAction(_fireSelect,		ETriggerEvent::Started, this, &APlayerCharacter::FireAction);
 		Input->BindAction(_lightningSelect, ETriggerEvent::Started, this, &APlayerCharacter::lightningAction);
+		Input->BindAction(_bloodSelect	  , ETriggerEvent::Started, this, &APlayerCharacter::BloodAction);
 		Input->BindAction(_rangeAttack,		ETriggerEvent::Started, this, &APlayerCharacter::RangeAttackAction);
 	}
 }
@@ -237,13 +239,22 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 void APlayerCharacter::lightningAction(const FInputActionValue& Value)
 {
 	_useElectric = true;
+	chosenAttack = 0;
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "using electricity");
 }
 
 void APlayerCharacter::FireAction(const FInputActionValue& Value)
 {
 	_useElectric = false;
+	chosenAttack = 1;
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "using fire");
+}
+
+void APlayerCharacter::BloodAction(const FInputActionValue& Value)
+{
+	
+	chosenAttack = 2;
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "using blood");
 }
 
 
@@ -278,7 +289,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	FVector BulletDir = AiMPoint - BulletOrg;
 
 
-	if (_useElectric)
+	if (chosenAttack == 0)
 	{
 		_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
@@ -293,7 +304,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		}
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
 	}
-	else
+	else if (chosenAttack == 1)
 	{
 		
 		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
@@ -308,6 +319,10 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 			_fireProjectileToUse = 0;
 		}
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_fireProjectileToUse));
+	}
+	else if (chosenAttack == 2)
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Blood attack");
 	}
 	
 }
@@ -385,3 +400,20 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 }
 
 
+void APlayerCharacter::UpgradePlayer()
+{
+	if (Upgrades.Num() > _playerLevel)
+	{
+		GetStats()->_healingTaken += Upgrades[_playerLevel].BloodAbsorb;
+     	GetComponentByClass<UChaosManager>()->_chaosBloodGain += Upgrades[_playerLevel].BloodAbsorb;
+     	_dashSpeed += Upgrades[_playerLevel].DashSpeed;
+     	_lightAttackMeleeDamage += Upgrades[_playerLevel].LightMeleeDamage;
+     	_heavyAttackMeleeDamage += Upgrades[_playerLevel].HeavyMeleeDamage;
+     	_playerLevel++;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "out of upgrades");
+	}
+	
+}

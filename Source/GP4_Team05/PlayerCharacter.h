@@ -17,6 +17,15 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 
+USTRUCT()
+struct FPlayerUpgrades
+{
+	GENERATED_BODY()
+	UPROPERTY(EditDefaultsOnly) int   LightMeleeDamage = 0;
+	UPROPERTY(EditDefaultsOnly) int	  HeavyMeleeDamage = 0;
+	UPROPERTY(EditDefaultsOnly) float BloodAbsorb	   = 0;
+	UPROPERTY(EditDefaultsOnly) int   DashSpeed		   = 0;
+};
 /**
  * 
  */
@@ -37,6 +46,7 @@ private:
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _dash;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _lightningSelect;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _fireSelect;
+	UPROPERTY(EditAnywhere, Category=input) UInputAction* _bloodSelect;
 	UPROPERTY(EditAnywhere, Category=input) UInputAction* _rangeAttack;
 
 	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
@@ -74,7 +84,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _fireProjectile;
 
 	bool _useElectric = true;
-
+	int chosenAttack = 0;
 	
 
 	TArray<AProjectileBaseClass*> _pooledElectricProjectiles;
@@ -121,6 +131,7 @@ private:
 	void DashAction		  (const FInputActionValue& Value);
 	void FireAction		  (const FInputActionValue& Value);
 	void lightningAction  (const FInputActionValue& Value);
+	void BloodAction	  (const FInputActionValue& Value);
 
 	void ResetDash		  ();
 
@@ -141,6 +152,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _fireLevel		= 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _electricLevel = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _bloodLevel    = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _playerLevel   = 0;
+
+	UPROPERTY(EditDefaultsOnly, Category=Upgrade) TArray<FPlayerUpgrades> Upgrades;
+
+	UFUNCTION(BlueprintCallable) void UpgradePlayer();
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
