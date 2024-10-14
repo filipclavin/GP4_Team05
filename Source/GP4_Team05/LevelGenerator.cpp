@@ -6,6 +6,7 @@
 #include "Runtime/Engine/Classes/Engine/LevelStreaming.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/LevelStreamingDynamic.h"
+#include "RoomAnchor.h"
 
 
 ALevelGenerator::ALevelGenerator()
@@ -20,6 +21,8 @@ void ALevelGenerator::LoadNewRoom()
 
 	_unloadLastRoom = true;
 	_unloadDuration = 1.0f;
+	_loadDuration   = 1.0f;
+	_waitForRoom    = true;
 
 	bool success = false;
 	_currentRoomDepth++;
@@ -69,6 +72,7 @@ void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 	{
 		newRoom->AnchorToRoom(_bridgeRoom->GetUnusedAnchor(), _bridgeRoom);
 	}
+	
 	_currentRoom = newRoom;
 	//_currentRoom->_roomDepth = _currentRoomDepth;
 }
@@ -82,13 +86,23 @@ void ALevelGenerator::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
+	if (_waitForRoom) {
+		const TArray<ULevelStreaming*>& levels = GetWorld()->GetStreamingLevels();
+		_loadDuration -= deltaTime;
+		if (levels[levels.Num() - 1]->IsLevelLoaded() && _loadDuration <= 0.0f) 
+		{
+			_bridgeRoom->GetOccupiedAnchor()->OpenAnchorDoor();
+			_currentRoom->GetOccupiedAnchor()->OpenAnchorDoor();
+			_waitForRoom = false;
+		}
+	}
+
 	if (_unloadLastRoom && _unloadDuration <= 0.0f)
 	{
-		_currentRoom->ActivateRoom();
-
-		FLatentActionInfo info;
 		const TArray<ULevelStreaming*>& levels = GetWorld()->GetStreamingLevels();
+		FLatentActionInfo info;
 		UGameplayStatics::UnloadStreamLevel(GetWorld(), levels[_unloadIndex]->GetWorldAssetPackageFName(), info, false);
+		
 		_removeInstanceFromList = true;
 		_unloadIndex++;
 		_unloadLastRoom = false;

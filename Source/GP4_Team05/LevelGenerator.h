@@ -43,6 +43,8 @@ private:
 
 	void GenerateLevelList(URoomGenerationData* data);
 	
+	float _loadDuration			  = 1.0f;
+	bool  _waitForRoom			  = false;
 	bool  _unloadLastRoom         = false;
 	bool  _removeInstanceFromList = false;
 	float _unloadDuration         = 1.0f;

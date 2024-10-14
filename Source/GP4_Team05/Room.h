@@ -8,6 +8,7 @@
 
 class UBoxComponent;
 class ALevelGenerator;
+class ARoomAnchor;
 
 UCLASS()
 class GP4_TEAM05_API ARoom : public AActor
@@ -23,7 +24,7 @@ public:
 	// Calls when room is loaded from LevelGenerator::LoadNextRoom
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnRoomLoad();
 	UFUNCTION(BlueprintCallable) void OnRoomComplete();
-	
+
 	void OnRoomLoad_Implementation() {}
 	void OnPlayerEnter_Implementation(){}
 
@@ -38,9 +39,9 @@ public:
 	
 	void ActivateRoom();
 	
-	void AnchorToRoom(const AActor* anchor, const ARoom* room);
-	AActor* GetUnusedAnchor();
-	AActor* GetOccupiedAnchor();
+	void AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room);
+	ARoomAnchor* GetUnusedAnchor();
+	UFUNCTION(BlueprintCallable) ARoomAnchor* GetOccupiedAnchor();
 
 
 	void SetBridgeRoom() { _bridgeRoom = true; }
@@ -55,10 +56,10 @@ protected:
 	bool _bridgeRoom      = false;
 	bool _hasEntered      = false;
 	bool _roomIsCompleted = false;
-
-	UPROPERTY(EditAnywhere) bool			_colliderActiveOnSpawn = false;
-	UPROPERTY(EditAnywhere) TArray<AActor*> _anchors;
-	UPROPERTY(EditAnywhere) UBoxComponent*  _playerEnterTrigger;
-
-	UPROPERTY(BlueprintReadWrite) ALevelGenerator* _levelGenerator = nullptr;
+		
+	UPROPERTY(BlueprintReadOnly)  int		           _roomDepth = -1;
+	UPROPERTY(EditAnywhere)       bool			       _colliderActiveOnSpawn = false;
+	UPROPERTY(EditAnywhere)       TArray<ARoomAnchor*> _anchors;
+	UPROPERTY(EditAnywhere)       UBoxComponent*       _playerEnterTrigger;
+	UPROPERTY(BlueprintReadWrite) ALevelGenerator*     _levelGenerator = nullptr;
 };

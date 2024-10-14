@@ -3,6 +3,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "AuraCharacter.h"
+#include "RoomAnchor.h"
 
 ARoom::ARoom()
 {
@@ -28,6 +29,7 @@ void ARoom::BeginPlay()
 
 		_levelGenerator->SetCurrentRoom(this);
 		OnRoomLoad();
+		ActivateRoom();
 	}
 }
 
@@ -38,13 +40,16 @@ void ARoom::OnRoomComplete()
 		_levelGenerator->GetBridgeRoom()->AnchorToRoom(GetUnusedAnchor(), this);
 		_levelGenerator->GetBridgeRoom()->_hasEntered = false;
 		_roomIsCompleted = true;
+
+		_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->OpenAnchorDoor();
+		GetOccupiedAnchor()->OpenAnchorDoor();
 	}
 	
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!_hasEntered) {
+ 	if (!_hasEntered) {
 		if (_colliderActiveOnSpawn) 
 		{
 			AAuraCharacter* check = Cast<AAuraCharacter>(OtherActor);
@@ -60,17 +65,22 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 
 			_hasEntered = true;
 
+			if(GetOccupiedAnchor())
+				GetOccupiedAnchor()->CloseAnchorDoor();
+
 			if (_bridgeRoom)
-				_levelGenerator->LoadNewRoom();
-			else
 			{
-				_testDuration = 2.0f;
-				 GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, TEXT("Player Enter"));
+				_levelGenerator->LoadNewRoom();
+			}
+			else 
+			{
+				if(_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor())
+					_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->CloseAnchorDoor();
 			}
 
 			OnPlayerEnter();
 		}
-	}
+	} 
 }
 
 void ARoom::ActivateRoom()
@@ -79,18 +89,32 @@ void ARoom::ActivateRoom()
 	//SetActorHiddenInGame(false);
 }
 
-void ARoom::AnchorToRoom(const AActor* anchor, const ARoom* room)
+void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
 {
 	if (anchor && !_anchors.IsEmpty()) {	
-		AActor* selectedAnchor = GetUnusedAnchor();
+		ARoomAnchor* selectedAnchor = GetUnusedAnchor();
 		
 		SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-		
+		SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
+
+		FVector anchorNoZ = selectedAnchor->GetActorLocation();
+		FVector roomNoZ   = GetActorLocation();
+		anchorNoZ.Z		  = 0.0f;
+		roomNoZ.Z		  = 0.0f;
+
+
 		FVector dir = anchor->GetActorForwardVector();
-		float distance = FVector::Distance(selectedAnchor->GetActorLocation(), GetActorLocation());
+		float distance = FVector::Distance(anchorNoZ, roomNoZ);
 		dir *= distance;
+
+		FVector zDelta = GetActorLocation();
+		zDelta		  -= selectedAnchor->GetActorLocation();
+		zDelta.X	   = 0.0f;
+		zDelta.Y	   = 0.0f;
+
 		SetActorLocation(anchor->GetActorLocation());
 		SetActorLocation(GetActorLocation() + dir);
+		SetActorLocation(GetActorLocation() + zDelta);
 
 		FRotator newRotation;
 
@@ -101,18 +125,15 @@ void ARoom::AnchorToRoom(const AActor* anchor, const ARoom* room)
 		SetActorLocation({ 0.0f, 0.0f, 0.0f });
 }
 
-AActor* ARoom::GetUnusedAnchor()
+ARoomAnchor* ARoom::GetUnusedAnchor()
 {
 	if (!_anchors.IsEmpty()) 
 	{
 		INT32 newAnchor = FMath::RandRange(0, _anchors.Num() - 1);
 		if (newAnchor == _occupiedAnchor)
 			newAnchor = newAnchor >= _anchors.Num() - 1 ? 0 : newAnchor + 1;
-		
-		GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, "Fetch unused anchor for room '" + GetName() + "'");
 
-		if(_occupiedAnchor < 0)
-			_occupiedAnchor = newAnchor;
+		_occupiedAnchor = newAnchor;
 
 		return _anchors[newAnchor];
 	}
@@ -125,9 +146,9 @@ AActor* ARoom::GetUnusedAnchor()
 	return nullptr;
 }
 
-AActor* ARoom::GetOccupiedAnchor()
+ARoomAnchor* ARoom::GetOccupiedAnchor()
 {
-	if (_occupiedAnchor > 0)
+	if (_occupiedAnchor >= 0)
 		return _anchors[_occupiedAnchor];
 	else
 		return nullptr;
