@@ -14,8 +14,10 @@
 
 void UPlayerWidget::SetPlayer(AAuraCharacter* player)
 {
-	_player		 = player;
-	_playerStats = player->GetStats();
+	if (player) {
+		_player		 = player;
+		_playerStats = player->GetStats();
+	}
 }
 
 void UPlayerWidget::InitializeAuraTracker()
