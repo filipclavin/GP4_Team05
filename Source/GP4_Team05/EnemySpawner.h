@@ -72,13 +72,13 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 		const FVector& spawnPoint = FVector::ZeroVector
 	);
 	void DespawnEnemy(ABaseEnemyClass* enemy);
+	void PrepareEnemy(FEnemyGroup& group);
 	void PrepareEnemies();
 	int ApplyRoomDepthMultiplier(int count) const;
 	
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
-	void PrepareEnemy(FEnemyGroup& group);
 
 protected:
 	// Called when the game starts or when spawned
