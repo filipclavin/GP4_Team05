@@ -13,6 +13,8 @@
 
 void AEnemySpawner::SpawnNextWave()
 {
+	if (_chaosManager->_chaosFull) return;
+
 	_currentWaveIndex++;
 
 	for (FEnemyGroup& group : _waves[_currentWaveIndex].EnemyGroups)
@@ -75,8 +77,6 @@ void AEnemySpawner::SpawnNextWave()
 		pool = pool.Difference(toRemoveFromPool);
 		
 	}
-
-	if (_chaosManager->_chaosFull) return;
 
 	if (_currentWaveIndex == _waves.Num()) _currentWaveIndex = -1;
 	
