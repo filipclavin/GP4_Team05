@@ -13,6 +13,8 @@
 
 void AEnemySpawner::SpawnNextWave()
 {
+	if (_chaosManager->_chaosFull) return;
+
 	_currentWaveIndex++;
 
 	for (FEnemyGroup& group : _waves[_currentWaveIndex].EnemyGroups)
@@ -50,9 +52,9 @@ void AEnemySpawner::SpawnNextWave()
 
 		TSet<ABaseEnemyClass*> toRemoveFromPool;
 
-		if (pool.Num() < finalCount)
+		while (pool.Num() < finalCount)
 		{
-			
+			PrepareEnemy(group);
 		}
 		
 		uint16 count = 0;
@@ -75,8 +77,6 @@ void AEnemySpawner::SpawnNextWave()
 		pool = pool.Difference(toRemoveFromPool);
 		
 	}
-
-	if (_chaosManager->_chaosFull) return;
 
 	if (_currentWaveIndex == _waves.Num()) _currentWaveIndex = -1;
 	
@@ -120,34 +120,36 @@ AEnemySpawner::AEnemySpawner()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AEnemySpawner::PrepareEnemy(FEnemyGroup& group)
+{
+	ABaseEnemyClass* enemy = GetWorld()->SpawnActor<ABaseEnemyClass>(
+		group.EnemyClass,
+		FVector(0, 0, -10000),
+		FRotator::ZeroRotator,
+		spawnParams
+	);
+				
+	enemy->SetActorHiddenInGame(true);
+	enemy->SetActorEnableCollision(false);
+	enemy->SetActorTickEnabled(false);
+
+	if (!_enemyPools.Contains(group.EnemyClass))
+	{
+		_enemyPools.Add(group.EnemyClass, TSet<ABaseEnemyClass*>());
+	}
+				
+	_enemyPools[group.EnemyClass].Add(enemy);
+}
+
 void AEnemySpawner::PrepareEnemies()
 {
-	FActorSpawnParameters spawnParams;
-	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
 	for (FEnemyWave& wave : _waves)
 	{
 		for (FEnemyGroup& group : wave.EnemyGroups)
 		{
 			for (int i = 0; i < ApplyRoomDepthMultiplier(group.Count); i++)
 			{
-				ABaseEnemyClass* enemy = GetWorld()->SpawnActor<ABaseEnemyClass>(
-					group.EnemyClass,
-					FVector(0, 0, -10000),
-					FRotator::ZeroRotator,
-					spawnParams
-				);
-				
-				enemy->SetActorHiddenInGame(true);
-				enemy->SetActorEnableCollision(false);
-				enemy->SetActorTickEnabled(false);
-
-				if (!_enemyPools.Contains(group.EnemyClass))
-				{
-					_enemyPools.Add(group.EnemyClass, TSet<ABaseEnemyClass*>());
-				}
-				
-				_enemyPools[group.EnemyClass].Add(enemy);
+				PrepareEnemy(group);
 			}
 		}
 	}
@@ -168,7 +170,8 @@ void AEnemySpawner::BeginPlay()
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 	_navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(_player);
 
-	PrepareEnemies();
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//PrepareEnemies();
 
 	if (_waves.Num() > 0)
 		SpawnNextWave();

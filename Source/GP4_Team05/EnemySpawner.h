@@ -63,6 +63,8 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 
 	TMap<TSubclassOf<ABaseEnemyClass>, TSet<ABaseEnemyClass*>> _enemyPools;
 	
+	FActorSpawnParameters spawnParams;
+	
 	void SpawnNextWave();
 	void SpawnEnemy
 	(
@@ -76,6 +78,7 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
+	void PrepareEnemy(FEnemyGroup& group);
 
 protected:
 	// Called when the game starts or when spawned
