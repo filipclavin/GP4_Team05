@@ -13,11 +13,11 @@ USTRUCT()
 struct FStatIncrease
 {
 	GENERATED_BODY()
-	int additionalSpeed			  = 0;
-	int additionalRange			  = 0;
-	int additionalForkAmount	  = 0;
-	int additionalDamage		  = 0;
-	int additionalExplosionRadius = 0;
+	UPROPERTY(EditDefaultsOnly) int additionalSpeed			  = 0;
+	UPROPERTY(EditDefaultsOnly) int additionalRange			  = 0;
+	UPROPERTY(EditDefaultsOnly) int additionalForkAmount	  = 0;
+	UPROPERTY(EditDefaultsOnly) int additionalDamage		  = 0;
+	UPROPERTY(EditDefaultsOnly) int additionalExplosionRadius = 0;
 };
 
 UCLASS()

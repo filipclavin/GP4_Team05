@@ -99,3 +99,27 @@ void AExplosiveBarrel::EndFire()
 	Despawn();
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "despawning fire");
 }
+
+void AExplosiveBarrel::Explode()
+{
+	TArray<AActor*> hitEnemies;
+	TArray<AActor*> IgnoreArray;
+
+	//ignore player
+	IgnoreArray.Add(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	
+	TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
+	traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+
+	
+	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), explosionRadius,
+		traceObjectTypes, AAuraCharacter::StaticClass(), IgnoreArray, hitEnemies);
+	DrawDebugSphere(GetWorld(), GetActorLocation(), explosionRadius, 12, FColor::Red, true, 4.0f);
+
+	for (AActor* HitEnemyActor : hitEnemies)
+	{
+		AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(HitEnemyActor);
+		hitCharacter->QueueDamage(explosionDamage, FIRE);
+		_auraHandler->CastAuraByName("FIRE", hitCharacter, nullptr);
+	}
+}

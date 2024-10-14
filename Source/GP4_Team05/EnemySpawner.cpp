@@ -21,7 +21,11 @@ void AEnemySpawner::SpawnNextWave()
 	{
 		if (group.Count == 0) continue;
 
-		int finalCount = ApplyRoomDepthMultiplier(group.Count);
+		int finalCount = ApplyRoomDepthMultiplier
+		(
+			group.Count,
+			group.OverrideDepthScalingFactor ? group.DepthScalingFactor : _depthScalingFactor
+		);
 		
 		TSet<ABaseEnemyClass*>& pool = _enemyPools[group.EnemyClass];
 
@@ -147,7 +151,12 @@ void AEnemySpawner::PrepareEnemies()
 	{
 		for (FEnemyGroup& group : wave.EnemyGroups)
 		{
-			for (int i = 0; i < ApplyRoomDepthMultiplier(group.Count); i++)
+			int finalCount = ApplyRoomDepthMultiplier
+			(
+				group.Count,
+				group.OverrideDepthScalingFactor ? group.DepthScalingFactor : _depthScalingFactor
+			);
+			for (int i = 0; i < finalCount; i++)
 			{
 				PrepareEnemy(group);
 			}
@@ -155,9 +164,9 @@ void AEnemySpawner::PrepareEnemies()
 	}
 }
 
-int AEnemySpawner::ApplyRoomDepthMultiplier(int count) const
+int AEnemySpawner::ApplyRoomDepthMultiplier(int count, float depthScalingFactor) const
 {
-	return count + count * _levelGenerator->GetRoomDepth() * DepthScalingFactor;
+	return count + count * _levelGenerator->GetRoomDepth() * depthScalingFactor;
 }
 
 // Called when the game starts or when spawned
