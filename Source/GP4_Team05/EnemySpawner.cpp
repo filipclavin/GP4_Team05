@@ -6,6 +6,7 @@
 #include "BaseEnemyClass.h"
 #include "SpawnArea.h"
 #include "ChaosManager.h"
+#include "LevelGenerator.h"
 #include "NavigationSystem.h"
 #include "AI/NavigationSystemBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,26 +18,28 @@ void AEnemySpawner::SpawnNextWave()
 	for (FEnemyGroup& group : _waves[_currentWaveIndex].EnemyGroups)
 	{
 		if (group.Count == 0) continue;
+
+		int finalCount = ApplyRoomDepthMultiplier(group.Count);
 		
 		TSet<ABaseEnemyClass*>& pool = _enemyPools[group.EnemyClass];
 
 		FBoxSphereBounds bounds = group.SpawnArea->GetBounds();
 
 		float boxAspectRatio = bounds.BoxExtent.X / bounds.BoxExtent.Y;
-		int cols = FMath::Max(FMath::Floor(FMath::Sqrt(group.Count * boxAspectRatio)), 1);
-		int rows = FMath::Floor(static_cast<float>(group.Count) / cols);
+		int cols = FMath::Max(FMath::Floor(FMath::Sqrt(finalCount * boxAspectRatio)), 1);
+		int rows = FMath::Floor(static_cast<float>(finalCount) / cols);
 
-		while (cols * rows != group.Count)
+		while (cols * rows != finalCount)
 		{
 			float gridAspectRatio = cols / rows;
 
-			if (cols * rows < group.Count)
+			if (cols * rows < finalCount)
 			{
 				gridAspectRatio > boxAspectRatio ? rows++ : cols++;
 			}
-			else if (cols * rows > group.Count)
+			else if (cols * rows > finalCount)
 			{
-				if ((cols - 1) * rows < group.Count && cols * (rows - 1) < group.Count)
+				if ((cols - 1) * rows < finalCount && cols * (rows - 1) < finalCount)
 				{
 					break;
 				}
@@ -46,6 +49,11 @@ void AEnemySpawner::SpawnNextWave()
 		}
 
 		TSet<ABaseEnemyClass*> toRemoveFromPool;
+
+		if (pool.Num() < finalCount)
+		{
+			
+		}
 		
 		uint16 count = 0;
 		for (ABaseEnemyClass* enemy : pool)
@@ -61,7 +69,7 @@ void AEnemySpawner::SpawnNextWave()
 			SpawnEnemy(enemy, spawnPoint);
 			toRemoveFromPool.Add(enemy);
 
-			if (count == group.Count) break;
+			if (count == finalCount) break;
 		}
 
 		pool = pool.Difference(toRemoveFromPool);
@@ -112,15 +120,8 @@ AEnemySpawner::AEnemySpawner()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
-void AEnemySpawner::BeginPlay()
+void AEnemySpawner::PrepareEnemies()
 {
-	Super::BeginPlay();
-
-	_player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	_chaosManager = _player->FindComponentByClass<UChaosManager>();
-	_navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(_player);
-
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -128,7 +129,7 @@ void AEnemySpawner::BeginPlay()
 	{
 		for (FEnemyGroup& group : wave.EnemyGroups)
 		{
-			for (int i = 0; i < group.Count; i++)
+			for (int i = 0; i < ApplyRoomDepthMultiplier(group.Count); i++)
 			{
 				ABaseEnemyClass* enemy = GetWorld()->SpawnActor<ABaseEnemyClass>(
 					group.EnemyClass,
@@ -150,6 +151,24 @@ void AEnemySpawner::BeginPlay()
 			}
 		}
 	}
+}
+
+int AEnemySpawner::ApplyRoomDepthMultiplier(int count) const
+{
+	return count + count * _levelGenerator->GetRoomDepth() * DepthScalingFactor;
+}
+
+// Called when the game starts or when spawned
+void AEnemySpawner::BeginPlay()
+{
+	Super::BeginPlay();
+
+	_player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	_chaosManager = _player->FindComponentByClass<UChaosManager>();
+	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
+	_navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(_player);
+
+	PrepareEnemies();
 
 	if (_waves.Num() > 0)
 		SpawnNextWave();

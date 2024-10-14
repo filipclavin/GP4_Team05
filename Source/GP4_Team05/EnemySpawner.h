@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "EnemySpawner.generated.h"
 
+class ALevelGenerator;
 class ABaseEnemyClass;
 class ASpawnArea;
 class UChaosManager;
@@ -19,6 +20,14 @@ struct FEnemyGroup
 	UPROPERTY(EditAnywhere) TSubclassOf<ABaseEnemyClass>	EnemyClass;
 	UPROPERTY(EditAnywhere) int32							Count;
 	UPROPERTY(EditAnywhere) ASpawnArea*						SpawnArea;
+
+	UPROPERTY(EditAnywhere) bool	OverrideDepthScalingFactor	= false;
+	/** Decides at what rate the current room depth scales the enemy count.
+	 * Final enemy count is calculated as count + count * room depth * depth scaling factor,
+	 * where room depth starts at 0.
+	 *
+	 * Only used if OverrideDepthScalingFactor is true. */
+	UPROPERTY(EditAnywhere) float	DepthScalingFactor			= 0.0f;
 };
 
 USTRUCT()
@@ -36,19 +45,33 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere) TArray<FEnemyWave> _waves = {};
+
+	/** Decides at what rate the current room depth scales the enemy count.
+	 * Final enemy count is calculated as count + count * room depth * depth scaling factor,
+	 * where room depth starts at 0.
+	 *
+	 * May be overridden by individual enemy groups. */
+	UPROPERTY(EditAnywhere) float DepthScalingFactor = 0.0f;
 	
 	int32			_currentWaveIndex = -1;
 	FTimerHandle	_waveTimer;
 
-	UPROPERTY() ACharacter*				_player = nullptr;
-	UPROPERTY() UChaosManager*			_chaosManager = nullptr;
-	UPROPERTY() UNavigationSystemV1*	_navSys = nullptr;
+	UPROPERTY() ACharacter*				_player			= nullptr;
+	UPROPERTY() UChaosManager*			_chaosManager	= nullptr;
+	UPROPERTY() ALevelGenerator*		_levelGenerator	= nullptr;
+	UPROPERTY() UNavigationSystemV1*	_navSys			= nullptr;
 
 	TMap<TSubclassOf<ABaseEnemyClass>, TSet<ABaseEnemyClass*>> _enemyPools;
 	
 	void SpawnNextWave();
-	void SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint = FVector::ZeroVector);
+	void SpawnEnemy
+	(
+		ABaseEnemyClass* enemy,
+		const FVector& spawnPoint = FVector::ZeroVector
+	);
 	void DespawnEnemy(ABaseEnemyClass* enemy);
+	void PrepareEnemies();
+	int ApplyRoomDepthMultiplier(int count) const;
 	
 public:	
 	// Sets default values for this actor's properties
