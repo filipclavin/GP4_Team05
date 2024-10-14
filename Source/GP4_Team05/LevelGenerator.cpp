@@ -70,7 +70,7 @@ void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 		newRoom->AnchorToRoom(_bridgeRoom->GetUnusedAnchor(), _bridgeRoom);
 	}
 	_currentRoom = newRoom;
-	_currentRoom->_roomDepth = _currentRoomDepth;
+	//_currentRoom->_roomDepth = _currentRoomDepth;
 }
 
 void ALevelGenerator::BeginPlay()
