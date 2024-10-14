@@ -22,6 +22,8 @@ public:
 	// This function is called when entering a bridge collider, or a new room. will see what I decide.
 	void LoadNewRoom();
 
+	UFUNCTION(BlueprintCallable) int GetRoomDepth() { return _currentRoomDepth; }
+
 	void SetCurrentRoom(ARoom* newRoom);
 	ARoom* GetBridgeRoom() { return _bridgeRoom; }
 protected:
@@ -44,7 +46,7 @@ private:
 	bool  _unloadLastRoom         = false;
 	bool  _removeInstanceFromList = false;
 	float _unloadDuration         = 1.0f;
-	int   _currentRoomIndex       = -1;
+	int   _currentRoomDepth       = -1;
 	int   _currentPOIRoom         = 0;
 	int   _numberOfRooms          = 0;
 	int   _unloadIndex            = -1;
