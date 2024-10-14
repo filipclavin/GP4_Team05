@@ -22,20 +22,23 @@ void ALevelGenerator::LoadNewRoom()
 	_unloadDuration = 1.0f;
 
 	bool success = false;
-	_currentRoomIndex++;
+	_currentRoomDepth++;
 	FLatentActionInfo info;
+	
+	FTransform transform;
+	transform.SetTranslation({ 0.0f, 0.0f, 10000.0f });
 
 	TSoftObjectPtr<UWorld> levelInstance;
-	if (_currentRoomIndex < _numberOfRooms)
+	if (_currentRoomDepth < _numberOfRooms)
 	{
-		int checkNumber = _currentRoomIndex % _numberOfRooms;
+		int checkNumber = _currentRoomDepth % _numberOfRooms;
 		
-		if (_currentRoomIndex % _numberOfRooms == _roomGenDataAsset->_numOfRoomsPerPOI) 
+		if (_currentRoomDepth % _numberOfRooms == _roomGenDataAsset->_numOfRoomsPerPOI) 
 		{
 			if(_currentPOIRoom < _roomGenDataAsset->_POIRoomInstances.Num())
 			{
 				levelInstance = _roomGenDataAsset->_POIRoomInstances[_currentPOIRoom];
-				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, FTransform::Identity, success);
+				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, transform, success);
 			}
 			_currentPOIRoom++;
 		}
@@ -48,14 +51,12 @@ void ALevelGenerator::LoadNewRoom()
 				_selectedRoom = _selectedRoom == _roomGenDataAsset->_regularRoomInstances.Num() - 1 ? 0 : +1;
 
 			levelInstance = _roomGenDataAsset->_regularRoomInstances[_selectedRoom];
-			FTransform transform;
-			transform.SetTranslation({ 0.0f, 0.0f, 10000.0f });
 			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, transform, success);
 		}
 	}
 	else 
 	{
-		ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, FTransform::Identity, success);
+		ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), _roomGenDataAsset->_endRoomInstance, transform, success);
 	}
 }
 
@@ -64,12 +65,12 @@ void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 	if (newRoom == _bridgeRoom || !_bridgeRoom)
 		return;
 
-	if (_currentRoomIndex > -1) {
+	if (_currentRoomDepth > -1) 
+	{
 		newRoom->AnchorToRoom(_bridgeRoom->GetUnusedAnchor(), _bridgeRoom);
 	}
 	_currentRoom = newRoom;
-
-	//newRoom->SetActorHiddenInGame(false);
+	_currentRoom->_roomDepth = _currentRoomDepth;
 }
 
 void ALevelGenerator::BeginPlay()

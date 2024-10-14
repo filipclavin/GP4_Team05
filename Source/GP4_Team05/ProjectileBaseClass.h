@@ -9,6 +9,17 @@
 class AAuraCharacter;
 class USphereComponent;
 
+USTRUCT()
+struct FStatIncrease
+{
+	GENERATED_BODY()
+	int additionalSpeed			  = 0;
+	int additionalRange			  = 0;
+	int additionalForkAmount	  = 0;
+	int additionalDamage		  = 0;
+	int additionalExplosionRadius = 0;
+};
+
 UCLASS()
 class GP4_TEAM05_API AProjectileBaseClass : public AActor
 {
@@ -27,20 +38,23 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(VisibleAnywhere) USphereComponent* _projectileCollider = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileSpeed		 = 5000;
-	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileRange		 = 50000;
-	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileForking		 = 0;
-	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileForkingRange = 100;
-	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileDamage		 = 20;
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileSpeed			= 5000;
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileRange			= 50000;
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileForking			= 0;
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileForkingRange	= 100;
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileDamage			= 20;
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileExplosionRadius	= 0;
 	
-	int _projectileSpeed   = 5000;
-	int _projectileForking = 0;
-	int _projectileDamage  = 20;
-	int _projectileRange   = 50000;
+	int _projectileSpeed			= 5000;
+	int _projectileForking			= 0;
+	int _projectileDamage			= 20;
+	int	_projectileRange		    = 50000;
+	int _projectileExplosionRadius  = 0;
+	
 
 	FVector _startLocation;
 
-	void SpawnProjectile  (int additionalSpeed, int additionalRange, int additionalForkAmount, int additionalDamage);
+	void SpawnProjectile  (int upgradeAmount);
 	void DespawnProjectile();
 
 	UFUNCTION()
@@ -48,4 +62,8 @@ public:
 UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const FHitResult& SweepResult);
 
 	virtual void DealDamage(TArray<AActor*> hitCharacter);
+
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Upgrade") TArray<FStatIncrease> upgradeStatIncreases;
+
+	int _upgradeAmount = 0;
 };
