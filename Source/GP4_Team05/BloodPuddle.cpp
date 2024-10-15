@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCharacter.h"
 #include "ChaosManager.h"
+#include "Engine/World.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 
@@ -15,11 +16,25 @@ ABloodPuddle::ABloodPuddle()
 	_puddleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PuddleMesh"));
 	SetRootComponent(_puddleMesh);
 
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PuddleMeshAsset(TEXT("StaticMesh'/Game/Path/To/Your/BloodPuddleMesh.BloodPuddleMesh'")); // Update the path accordingly
+	if (PuddleMeshAsset.Succeeded())
+	{
+		_puddleMesh->SetStaticMesh(PuddleMeshAsset.Object);
+		_puddleMesh->SetVisibility(true); // Ensure visibility
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load blood puddle mesh!"));
+	}
+
+
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	_collisionBox->SetupAttachment(RootComponent);
 	_collisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABloodPuddle::OnPlayerEnterPuddle);
 
 	
+
 	//_fadeSpeed = 0.5f;
 	_fadeSpeedStart = 0.2f;
 	_fadeSpeedEnd = 1.5f;
@@ -50,9 +65,11 @@ void ABloodPuddle::BeginPlay()
 		{
 			_dynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
 			_puddleMesh->SetMaterial(0, _dynamicMaterial);
+			_dynamicMaterial->SetScalarParameterValue(FName("Opacity"), 1.0f);
 		}
 	}
-	_opacity = 1.0f;
+	SetActorScale3D(FVector(1.0f));
+	//_opacity = 1.0f;
 	
 }
 void ABloodPuddle::OnPlayerEnterPuddle(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -127,9 +144,16 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 					
 	}
 }
-ABloodPuddle* ABloodPuddle::SpawnPuddle(AActor* Actor)
+ABloodPuddle* ABloodPuddle::SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation)
 {
-	if (Actor)
+	UWorld* World = GWorld;  // Use GWorld or call GetWorld() on an actor
+	if (World)
+	{
+		static ConstructorHelpers::FObjectFinder<UClass> PuddleBP(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_BloodPuddle.BP_BloodPuddle'"));
+		return World->SpawnActor<ABloodPuddle>(PuddleBP.Object, SpawnLocation, SpawnRotation);
+	}
+	return nullptr;
+	/*if (Actor)
 	{
 		UWorld* World = Actor->GetWorld();
 		if (World)
@@ -139,6 +163,6 @@ ABloodPuddle* ABloodPuddle::SpawnPuddle(AActor* Actor)
 			return World->SpawnActor<ABloodPuddle>(ABloodPuddle::StaticClass(), Location, Rotation);
 		}
 	}
-	return nullptr;
+	return nullptr;*/
 }
 
