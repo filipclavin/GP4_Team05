@@ -12,6 +12,8 @@ ARoom::ARoom()
 	_playerEnterTrigger = CreateDefaultSubobject<UBoxComponent>("Player Enter Trigger");
 	_playerEnterTrigger->AttachToComponent(scene, FAttachmentTransformRules::KeepRelativeTransform);
 	_playerEnterTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARoom::BeginOverlap);
+
+	_anchors = TArray<ARoomAnchor*>();
 }
 
 void ARoom::BeginPlay()
@@ -21,9 +23,6 @@ void ARoom::BeginPlay()
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 	if (_levelGenerator) 
 	{
-		if (_colliderActiveOnSpawn)
-			OnRoomComplete();
-
 		if (_bridgeRoom)
 			_colliderActiveOnSpawn = true; 
 
@@ -43,8 +42,7 @@ void ARoom::OnRoomComplete()
 
 		_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->OpenAnchorDoor();
 		GetOccupiedAnchor()->OpenAnchorDoor();
-	}
-	
+	}	
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -94,32 +92,34 @@ void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
 	if (anchor && !_anchors.IsEmpty()) {	
 		ARoomAnchor* selectedAnchor = GetUnusedAnchor();
 		
-		SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-		SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
+		if (selectedAnchor) {
+			SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+			SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
 
-		FVector anchorNoZ = selectedAnchor->GetActorLocation();
-		FVector roomNoZ   = GetActorLocation();
-		anchorNoZ.Z		  = 0.0f;
-		roomNoZ.Z		  = 0.0f;
+			FVector anchorNoZ = selectedAnchor->GetActorLocation();
+			FVector roomNoZ   = GetActorLocation();
+			anchorNoZ.Z		  = 0.0f;
+			roomNoZ.Z		  = 0.0f;
 
 
-		FVector dir = anchor->GetActorForwardVector();
-		float distance = FVector::Distance(anchorNoZ, roomNoZ);
-		dir *= distance;
+			FVector dir = anchor->GetActorForwardVector();
+			float distance = FVector::Distance(anchorNoZ, roomNoZ);
+			dir *= distance;
 
-		FVector zDelta = GetActorLocation();
-		zDelta		  -= selectedAnchor->GetActorLocation();
-		zDelta.X	   = 0.0f;
-		zDelta.Y	   = 0.0f;
+			FVector zDelta = GetActorLocation();
+			zDelta		  -= selectedAnchor->GetActorLocation();
+			zDelta.X	   = 0.0f;
+			zDelta.Y	   = 0.0f;
 
-		SetActorLocation(anchor->GetActorLocation());
-		SetActorLocation(GetActorLocation() + dir);
-		SetActorLocation(GetActorLocation() + zDelta);
+			SetActorLocation(anchor->GetActorLocation());
+			SetActorLocation(GetActorLocation() + dir);
+			SetActorLocation(GetActorLocation() + zDelta);
 
-		FRotator newRotation;
+			FRotator newRotation;
 
-		newRotation = anchor->GetActorRotation() - selectedAnchor->GetActorRotation();
-		SetActorRotation(newRotation - FRotator(0.0f, 180.0f, 0.0f));
+			newRotation = anchor->GetActorRotation() - selectedAnchor->GetActorRotation();
+			SetActorRotation(newRotation - FRotator(0.0f, 180.0f, 0.0f));
+		}
 	}
 	else
 		SetActorLocation({ 0.0f, 0.0f, 0.0f });
@@ -129,13 +129,19 @@ ARoomAnchor* ARoom::GetUnusedAnchor()
 {
 	if (!_anchors.IsEmpty()) 
 	{
-		INT32 newAnchor = FMath::RandRange(0, _anchors.Num() - 1);
-		if (newAnchor == _occupiedAnchor)
-			newAnchor = newAnchor >= _anchors.Num() - 1 ? 0 : newAnchor + 1;
+		if (_occupiedAnchor == -1 && _prioritizeEntrance > -1) {
+			_occupiedAnchor = _prioritizeEntrance;
+			return _anchors[_prioritizeEntrance];
+		}
+		else {
+			INT32 newAnchor = FMath::RandRange(0, _anchors.Num() - 1);
+			if (newAnchor == _occupiedAnchor)
+				newAnchor = newAnchor >= _anchors.Num() - 1 ? 0 : newAnchor + 1;
 
-		_occupiedAnchor = newAnchor;
+			_occupiedAnchor = newAnchor;
 
-		return _anchors[newAnchor];
+			return _anchors[newAnchor];
+		}
 	}
 	else 
 	{
