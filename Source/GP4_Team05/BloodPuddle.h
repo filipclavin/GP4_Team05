@@ -54,6 +54,8 @@ protected:
 	//this is just for a temporary implementation of adding chaos, CHANGE LATER! -Gustav
 	UPROPERTY()
 	      UChaosManager*  _chaosManager;
+		  UPROPERTY(EditDefaultsOnly, Category = "Blood Puddle")
+		  TSubclassOf<ABloodPuddle> BloodPuddleBlueprint;
 
 	// Handle player stepping on the puddle
 	UFUNCTION()
@@ -70,6 +72,6 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable, Category = "BloodPuddle")
-	static ABloodPuddle* SpawnPuddle(AActor* Actor);
+	static ABloodPuddle* SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation);
 
 };

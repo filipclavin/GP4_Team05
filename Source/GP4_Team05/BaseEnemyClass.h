@@ -61,6 +61,7 @@ protected:
 	UFUNCTION(BlueprintCallable) bool IsWithinRange			(AActor* otherActor);
 	UFUNCTION(BlueprintCallable) void incrementTimerCounter (float deltatime);
 
+	
 	virtual void OnDeath() override;
 	
 	void UpdateTickInterval();
