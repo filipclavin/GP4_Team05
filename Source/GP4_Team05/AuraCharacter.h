@@ -58,7 +58,7 @@ protected:
 
 	// Aura updates in the order of Buffs -> Debuffs 
 	UFUNCTION(BlueprintCallable) void UpdateAuras(const float deltaTime);
-	UFUNCTION(BlueprintCallable) void OnDeath();
+	UFUNCTION(BlueprintCallable) virtual void OnDeath();
 
 	UPROPERTY(BlueprintReadWrite) bool _characterIsActive = true;
 private:
