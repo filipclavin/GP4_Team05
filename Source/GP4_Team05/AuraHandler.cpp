@@ -80,6 +80,15 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Invalid Aura Name or AuraList is empty!"));
 }
 
+FString AAuraHandler::GetAuraDescription(FString nameOfAura)
+{
+	if (_auraNameMap.Contains(nameOfAura)) {
+		INT32 id = _auraNameMap[nameOfAura];
+		return _auraList[id]->_auraDescription;
+	}
+	return "Aura not found :(";
+}
+
 void AAuraHandler::FetchAllAurasAttached()
 {
 	GetComponents<UAura>(_auraList);

@@ -72,6 +72,8 @@ protected:
 
 	// Name of aura.
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)  FString _auraName;
+	// Description of Aura
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)  FString _auraDescription;
 	// Icon of the aura, used for UI, Auras with no icon will not appear in the UI.
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)  UTexture2D* _icon;
 	// Auras updates in the order of Buff -> Debuffs and to differentiate them in UI 
