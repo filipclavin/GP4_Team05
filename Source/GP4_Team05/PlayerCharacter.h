@@ -62,6 +62,7 @@ private:
 	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _heavyAttackMeleeDamage = 20.f;
 	//how long the attack must be charged before it becomes heavy
 	UPROPERTY(EditAnywhere, Category="Melee Stats") float _heavyAttackMeleeTime	  = 0.5f;
+	UPROPERTY(EditAnywhere, Category="Melee Stats") float _meleeSelfDamage		  = 0;
 
 	float _meleeCooldownTimer = 0.f;
 	float _meleeHeavyTimer    = 0.f;
@@ -75,13 +76,14 @@ private:
 	//UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashLength		= 1000;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashSpeed		= 10000;
 	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashKnockBack	= 100;
+	UPROPERTY(EditAnywhere, Category="Dash Stats")	 int   _dashSelfDamage	= 0;
 
-	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _Ligtningdamage	= 10;
-	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _spreadRadius	= 100;
-	UPROPERTY(EditAnywhere, Category="Arcing Surge") int   _range			= 3000;
+	
 
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _electricProjectile;
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _fireProjectile;
+	UPROPERTY(EditDefaultsOnly, Category="projectile") int								 _fireSelfDamage	 = 0;
+	UPROPERTY(EditDefaultsOnly, Category="projectile") int								 _ligtningSelfDamage = 0;
 
 	bool _useElectric = true;
 	int chosenAttack = 0;
@@ -137,6 +139,7 @@ private:
 
 public:
 	UFUNCTION(BlueprintImplementableEvent) void MeleeAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void HeavyMeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginMeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void RangedAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginAimEvent();

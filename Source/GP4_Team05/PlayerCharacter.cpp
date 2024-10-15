@@ -202,21 +202,24 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 	
 
 	UpdateAurasOnAttackCast(MELEE);
+	QueueDamage(_meleeSelfDamage, PHYSICAL);
 
 	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
 
 	if (_heavyAttackMeleeTime < _meleeHeavyTimer)
 	{
+		HeavyMeleeAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "heavy melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
 	}
 	else
 	{
+		MeleeAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "light melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
 	}
 	_meleeCooldownTimer = 0;
 	_meleeHeavyTimer = 0;
 	_chargingAttack = false;
-	MeleeAttackEvent();
+	
 	
 	TArray<AActor*> HitActors;
 	_meleeHitbox->GetOverlappingActors(HitActors);
@@ -296,7 +299,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
 		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel, this);
-        
+        QueueDamage(_ligtningSelfDamage, PHYSICAL);
         
 		_electricProjectileToUse++;
         
@@ -311,17 +314,21 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 }
 	else if (chosenAttack == 1)
 	{
+        QueueDamage(_fireSelfDamage, PHYSICAL);
+		
 		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
 		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel, this);
         
         
 		_fireProjectileToUse++;
+		
         
 		if (_fireProjectileToUse > _pooledFireProjectiles.Num()-1)
 		{
 			_fireProjectileToUse = 0;
 		}
+		
 		UpdateAurasOnAttackCast(FIRE_ATTACK);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_fireProjectileToUse));
 	}
@@ -361,6 +368,9 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 		dashDirection = GetActorForwardVector();
 	}
 
+	
+	QueueDamage(_dashDamage, PHYSICAL);
+	
 	GetCapsuleComponent()->SetCollisionProfileName("HitWorldStaticOnly");
 
 	dashDirection.Normalize();
