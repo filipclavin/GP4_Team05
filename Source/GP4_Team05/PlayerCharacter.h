@@ -137,6 +137,7 @@ private:
 
 public:
 	UFUNCTION(BlueprintImplementableEvent) void MeleeAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void HeavyMeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginMeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void RangedAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginAimEvent();

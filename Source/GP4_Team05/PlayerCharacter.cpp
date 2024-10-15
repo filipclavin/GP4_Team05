@@ -207,16 +207,18 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 
 	if (_heavyAttackMeleeTime < _meleeHeavyTimer)
 	{
+		HeavyMeleeAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "heavy melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
 	}
 	else
 	{
+		MeleeAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "light melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
 	}
 	_meleeCooldownTimer = 0;
 	_meleeHeavyTimer = 0;
 	_chargingAttack = false;
-	MeleeAttackEvent();
+	
 	
 	TArray<AActor*> HitActors;
 	_meleeHitbox->GetOverlappingActors(HitActors);
