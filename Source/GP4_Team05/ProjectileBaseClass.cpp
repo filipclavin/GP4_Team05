@@ -4,6 +4,7 @@
 #include "ProjectileBaseClass.h"
 
 #include "AuraCharacter.h"
+#include "PlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -37,7 +38,7 @@ void AProjectileBaseClass::Tick(float DeltaTime)
 	}
 }
 
-void AProjectileBaseClass::SpawnProjectile(int upgradeAmount)
+void AProjectileBaseClass::SpawnProjectile(int upgradeAmount, APlayerCharacter* owningPlayer)
 {
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -70,7 +71,10 @@ void AProjectileBaseClass::SpawnProjectile(int upgradeAmount)
 	_projectileForking		   = _baseProjectileForking			+ additionalForkAmount;
 	_projectileExplosionRadius = _baseProjectileExplosionRadius + additionalExplodeRadius;
 
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "forking: " + FString::FromInt(_projectileForking));
+	if (owningPlayer != nullptr)
+	{
+		_owningPlayer = owningPlayer;
+	}
 }
 
 void AProjectileBaseClass::DespawnProjectile()
@@ -147,7 +151,9 @@ void AProjectileBaseClass::DealDamage(TArray<AActor*> hitCharacter)
     		if (hitActor->IsA<AAuraCharacter>())
     		{
     			//TODO change to lightning when its ready
-    			Cast<AAuraCharacter>(hitActor)->QueueDamage(_projectileDamage, ElementTypes::WATER);
+    			AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(hitActor);
+    			hitCharacter->QueueDamage(_projectileDamage, ElementTypes::WATER);
+    			_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, LIGHTNING_ATTACK);
     			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
     			numberOfForks++;
     			

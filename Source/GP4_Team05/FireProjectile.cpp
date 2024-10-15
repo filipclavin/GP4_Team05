@@ -4,6 +4,7 @@
 #include "AuraCharacter.h"
 #include "AuraHandler.h"
 #include "ExplosiveBarrel.h"
+#include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 void AFireProjectile::BeginPlay()
@@ -89,6 +90,8 @@ void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
 		}
 		
 	}
+
+	_owningPlayer->UpdateAurasOnAttackHits(Character, FIRE_ATTACK);
 	
 	Character->QueueDamage(_explosionDamage, ElementTypes::FIRE);
 	_handler->CastAuraByName("FIRE", Character, nullptr);

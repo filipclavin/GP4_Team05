@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ProjectileBaseClass.generated.h"
 
+class APlayerCharacter;
 class AAuraCharacter;
 class USphereComponent;
 
@@ -54,7 +55,9 @@ public:
 
 	FVector _startLocation;
 
-	void SpawnProjectile  (int upgradeAmount);
+	UPROPERTY()APlayerCharacter* _owningPlayer = nullptr;
+
+	void SpawnProjectile  (int upgradeAmount, APlayerCharacter* owningPlayer = nullptr);
 	void DespawnProjectile();
 
 	UFUNCTION()
