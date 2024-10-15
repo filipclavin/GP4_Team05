@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "AuraCharacter.h"
 #include "InputActionValue.h"
+#include "ProjectileBaseClass.h"
 #include "PlayerCharacter.generated.h"
 
 class AProjectileBaseClass;
@@ -82,8 +83,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _electricProjectile;
 	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _fireProjectile;
+	UPROPERTY(EditDefaultsOnly, Category="projectile") TSubclassOf<AProjectileBaseClass> _bloodProjectile = AProjectileBaseClass::StaticClass();
 	UPROPERTY(EditDefaultsOnly, Category="projectile") int								 _fireSelfDamage	 = 0;
 	UPROPERTY(EditDefaultsOnly, Category="projectile") int								 _ligtningSelfDamage = 0;
+	UPROPERTY(EditDefaultsOnly, Category="projectile") int								 _bloodSelfDamage = 0;
 
 	bool _useElectric = true;
 	int chosenAttack = 0;
@@ -93,7 +96,10 @@ private:
 	int							  _electricProjectileToUse;
 	TArray<AProjectileBaseClass*> _pooledFireProjectiles;
 	int							  _fireProjectileToUse;
+
+	UPROPERTY()AProjectileBaseClass* _bloodProjectileToUse;
 	
+
 	FVector		 _dashDirection  = FVector::Zero();
 	FTimerHandle _dashHandle;
 

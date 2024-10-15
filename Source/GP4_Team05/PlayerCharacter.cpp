@@ -108,6 +108,10 @@ void APlayerCharacter::BeginPlay()
 		_pooledFireProjectiles[i]->SpawnProjectile(_fireLevel, this);
 		_pooledFireProjectiles[i]->DespawnProjectile();
 	}
+
+	_bloodProjectileToUse = GetWorld()->SpawnActor<AProjectileBaseClass>(_bloodProjectile);
+	_bloodProjectileToUse->SpawnProjectile(_bloodLevel, this);
+	_bloodProjectileToUse->DespawnProjectile();
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds)
@@ -129,6 +133,8 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 		GetMovementComponent()->Velocity = FMath::Lerp(FVector::Zero(), _dashDirection, easeInOutQuint
 			(GetWorld()->GetTimerManager().GetTimerElapsed(_dashHandle)/_dashDuration));
 	}
+
+	UpdateAuras(DeltaSeconds);
 }
 
 float APlayerCharacter::easeInOutQuint(float x)
@@ -334,6 +340,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	}
 	else if (chosenAttack == 2)
 	{
+		_bloodProjectileToUse->SpawnProjectile(_bloodLevel);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Blood attack");
 	}
 	
@@ -388,7 +395,8 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 void APlayerCharacter::ResetDash()
 {
 	CurrentlyDashing = false;
-	GetCharacterMovement()->Velocity = FVector::Zero();
+	//GetCharacterMovement()->Velocity = FVector::Zero();
+	GetCharacterMovement()->Velocity = _inputVector*GetActorForwardVector()*GetCharacterMovement()->MaxWalkSpeed;
 	GetCapsuleComponent()->SetCollisionProfileName("Pawn");
 	_dashHitActors.Empty();
 	GetStats()->_allDamageTaken = _damageTakenStorage;
