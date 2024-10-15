@@ -174,7 +174,7 @@ ARoomAnchor* ARoom::GetUnusedAnchor()
 
 ARoomAnchor* ARoom::GetOccupiedAnchor()
 {
-	if (_occupiedAnchor >= 0)
+	if (_occupiedAnchor >= 0 && _occupiedAnchor < _anchors.Num())
 		return _anchors[_occupiedAnchor];
 	else
 		return nullptr;

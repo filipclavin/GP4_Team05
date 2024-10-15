@@ -91,8 +91,18 @@ void ALevelGenerator::Tick(float deltaTime)
 		_loadDuration -= deltaTime;
 		if (levels[levels.Num() - 1]->IsLevelLoaded() && _loadDuration <= 0.0f) 
 		{
-			_bridgeRoom->GetOccupiedAnchor()->OpenAnchorDoor();
-			_currentRoom->GetOccupiedAnchor()->OpenAnchorDoor();
+			if(_bridgeRoom->GetOccupiedAnchor())
+				_bridgeRoom->GetOccupiedAnchor()->OpenAnchorDoor();
+			else
+				if (GEngine)
+					GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, "OBS! Bridge doesnt have a valid anchor door to connect too");
+
+			if(_currentRoom->GetOccupiedAnchor())
+				_currentRoom->GetOccupiedAnchor()->OpenAnchorDoor();
+			else
+				if (GEngine)
+					GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red,  "OBS! Room doesnt have a valid anchor door to connect too");
+
 			_waitForRoom = false;
 		}
 	}
