@@ -202,6 +202,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 	
 
 	
+	QueueDamage(_meleeSelfDamage, PHYSICAL);
 
 	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
 
@@ -296,7 +297,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
 		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel);
-        
+        QueueDamage(_ligtningSelfDamage, PHYSICAL);
         
 		_electricProjectileToUse++;
         
@@ -308,6 +309,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	}
 	else if (chosenAttack == 1)
 	{
+        QueueDamage(_fireSelfDamage, PHYSICAL);
 		
 		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
@@ -315,6 +317,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
         
         
 		_fireProjectileToUse++;
+		
         
 		if (_fireProjectileToUse > _pooledFireProjectiles.Num()-1)
 		{
@@ -358,6 +361,9 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 		dashDirection = GetActorForwardVector();
 	}
 
+	
+	QueueDamage(_dashDamage, PHYSICAL);
+	
 	GetCapsuleComponent()->SetCollisionProfileName("HitWorldStaticOnly");
 
 	dashDirection.Normalize();
