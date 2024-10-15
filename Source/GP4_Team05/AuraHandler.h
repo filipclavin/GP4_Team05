@@ -22,8 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable) void CastAuraByID(const int id, AAuraCharacter* target, AAuraCharacter* caster);
 	UFUNCTION(BlueprintCallable) void CastAuraByName(FString name, AAuraCharacter* target, AAuraCharacter* caster);
 
+	void FetchAllAurasAttached();
 protected:
-	UFUNCTION(BlueprintCallable) void FetchAllAurasAttached();
 	
 	UPROPERTY(BlueprintReadOnly) 
 	TArray<UAura*>       _auraList;

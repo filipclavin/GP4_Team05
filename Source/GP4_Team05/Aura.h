@@ -29,9 +29,9 @@ public:
 	// Called if an affected AuraCharacter already has this aura (based on Aura ID).
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraExists();
 	// Called when AuraCharacter hits with an ability or regular attack. Note: it is not possible to specify what attack at the moment
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAttackHit(AAuraCharacter* targetHit);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraAttackHit(AAuraCharacter* targetHit);
 
-	void OnAttackHit_Implementation(AAuraCharacter* targetHit)  { targetHit;    }
+	void OnAuraAttackHit_Implementation(AAuraCharacter* targetHit)  { targetHit;    }
 	void OnAuraCast_Implementation(AAuraCharacter* caster)      { caster;	    }
 	void OnAuraAdd_Implementation(AAuraCharacter* affectedChar) { affectedChar; }
 	void OnAuraUpdate_Implementation(const float deltaTime)     { deltaTime;    }
@@ -45,6 +45,8 @@ public:
 	UFUNCTION(BlueprintCallable) const AuraType GetType()  { return _type; }
 	UFUNCTION(BlueprintCallable) const FString  AuraName() { return _auraName; }
 	UFUNCTION(BlueprintCallable) const int      GetID()	   { return _id; }
+
+	const AuraAttackType GetAuraAttackType()			   { return _onAttackType; };
 
 	const float GetTickDuration() { return _currentTick; }
 	const float GetDuration()     { return _currentDuration; }
@@ -60,11 +62,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite) AAuraCharacter* _affected = nullptr;
 	UPROPERTY(BlueprintReadWrite) AAuraCharacter* _caster   = nullptr;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void CreatePooledAuras(AActor* pooledActor);
-	void CreatePooledAuras_Implementation(AActor* pooledActor);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void CreatePooledAuras(AAuraHandler* handler, AActor* pooledActor);
+	void CreatePooledAuras_Implementation(AAuraHandler* handler, AActor* pooledActor);
 	UFUNCTION(BlueprintCallable) void UpdateAuraPool(UAura* newAura);
 
-	int  _id   = -1;
+	int  _id		= -1;
 	bool _isActive  = false;
 	// General Aura values, These values do not need to be used by all auras
 
@@ -74,6 +76,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)  UTexture2D* _icon;
 	// Auras updates in the order of Buff -> Debuffs and to differentiate them in UI 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)  TEnumAsByte<AuraType> _type = AuraType::BUFF;
+	// This is only for ON_HIT auras, BUFF and DEBUFF are not affected by this. 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)  TEnumAsByte<AuraAttackType> _onAttackType = AuraAttackType::MELEE;
 	// Duration of aura, FLT_MAX = Infinite duration.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float   _duration    = FLT_MAX; 	
 	// Tick Counter for how many times the aura should tick during it's duration.

@@ -55,8 +55,11 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 		UAura* affectedAura = target->AffectedByAura(id);
 		if (affectedAura)
 		{
-			affectedAura->OnAuraCast(caster);
-			affectedAura->OnAuraExists();
+			if(affectedAura->GetType() != ON_HIT)
+			{
+				affectedAura->OnAuraCast(caster);
+				affectedAura->OnAuraExists();
+			}
 		}
 		else
 		{
@@ -64,7 +67,8 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 			if (aura) 
 			{
 				aura->ActivateAura();
-				aura->OnAuraCast(caster);
+				if(affectedAura->GetType() != ON_HIT)
+					aura->OnAuraCast(caster);
 				target->AddAura(aura);
 			}
 			else
@@ -78,7 +82,7 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 
 void AAuraHandler::FetchAllAurasAttached()
 {
-	this->GetComponents<UAura>(_auraList);
+	GetComponents<UAura>(_auraList);
 
 	// Assign Aura names and ID's:
 	for (size_t i = 0; i < _auraList.Num(); i++)
@@ -94,7 +98,7 @@ void AAuraHandler::FetchAllAurasAttached()
 		for (size_t j = 0; j < poolCount; j++)
 		{
 			// Create the pooling for the specific aura subclass
-			aura->CreatePooledAuras(_auraPoolingActor);
+			aura->CreatePooledAuras(this, _auraPoolingActor);
 		}
 	}
 }
@@ -105,6 +109,7 @@ UAura* AAuraHandler::GetPooledAura(UAura* aura)
 
 	for (size_t i = 0; i < pool.Num(); i++)
 	{
+		// Reset Aura when we fetch it so it's ready for use.
 		if (!pool[i]->_isActive) {
 			pool[i]->ResetAura(aura);
 			return pool[i];

@@ -33,6 +33,8 @@ public:
 	UFUNCTION(BlueprintCallable) const TArray<UAura*>& GetAffectedBuffs()   { return _auraList[BUFF]; }
 	UFUNCTION(BlueprintCallable) const TArray<UAura*>& GetAffectedDebuffs() { return _auraList[DEBUFF]; }
 
+	void UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackType attackType);
+	void UpdateAurasOnAttackCast(AuraAttackType attackType);
 	bool IsPlayer() { return _isPlayer; }
 
 protected:

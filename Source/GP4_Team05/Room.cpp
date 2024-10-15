@@ -120,9 +120,17 @@ void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
 			newRotation = anchor->GetActorRotation() - selectedAnchor->GetActorRotation();
 			SetActorRotation(newRotation - FRotator(0.0f, 180.0f, 0.0f));
 		}
+		else
+		{
+			if(GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, TEXT("Failed to fetch Anchor, Spawning room at center of world!"));
+			SetActorLocation({ 0.0f, 0.0f, 0.0f });
+		}
 	}
-	else
+	else 
+	{
 		SetActorLocation({ 0.0f, 0.0f, 0.0f });
+	}
 }
 
 ARoomAnchor* ARoom::GetUnusedAnchor()
