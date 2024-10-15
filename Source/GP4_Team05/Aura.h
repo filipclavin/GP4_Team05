@@ -62,8 +62,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite) AAuraCharacter* _affected = nullptr;
 	UPROPERTY(BlueprintReadWrite) AAuraCharacter* _caster   = nullptr;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void CreatePooledAuras(AAuraHandler* handler, AActor* pooledActor);
-	void CreatePooledAuras_Implementation(AAuraHandler* handler, AActor* pooledActor);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void CreatePooledAuras(AActor* pooledActor);
+	void CreatePooledAuras_Implementation(AActor* pooledActor);
 	UFUNCTION(BlueprintCallable) void UpdateAuraPool(UAura* newAura);
 
 	int  _id		= -1;
@@ -79,10 +79,10 @@ protected:
 	// This is only for ON_HIT auras, BUFF and DEBUFF are not affected by this. 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)  TEnumAsByte<AuraAttackType> _onAttackType = AuraAttackType::MELEE;
 	// Duration of aura, FLT_MAX = Infinite duration.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float   _duration    = FLT_MAX; 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float         _duration = FLT_MAX; 	
 	// Tick Counter for how many times the aura should tick during it's duration.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) int     _tickCounter = 0;    
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) int           _tickCounter = 0;    
+	UPROPERTY(BlueprintReadOnly)				AAuraHandler* _auraHandler;
 	// Private aura values, used to affect the target entity after a certain duration.
 
 	// The tick duration of the aura, decided by Duration / TickCounter (if aura is infinite then define TickDuration manually) 

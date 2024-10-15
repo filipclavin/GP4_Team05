@@ -201,7 +201,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 	if (_meleeCooldown > _meleeCooldownTimer){GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown"); return;}
 	
 
-	
+	UpdateAurasOnAttackCast(MELEE);
 
 	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
 
@@ -228,8 +228,10 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 		{
 			if (HitActor->IsA<AAuraCharacter>())
 			{
+				AAuraCharacter* target = Cast<AAuraCharacter>(HitActor);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, HitActor->GetName() + " hit");
-				Cast<AAuraCharacter>(HitActor)->QueueDamage(_lightAttackMeleeDamage, PHYSICAL);
+				target->QueueDamage(_lightAttackMeleeDamage, PHYSICAL);
+				UpdateAurasOnAttackHits(target, MELEE);
 			}
 		}
 		
@@ -302,11 +304,13 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		{
 			_electricProjectileToUse = 0;
 		}
+		
+		UpdateAurasOnAttackCast(LIGHTNING_ATTACK);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
-	}
+	
+}
 	else if (chosenAttack == 1)
 	{
-		
 		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
 		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel, this);
@@ -318,6 +322,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		{
 			_fireProjectileToUse = 0;
 		}
+		UpdateAurasOnAttackCast(FIRE_ATTACK);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_fireProjectileToUse));
 	}
 	else if (chosenAttack == 2)
@@ -365,6 +370,8 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 	_damageTakenStorage = GetStats()->_allDamageTaken;
 	GetStats()->_allDamageTaken = 0;
 	
+	UpdateAurasOnAttackCast(DASH);
+
 	GetWorld()->GetTimerManager().SetTimer(_dashHandle, FTimerDelegate::CreateLambda([this] {APlayerCharacter::ResetDash();}), _dashDuration, false);
 }
 
@@ -394,7 +401,7 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 		OtherActor->SetActorLocation(OtherActor->GetActorLocation() + knockbackDirection*_dashKnockBack);
 		HitCharacter->QueueDamage(_dashDamage, ElementTypes::PHYSICAL);
 
-		
+		UpdateAurasOnAttackHits(HitCharacter, DASH);
 		_dashHitActors.Add(OtherActor);
 	}
 }
