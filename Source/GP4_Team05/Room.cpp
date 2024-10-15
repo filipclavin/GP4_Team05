@@ -130,6 +130,14 @@ ARoomAnchor* ARoom::GetUnusedAnchor()
 	if (!_anchors.IsEmpty()) 
 	{
 		if (_occupiedAnchor == -1 && _prioritizeEntrance > -1) {
+			if(_prioritizeEntrance >= _anchors.Num())
+			{
+				if(GEngine)
+					GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, TEXT("Invalid Priority Anchor Index!!"));
+				
+				_occupiedAnchor = 0;
+				return _anchors[0];
+			}
 			_occupiedAnchor = _prioritizeEntrance;
 			return _anchors[_prioritizeEntrance];
 		}
