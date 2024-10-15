@@ -109,8 +109,10 @@ void ABaseEnemyClass::incrementTimerCounter(float deltatime)
 	_attackTimer += deltatime;
 }
 
-void ABaseEnemyClass::Die()
+void ABaseEnemyClass::OnDeath()
 {
+	Super::OnDeath();
+	
 	_controller->StopMovement();
 	_spawner->DespawnEnemy(this);
 }

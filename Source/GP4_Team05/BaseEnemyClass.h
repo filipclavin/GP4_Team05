@@ -17,12 +17,15 @@ class GP4_TEAM05_API ABaseEnemyClass : public AAuraCharacter
 {
 	GENERATED_BODY()
 
-	ABaseEnemyClass();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
 	void OnSpawned(AEnemySpawner* spawner);
+
+public:
+	ABaseEnemyClass();
+	
 protected:
 	UPROPERTY(VisibleAnywhere) UBoxComponent* _meleeHitbox = nullptr;
 
@@ -57,7 +60,8 @@ protected:
 	//returns if the actor is within attack range
 	UFUNCTION(BlueprintCallable) bool IsWithinRange			(AActor* otherActor);
 	UFUNCTION(BlueprintCallable) void incrementTimerCounter (float deltatime);
-	UFUNCTION(BlueprintCallable) void Die					();
+
+	virtual void OnDeath() override;
 	
 	void UpdateTickInterval();
 
