@@ -57,8 +57,8 @@ void AAuraCharacter::QueueDamage(int amount, ElementTypes element, UCharacterSta
 
 void AAuraCharacter::UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackType attackType)
 {
-	TArray<UAura*>& auras = _auraList[ON_HIT];
-	for (INT32 i = 0; i < _auraList[ON_HIT].Num(); i++)
+	TArray<UAura*>& auras = _auraList[EFFECT];
+	for (INT32 i = 0; i < _auraList[EFFECT].Num(); i++)
 	{
 		if(attackType == auras[i]->GetAuraAttackType())
 			auras[i]->OnAuraAttackHit(target);		
@@ -67,8 +67,8 @@ void AAuraCharacter::UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackT
 
 void AAuraCharacter::UpdateAurasOnAttackCast(AuraAttackType attackType)
 {
-	TArray<UAura*>& auras = _auraList[ON_HIT];
-	for (INT32 i = 0; i < _auraList[ON_HIT].Num(); i++)
+	TArray<UAura*>& auras = _auraList[EFFECT];
+	for (INT32 i = 0; i < _auraList[EFFECT].Num(); i++)
 	{
 		if (attackType == auras[i]->GetAuraAttackType())
 			auras[i]->OnAuraCast(this);
@@ -100,7 +100,7 @@ void AAuraCharacter::UpdateAuras(const float deltaTime)
 				for (INT32 j = 0; j < list.Num(); j++)
 				{
 					list[j]->DecreaseDuration(deltaTime);
-					if(i != AuraType::ON_HIT)
+					if(i != AuraType::EFFECT)
 					{
 						list[j]->OnAuraUpdate(deltaTime);
 						if (list[j]->GetTickDuration() <= 0.0f)
@@ -153,7 +153,7 @@ void AAuraCharacter::RemoveAura(const size_t index, const AuraType type)
 {
 	TArray<UAura*>& typeList = _auraList[type];
 
-	if(type != ON_HIT)
+	if(type != EFFECT)
 		typeList[index]->OnAuraRemoved();
 
 	typeList[index]->DeactivateAura();

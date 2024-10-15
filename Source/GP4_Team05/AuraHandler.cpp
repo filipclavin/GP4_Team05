@@ -55,7 +55,7 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 		UAura* affectedAura = target->AffectedByAura(id);
 		if (affectedAura)
 		{
-			if(affectedAura->GetType() != ON_HIT)
+			if(affectedAura->GetType() != EFFECT)
 			{
 				affectedAura->OnAuraCast(caster);
 				affectedAura->OnAuraExists();
@@ -67,7 +67,7 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 			if (aura) 
 			{
 				aura->ActivateAura();
-				if(affectedAura->GetType() != ON_HIT)
+				if(aura->GetType() != EFFECT)
 					aura->OnAuraCast(caster);
 				target->AddAura(aura);
 			}
@@ -98,7 +98,8 @@ void AAuraHandler::FetchAllAurasAttached()
 		for (size_t j = 0; j < poolCount; j++)
 		{
 			// Create the pooling for the specific aura subclass
-			aura->CreatePooledAuras(this, _auraPoolingActor);
+			aura->CreatePooledAuras(_auraPoolingActor);
+			aura->_auraHandler = this;
 		}
 	}
 }
