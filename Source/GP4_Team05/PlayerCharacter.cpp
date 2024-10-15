@@ -102,10 +102,10 @@ void APlayerCharacter::BeginPlay()
 	for (int i = 0; i < 10; i++)
 	{
 		_pooledElectricProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_electricProjectile));
-		_pooledElectricProjectiles[i]->SpawnProjectile(_electricLevel);
+		_pooledElectricProjectiles[i]->SpawnProjectile(_electricLevel, this);
 		_pooledElectricProjectiles[i]->DespawnProjectile();
 		_pooledFireProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_fireProjectile));
-		_pooledFireProjectiles[i]->SpawnProjectile(_fireLevel);
+		_pooledFireProjectiles[i]->SpawnProjectile(_fireLevel, this);
 		_pooledFireProjectiles[i]->DespawnProjectile();
 	}
 }
@@ -293,7 +293,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	{
 		_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
-		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel);
+		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel, this);
         
         
 		_electricProjectileToUse++;
@@ -309,7 +309,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		
 		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
-		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel);
+		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel, this);
         
         
 		_fireProjectileToUse++;
