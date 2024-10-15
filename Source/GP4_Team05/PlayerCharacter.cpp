@@ -102,12 +102,16 @@ void APlayerCharacter::BeginPlay()
 	for (int i = 0; i < 10; i++)
 	{
 		_pooledElectricProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_electricProjectile));
-		_pooledElectricProjectiles[i]->SpawnProjectile(_electricLevel);
+		_pooledElectricProjectiles[i]->SpawnProjectile(_electricLevel, this);
 		_pooledElectricProjectiles[i]->DespawnProjectile();
 		_pooledFireProjectiles.Add(GetWorld()->SpawnActor<AProjectileBaseClass>(_fireProjectile));
-		_pooledFireProjectiles[i]->SpawnProjectile(_fireLevel);
+		_pooledFireProjectiles[i]->SpawnProjectile(_fireLevel, this);
 		_pooledFireProjectiles[i]->DespawnProjectile();
 	}
+
+	_bloodProjectileToUse = GetWorld()->SpawnActor<AProjectileBaseClass>(_bloodProjectile);
+	_bloodProjectileToUse->SpawnProjectile(_bloodLevel, this);
+	_bloodProjectileToUse->DespawnProjectile();
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds)
@@ -129,6 +133,8 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 		GetMovementComponent()->Velocity = FMath::Lerp(FVector::Zero(), _dashDirection, easeInOutQuint
 			(GetWorld()->GetTimerManager().GetTimerElapsed(_dashHandle)/_dashDuration));
 	}
+
+	UpdateAuras(DeltaSeconds);
 }
 
 float APlayerCharacter::easeInOutQuint(float x)
@@ -201,7 +207,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 	if (_meleeCooldown > _meleeCooldownTimer){GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown"); return;}
 	
 
-	
+	UpdateAurasOnAttackCast(MELEE);
 	QueueDamage(_meleeSelfDamage, PHYSICAL);
 
 	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
@@ -231,8 +237,10 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 		{
 			if (HitActor->IsA<AAuraCharacter>())
 			{
+				AAuraCharacter* target = Cast<AAuraCharacter>(HitActor);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, HitActor->GetName() + " hit");
-				Cast<AAuraCharacter>(HitActor)->QueueDamage(_lightAttackMeleeDamage, PHYSICAL);
+				target->QueueDamage(_lightAttackMeleeDamage, PHYSICAL);
+				UpdateAurasOnAttackHits(target, MELEE);
 			}
 		}
 		
@@ -296,7 +304,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	{
 		_pooledElectricProjectiles[_electricProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
-		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel);
+		_pooledElectricProjectiles[_electricProjectileToUse]->SpawnProjectile(_electricLevel, this);
         QueueDamage(_ligtningSelfDamage, PHYSICAL);
         
 		_electricProjectileToUse++;
@@ -305,15 +313,18 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		{
 			_electricProjectileToUse = 0;
 		}
+		
+		UpdateAurasOnAttackCast(LIGHTNING_ATTACK);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
-	}
+	
+}
 	else if (chosenAttack == 1)
 	{
         QueueDamage(_fireSelfDamage, PHYSICAL);
 		
 		_pooledFireProjectiles[_fireProjectileToUse]->SetActorLocationAndRotation
 		(GetActorLocation() + GetActorForwardVector()*200.f ,UKismetMathLibrary::MakeRotFromX(BulletDir));
-		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel);
+		_pooledFireProjectiles[_fireProjectileToUse]->SpawnProjectile(_fireLevel, this);
         
         
 		_fireProjectileToUse++;
@@ -323,10 +334,13 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		{
 			_fireProjectileToUse = 0;
 		}
+		
+		UpdateAurasOnAttackCast(FIRE_ATTACK);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_fireProjectileToUse));
 	}
 	else if (chosenAttack == 2)
 	{
+		_bloodProjectileToUse->SpawnProjectile(_bloodLevel);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Blood attack");
 	}
 	
@@ -373,13 +387,16 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 	_damageTakenStorage = GetStats()->_allDamageTaken;
 	GetStats()->_allDamageTaken = 0;
 	
+	UpdateAurasOnAttackCast(DASH);
+
 	GetWorld()->GetTimerManager().SetTimer(_dashHandle, FTimerDelegate::CreateLambda([this] {APlayerCharacter::ResetDash();}), _dashDuration, false);
 }
 
 void APlayerCharacter::ResetDash()
 {
 	CurrentlyDashing = false;
-	GetCharacterMovement()->Velocity = FVector::Zero();
+	//GetCharacterMovement()->Velocity = FVector::Zero();
+	GetCharacterMovement()->Velocity = _inputVector*GetActorForwardVector()*GetCharacterMovement()->MaxWalkSpeed;
 	GetCapsuleComponent()->SetCollisionProfileName("Pawn");
 	_dashHitActors.Empty();
 	GetStats()->_allDamageTaken = _damageTakenStorage;
@@ -402,7 +419,7 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 		OtherActor->SetActorLocation(OtherActor->GetActorLocation() + knockbackDirection*_dashKnockBack);
 		HitCharacter->QueueDamage(_dashDamage, ElementTypes::PHYSICAL);
 
-		
+		UpdateAurasOnAttackHits(HitCharacter, DASH);
 		_dashHitActors.Add(OtherActor);
 	}
 }

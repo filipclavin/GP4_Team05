@@ -27,7 +27,7 @@ void UAura::DecreaseDuration(const float deltaTime)
 	}
 }
 
-void UAura::CreatePooledAuras_Implementation(AAuraHandler* handler, AActor* pooledActor)
+void UAura::CreatePooledAuras_Implementation(AActor* pooledActor)
 {
 	if (GEngine) {
 		FString s = _auraName + " CreatePoolAuras function is not overriden and wont spawn any auras!";
@@ -45,11 +45,13 @@ void UAura::ResetAura(const UAura* aura)
 {
 	if (_id == -1) 
 	{
-		_id              = aura->_id;
-		_icon			 = aura->_icon;
-		_auraName		 = aura->_auraName;
-		_type			 = aura->_type;
-		_tickCounter     = aura->_tickCounter;
+		_auraHandler  = aura->_auraHandler;
+		_id           = aura->_id;
+		_icon		  = aura->_icon;
+		_auraName	  = aura->_auraName;
+		_type		  = aura->_type;
+		_onAttackType = aura->_onAttackType;
+		_tickCounter  = aura->_tickCounter;
 	}
 	
 	_duration		 = aura->_duration;
