@@ -71,7 +71,7 @@ protected:
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION(BlueprintCallable, Category = "BloodPuddle")
+	//UFUNCTION(BlueprintCallable, Category = "BloodPuddle")
 	//static ABloodPuddle* SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation);
 
 };
