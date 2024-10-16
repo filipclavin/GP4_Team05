@@ -5,6 +5,7 @@
 #include "PlayerCharacter.h"
 #include "ChaosManager.h"
 #include "Engine/World.h"
+#include "AuraHandler.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 
@@ -15,7 +16,6 @@ ABloodPuddle::ABloodPuddle()
 	
 	_puddleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PuddleMesh"));
 	SetRootComponent(_puddleMesh);
-
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> PuddleMeshAsset(TEXT("StaticMesh'/Game/Path/To/Your/BloodPuddleMesh.BloodPuddleMesh'")); // Update the path accordingly
 	if (PuddleMeshAsset.Succeeded())
@@ -54,9 +54,8 @@ void ABloodPuddle::BeginPlay()
 	Super::BeginPlay();
 
 	_auraCharacter = Cast<AAuraCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-	_chaosManager = _auraCharacter->GetComponentByClass<UChaosManager>();
-	
+	_auraHandler   = Cast<AAuraHandler>(UGameplayStatics::GetActorOfClass(GetWorld(), AAuraHandler::StaticClass()));
+	_chaosManager  = _auraCharacter->GetComponentByClass<UChaosManager>();
 	
 	if (_puddleMesh)
 	{					 
@@ -121,37 +120,37 @@ void ABloodPuddle::ShrinkPuddle(float DeltaTime)
 
 void ABloodPuddle::ApplyHealing(float DeltaTime)
 {
-	if (!_auraCharacter)
-	{
+	if (!_auraCharacter && !_auraHandler)
 		return;  
-	}
 	
-	float _maxHealing = 100.0f * _healingPercentage;
-	if (_healingProgress < _maxHealing)
-	{   
-		float HealThisTick = FMath::Min(_healingRate * DeltaTime, _maxHealing - _healingProgress);
-		_healingProgress += HealThisTick;
-		int HealAmount = FMath::RoundToInt(HealThisTick);
+	_auraHandler->CastAuraByName("Blood Offer", _auraCharacter, nullptr);
 
-		//this is just for a temporary implementation of adding chaos, CHANGE LATER! -Gustav
-		if (_auraCharacter->GetStats()->_currentHealth == _auraCharacter->GetStats()->_maxHealth)
-		{
-			_chaosManager->bloodPickup();
-		}
-		_auraCharacter->QueueHeal(HealThisTick);
-
-		UE_LOG(LogTemp, Warning, TEXT("Healed: %f, Total Healed: %f"), HealThisTick, _healingProgress);
-					
-	}
+	//float _maxHealing = 100.0f * _healingPercentage;
+	//if (_healingProgress < _maxHealing)
+	//{   
+	//	float HealThisTick = FMath::Min(_healingRate * DeltaTime, _maxHealing - _healingProgress);
+	//	_healingProgress += HealThisTick;
+	//	int HealAmount = FMath::RoundToInt(HealThisTick);
+	//
+	//	//this is just for a temporary implementation of adding chaos, CHANGE LATER! -Gustav
+	//	if (_auraCharacter->GetStats()->_currentHealth == _auraCharacter->GetStats()->_maxHealth)
+	//	{
+	//		_chaosManager->bloodPickup();
+	//	}
+	//	_auraCharacter->QueueHeal(HealThisTick);
+	//
+	//	UE_LOG(LogTemp, Warning, TEXT("Healed: %f, Total Healed: %f"), HealThisTick, _healingProgress);
+	//				
+	//}
 }
 ABloodPuddle* ABloodPuddle::SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation)
 {
-	UWorld* World = GWorld;  // Use GWorld or call GetWorld() on an actor
-	if (World)
-	{
-		static ConstructorHelpers::FObjectFinder<UClass> PuddleBP(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_BloodPuddle.BP_BloodPuddle'"));
-		return World->SpawnActor<ABloodPuddle>(PuddleBP.Object, SpawnLocation, SpawnRotation);
-	}
+	//UWorld* World = GetWorld();  // Use GWorld or call GetWorld() on an actor
+	//if (World)
+	//{
+		//static ConstructorHelpers::FObjectFinder<UClass> PuddleBP(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_BloodPuddle.BP_BloodPuddle'"));
+		//return GetWorld()->SpawnActor<ABloodPuddle>(PuddleBP.Object, SpawnLocation, SpawnRotation);
+	//}
 	return nullptr;
 	/*if (Actor)
 	{

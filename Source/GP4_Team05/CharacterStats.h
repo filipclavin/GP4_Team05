@@ -24,6 +24,7 @@ public:
 	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats);
 
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool  _isInvincible     = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) int   _maxHealth     = 100;
 	UPROPERTY(BlueprintReadOnly)			    int   _currentHealth = 100;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _movementSpeed = 600;
@@ -33,7 +34,6 @@ public:
 	// (Damage * ElementDamageDealt) * AllDamageDealt  * crit = true ? 2 : 1 -> (DamageTaken * ElementDamageTaken) * AllDamageTaken
 
 	// Scalings
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool  _isInvincible     = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _critStrikeChance = 0.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _healingTaken	    = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _allDamageTaken   = 1.0f;

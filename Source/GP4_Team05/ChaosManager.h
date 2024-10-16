@@ -19,8 +19,12 @@ public:
 
 	void ScaleChaosBar();
 	void ScaleChaosGain(float gainIncreas);
+	void ResetChaosBarProgress();
 
-	float _currentChaos = 0;
+	float GetCurrentChaos();
+
+	bool ChaosBarIsFilled();
+
 	bool  _chaosFull	= false;
 protected:
 
@@ -31,6 +35,7 @@ protected:
 	//how much chaos per second you will gain by collecting blood. Can move this to an aura instead.
 	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosGainScaling	= 1.0f;
 		
+	float _currentChaos = 0;
 	// Called when the game starts
 	virtual void BeginPlay() override;
 

@@ -50,10 +50,16 @@ void ARoom::OnRoomComplete()
 
 void ARoom::ResetChaosManager()
 {
-	if (!_enemySpawner) 
+	if (_enemySpawner) 
 	{
-
+		_chaosManager->ResetChaosBarProgress();
+		_chaosManager->ScaleChaosBar();
 	}
+}
+
+void ARoom::OnRoomChaosBarFilled_Implementation()
+{
+	OnRoomComplete();
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -87,6 +93,8 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 					_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->CloseAnchorDoor();
 				
 				_chaosManager = check->GetComponentByClass<UChaosManager>();
+				if(_chaosManager)
+					ResetChaosManager();
 			}
 
 			OnPlayerEnter();
@@ -189,6 +197,16 @@ ARoomAnchor* ARoom::GetOccupiedAnchor()
 		return _anchors[_occupiedAnchor];
 	else
 		return nullptr;
+}
+
+void ARoom::Tick(float deltaTime)
+{
+	if(!_roomIsCompleted)
+	{
+		if (_chaosManager)
+			if (_chaosManager->ChaosBarIsFilled()) 
+				OnRoomChaosBarFilled_Implementation();
+	}
 }
 
 void ARoom::FetchLevelGenerator()

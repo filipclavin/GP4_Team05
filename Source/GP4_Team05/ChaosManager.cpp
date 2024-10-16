@@ -15,7 +15,27 @@ UChaosManager::UChaosManager()
 
 void UChaosManager::ScaleChaosBar()
 {
-	_maxChaos *= _chaosScaling;
+	_maxChaos *= _maxChaosBarScaling;
+}
+
+void UChaosManager::ScaleChaosGain(float gainIncrease)
+{
+	_chaosGainScaling += gainIncrease;
+}
+
+void UChaosManager::ResetChaosBarProgress()
+{
+	_currentChaos = 0.0f;
+}
+
+float UChaosManager::GetCurrentChaos()
+{
+	return _currentChaos;
+}
+
+bool UChaosManager::ChaosBarIsFilled()
+{
+	return _currentChaos >= _maxChaos ? true: false;
 }
 
 
@@ -44,12 +64,10 @@ void UChaosManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		
 		FTimerHandle barFullHandle;
 
-		GetWorld()->GetTimerManager().SetTimer(barFullHandle, FTimerDelegate::CreateLambda([this] (){_chaosFull = false;}), _chaosFullDuration, false);
+		//GetWorld()->GetTimerManager().SetTimer(barFullHandle, FTimerDelegate::CreateLambda([this] (){_chaosFull = false;}), _chaosFullDuration, false);
 		
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Chaos bar full, this will do something when we implement it"));
 		_chaosBar->UpdateBar(_maxChaos, _maxChaos); // fill the bar until next update
-		_maxChaos *= _chaosScaling;
-		_currentChaos = 0;
 		return;
 	}
 	if (_chaosBar == nullptr)
@@ -72,17 +90,17 @@ void UChaosManager::setupChaosManager(UChaosBarWidget* widget)
 	}
 }
 
-void UChaosManager::bloodPickup()
-{
-	_currentChaos += GetWorld()->GetTime().GetDeltaWorldTimeSeconds()*_chaosBloodGain;
-}
+//void UChaosManager::bloodPickup()
+//{
+//	_currentChaos += GetWorld()->GetTime().GetDeltaWorldTimeSeconds()*_chaosBloodGain;
+//}
 
 void UChaosManager::enemyKilled(float chaosAmount)
 {
-	_currentChaos += chaosAmount;
+	_currentChaos += chaosAmount * _chaosGainScaling;
 }
 
 void UChaosManager::addChaos(int chaosToAdd)
 {
-	_currentChaos += chaosToAdd;
+	_currentChaos += chaosToAdd * _chaosGainScaling;
 }

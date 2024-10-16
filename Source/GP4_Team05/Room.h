@@ -33,7 +33,7 @@ public:
 
 	void OnRoomLoad_Implementation() {}
 	void OnPlayerEnter_Implementation(){}
-	void OnRoomChaosBarFilled_Implementation() {}
+	void OnRoomChaosBarFilled_Implementation();
 
 	UFUNCTION() void BeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -50,6 +50,7 @@ public:
 	ARoomAnchor* GetUnusedAnchor();
 	UFUNCTION(BlueprintCallable) ARoomAnchor* GetOccupiedAnchor();
 
+	virtual void Tick(float deltaTime) override;
 
 	void SetBridgeRoom() { _bridgeRoom = true; }
 protected:
@@ -67,10 +68,10 @@ protected:
 	UChaosManager* _chaosManager;
 
 	// -1 = it will not pick a specific entrance. 0 - 3 to specify what door to use.
+	//UPROPERTY(BlueprintReadWrite) bool				    _roomCompleted = false;
 	UPROPERTY(EditAnywhere)	      int				   _prioritizeEntrance = -1;
 	UPROPERTY(BlueprintReadOnly)  int		           _roomDepth = -1;
 								  bool			       _colliderActiveOnSpawn = false;
-
 	UPROPERTY(EditAnywhere)       AEnemySpawner*	   _enemySpawner;
 	UPROPERTY(EditAnywhere)       TArray<ARoomAnchor*> _anchors;
 	UPROPERTY(EditAnywhere)       UBoxComponent*       _playerEnterTrigger;
