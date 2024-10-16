@@ -71,7 +71,6 @@ void ABaseEnemyClass::MeleeAttack()
 		if (HitActor == playerActor)
 		{
 			Cast<AAuraCharacter>(playerActor)->QueueDamage(_attackDamage, FIRE);
-			_attackTimer = 0;
 		}
 	}
 }
@@ -116,22 +115,22 @@ void ABaseEnemyClass::OnDeath()
 	Super::OnDeath();
 	
 	_controller->StopMovement();
-	FVector DeathLocation = GetActorLocation();
-	FRotator DeathRotation = GetActorRotation();
-	ABloodPuddle* BloodPuddle = ABloodPuddle::SpawnPuddle(DeathLocation, DeathRotation);
-	if (BloodPuddle)
-	{
-		FString LocationString = DeathLocation.ToString();
-		
-		   if (GEngine)
-			   GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Blood Puddle spawned at: %s"), *LocationString));
-	}
-	else
-	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Failed to spawn Blood Puddle!)");
-		
-	}
+	//FVector DeathLocation = GetActorLocation();
+	//FRotator DeathRotation = GetActorRotation();
+	//ABloodPuddle* BloodPuddle = ABloodPuddle::SpawnPuddle(DeathLocation, DeathRotation);
+	//if (BloodPuddle)
+	//{
+	//	FString LocationString = DeathLocation.ToString();
+	//	
+	//	   if (GEngine)
+	//		   GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Blood Puddle spawned at: %s"), *LocationString));
+	//}
+	//else
+	//{
+	//	if (GEngine)
+	//		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Failed to spawn Blood Puddle!)");
+	//	
+	//}
 	_spawner->DespawnEnemy(this);
 }
 

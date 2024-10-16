@@ -24,6 +24,8 @@ enum AuraAttackType
 	FIRE_ATTACK,
 	// Calls auras that are activated by Lightning Attack
 	LIGHTNING_ATTACK,
+	// Calls auras that are activated by Blood Attack
+	BLOOD_ATTACK,
 	// Calls auras that are activated bu Dash
 	DASH
 };
