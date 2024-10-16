@@ -77,3 +77,8 @@ void UChaosManager::enemyKilled()
 {
 	_currentChaos += _chaosEnemyGain;
 }
+
+void UChaosManager::addChaos(int chaosToAdd)
+{
+	_currentChaos += chaosToAdd;
+}

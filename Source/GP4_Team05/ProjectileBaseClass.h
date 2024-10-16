@@ -9,6 +9,7 @@
 class APlayerCharacter;
 class AAuraCharacter;
 class USphereComponent;
+class UChaosManager;
 
 USTRUCT()
 struct FStatIncrease
@@ -19,6 +20,7 @@ struct FStatIncrease
 	UPROPERTY(EditDefaultsOnly) int additionalForkAmount	  = 0;
 	UPROPERTY(EditDefaultsOnly) int additionalDamage		  = 0;
 	UPROPERTY(EditDefaultsOnly) int additionalExplosionRadius = 0;
+	UPROPERTY(EditDefaultsOnly) int additionalHitEnemiesCap	  = 0;
 };
 
 UCLASS()
@@ -45,17 +47,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileForkingRange	= 100;
 	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileDamage			= 20;
 	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseProjectileExplosionRadius	= 0;
+	//this only applies to the blood attack
+	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _baseHitEnemiesCap				= 0;
 	
 	int _projectileSpeed			= 5000;
 	int _projectileForking			= 0;
 	int _projectileDamage			= 20;
 	int	_projectileRange		    = 50000;
 	int _projectileExplosionRadius  = 0;
+	int _hitEnemiesCap				= 0;
 	
 
 	FVector _startLocation;
 
 	UPROPERTY()APlayerCharacter* _owningPlayer = nullptr;
+	UPROPERTY() UChaosManager*   _chaosManager = nullptr;
 
 	virtual void SpawnProjectile  (int upgradeAmount, APlayerCharacter* owningPlayer = nullptr);
 	virtual void DespawnProjectile();
