@@ -69,11 +69,15 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 				GetOccupiedAnchor()->CloseAnchorDoor();
 
 			if (_bridgeRoom)
-			{
-				_levelGenerator->LoadNewRoom();
+			{	
+				// For room rework
+				//check->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+				_levelGenerator->LoadNewRoom();	
 			}
 			else 
 			{
+				// For room rework
+				//check->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 				if(_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor())
 					_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->CloseAnchorDoor();
 			}
@@ -85,9 +89,7 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 
 void ARoom::ActivateRoom()
 {
-	_colliderActiveOnSpawn = true;
-	//SetActorHiddenInGame(false);
-	
+	_colliderActiveOnSpawn = true;	
 	FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->Build();
 }
 
