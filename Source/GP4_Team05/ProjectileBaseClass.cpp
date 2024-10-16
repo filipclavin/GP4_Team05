@@ -7,6 +7,7 @@
 #include "PlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "ChaosManager.h"
 
 // Sets default values
 AProjectileBaseClass::AProjectileBaseClass()
@@ -49,6 +50,7 @@ void AProjectileBaseClass::SpawnProjectile(int upgradeAmount, APlayerCharacter* 
 	int additionalDamage		= 0;
 	int additionalForkAmount	= 0;
 	int additionalExplodeRadius = 0;
+	int additionalHitEnemiesCap = 0;
 	_upgradeAmount = upgradeAmount;
 
 	for (int i = 0; i < upgradeAmount; i++)
@@ -60,6 +62,7 @@ void AProjectileBaseClass::SpawnProjectile(int upgradeAmount, APlayerCharacter* 
 			additionalDamage		+= upgradeStatIncreases[i].additionalDamage;
 			additionalForkAmount	+= upgradeStatIncreases[i].additionalForkAmount;
 			additionalExplodeRadius += upgradeStatIncreases[i].additionalExplosionRadius;
+			additionalHitEnemiesCap += upgradeStatIncreases[i].additionalHitEnemiesCap;
 			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Upgraded");
 		}
 	}
@@ -70,10 +73,15 @@ void AProjectileBaseClass::SpawnProjectile(int upgradeAmount, APlayerCharacter* 
 	_projectileDamage		   = _baseProjectileDamage			+ additionalDamage;
 	_projectileForking		   = _baseProjectileForking			+ additionalForkAmount;
 	_projectileExplosionRadius = _baseProjectileExplosionRadius + additionalExplodeRadius;
+	_hitEnemiesCap			   = _baseHitEnemiesCap				+ additionalHitEnemiesCap;
 
 	if (owningPlayer != nullptr)
 	{
 		_owningPlayer = owningPlayer;
+		if (_owningPlayer != nullptr)
+		{
+			_chaosManager = _owningPlayer->GetComponentByClass<UChaosManager>();
+		}
 	}
 }
 

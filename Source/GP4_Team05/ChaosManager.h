@@ -18,22 +18,19 @@ public:
 	UChaosManager();
 
 	void ScaleChaosBar();
+	void ScaleChaosGain(float gainIncreas);
 
 	float _currentChaos = 0;
 	bool  _chaosFull	= false;
 protected:
 
 	//The amount of chaos for a full bar
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _maxChaos		     = 1000;
+	UPROPERTY(EditAnywhere, Category="chaos stats") float _maxChaos		   = 1000;
 	//How much the chaos bar scales, only scales per rooms that uses the chaos bar.
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosScaling	     = 1.2f;
+	UPROPERTY(EditAnywhere, Category="chaos stats") float _maxChaosBarScaling = 1.2f;
 	//how much chaos per second you will gain by collecting blood. Can move this to an aura instead.
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosBloodGain    = 2;
-	//how much chaos you will gain by killing enemies
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosEnemyGain    = 20;
-	//time in seconds that the chaos bar will be full
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosFullDuration = 4;
-	
+	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosGainScaling	= 1.0f;
+		
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
@@ -47,6 +44,8 @@ public:
 	UFUNCTION(BlueprintCallable) void setupChaosManager(UChaosBarWidget* widget);
 
 	
-	UFUNCTION(BlueprintCallable) void bloodPickup();
+	//UFUNCTION(BlueprintCallable) void bloodPickup();
 	UFUNCTION(BlueprintCallable) void enemyKilled(float chaosAmount);
+	//intended for miscellaneous sources of chaos 
+	UFUNCTION(BlueprintCallable) void addChaos	 (int chaosToAdd);
 };
