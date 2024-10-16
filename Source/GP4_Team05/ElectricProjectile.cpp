@@ -5,6 +5,23 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+void AElectricProjectile::SpawnProjectile(int upgradeAmount, APlayerCharacter* owningPlayer)
+{
+	Super::SpawnProjectile(upgradeAmount, owningPlayer);
+
+	if (upgradeAmount >= enemyTypeFilterThreshold)
+	{
+		_filterEnemyType = true;
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "filtering enemy type");
+	}
+	if (upgradeAmount >= enemyHitOverspillThreshold)
+	{
+		_overspillHits = true;
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "overspilling hits");
+	}
+}
+
+
 void AElectricProjectile::HitEnemies(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -17,7 +34,16 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 	TArray<AActor*>	alreadyHitActors;
 	TQueue<AActor*> ActorsToProcess;
 
-	UClass* AuraCharacterClass = AAuraCharacter::StaticClass();
+	UClass* AuraCharacterClass;
+
+	if (!_filterEnemyType)
+	{
+		AuraCharacterClass = AAuraCharacter::StaticClass();
+	}
+	else
+	{
+		AuraCharacterClass = OtherActor->GetClass();
+	}
 	UClass* PuddleClass		   = ABloodPuddle::StaticClass();
 	
 	TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
@@ -73,6 +99,24 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 				FColor::Yellow, true, 4, 0, 1);
 			alreadyHitActors.Add(hitPuddle);
 			ActorsToProcess.Enqueue(hitPuddle);
+		}
+
+		if (_overspillHits && ActorsToProcess.IsEmpty())
+		{
+			AuraCharacterClass = AAuraCharacter::StaticClass();
+
+			UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange,
+			traceObjectTypes, AuraCharacterClass, alreadyHitActors, lightningHits);
+			DrawDebugSphere(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange, 12, FColor::Red, true, 4.0f);
+			
+			for (AActor* hitActor : lightningHits)
+			{
+				DrawDebugLine(GetWorld(), Actor->GetActorLocation(), hitActor->GetActorLocation(),
+					FColor::Yellow, true, 4, 0, 1);
+				alreadyHitActors.Add(hitActor);
+				ActorsToProcess.Enqueue(hitActor);
+				numberOfForks++;
+			}
 		}
 	}
 
