@@ -57,8 +57,8 @@ public:
 
 	UPROPERTY()APlayerCharacter* _owningPlayer = nullptr;
 
-	void SpawnProjectile  (int upgradeAmount, APlayerCharacter* owningPlayer = nullptr);
-	void DespawnProjectile();
+	virtual void SpawnProjectile  (int upgradeAmount, APlayerCharacter* owningPlayer = nullptr);
+	virtual void DespawnProjectile();
 
 	UFUNCTION()
 	virtual void HitEnemies(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
