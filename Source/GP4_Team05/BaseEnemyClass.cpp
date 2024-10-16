@@ -6,7 +6,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include "ChaosManager.h"
-#include "BloodPuddle.h"
 #include "EnemySpawner.h"
 
 ABaseEnemyClass::ABaseEnemyClass()
@@ -116,22 +115,6 @@ void ABaseEnemyClass::OnDeath()
 	Super::OnDeath();
 	
 	_controller->StopMovement();
-	FVector DeathLocation = GetActorLocation();
-	FRotator DeathRotation = GetActorRotation();
-	ABloodPuddle* BloodPuddle = ABloodPuddle::SpawnPuddle(DeathLocation, DeathRotation);
-	if (BloodPuddle)
-	{
-		FString LocationString = DeathLocation.ToString();
-		
-		   if (GEngine)
-			   GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Blood Puddle spawned at: %s"), *LocationString));
-	}
-	else
-	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Failed to spawn Blood Puddle!)");
-		
-	}
 	_spawner->DespawnEnemy(this);
 }
 
