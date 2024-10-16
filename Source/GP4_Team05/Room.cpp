@@ -3,7 +3,9 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "AuraCharacter.h"
+#include "NavigationSystem.h"
 #include "RoomAnchor.h"
+#include "AI/NavigationSystemBase.h"
 
 ARoom::ARoom()
 {
@@ -42,7 +44,7 @@ void ARoom::OnRoomComplete()
 
 		_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->OpenAnchorDoor();
 		GetOccupiedAnchor()->OpenAnchorDoor();
-	}	
+	}
 }
 
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -85,6 +87,8 @@ void ARoom::ActivateRoom()
 {
 	_colliderActiveOnSpawn = true;
 	//SetActorHiddenInGame(false);
+	
+	FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->Build();
 }
 
 void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
@@ -170,7 +174,7 @@ ARoomAnchor* ARoom::GetUnusedAnchor()
 
 ARoomAnchor* ARoom::GetOccupiedAnchor()
 {
-	if (_occupiedAnchor >= 0)
+	if (_occupiedAnchor >= 0 && _occupiedAnchor < _anchors.Num())
 		return _anchors[_occupiedAnchor];
 	else
 		return nullptr;
