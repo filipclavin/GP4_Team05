@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "AuraCharacter.h"
 #include "NavigationSystem.h"
+#include "ChaosManager.h"
 #include "RoomAnchor.h"
 #include "AI/NavigationSystemBase.h"
 
@@ -47,6 +48,14 @@ void ARoom::OnRoomComplete()
 	}
 }
 
+void ARoom::ResetChaosManager()
+{
+	if (!_enemySpawner) 
+	{
+
+	}
+}
+
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
  	if (!_hasEntered) {
@@ -76,6 +85,8 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 			{
 				if(_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor())
 					_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->CloseAnchorDoor();
+				
+				_chaosManager = check->GetComponentByClass<UChaosManager>();
 			}
 
 			OnPlayerEnter();

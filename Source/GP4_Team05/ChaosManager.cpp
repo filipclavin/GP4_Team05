@@ -13,12 +13,16 @@ UChaosManager::UChaosManager()
 	// ...
 }
 
+void UChaosManager::ScaleChaosBar()
+{
+	_maxChaos *= _chaosScaling;
+}
+
 
 // Called when the game starts
 void UChaosManager::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// ...
 }
 
@@ -73,7 +77,7 @@ void UChaosManager::bloodPickup()
 	_currentChaos += GetWorld()->GetTime().GetDeltaWorldTimeSeconds()*_chaosBloodGain;
 }
 
-void UChaosManager::enemyKilled()
+void UChaosManager::enemyKilled(float chaosAmount)
 {
-	_currentChaos += _chaosEnemyGain;
+	_currentChaos += chaosAmount;
 }

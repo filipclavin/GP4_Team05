@@ -7,7 +7,9 @@
 #include "Room.generated.h"
 
 class UBoxComponent;
+class UChaosManager;
 class ALevelGenerator;
+class AEnemySpawner;
 class ARoomAnchor;
 
 UCLASS()
@@ -23,10 +25,15 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnPlayerEnter();
 	// Calls when room is loaded from LevelGenerator::LoadNextRoom
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnRoomLoad();
+	// Called when roomed has filled chaos bar
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnRoomChaosBarFilled();
 	UFUNCTION(BlueprintCallable) void OnRoomComplete();
+
+	void ResetChaosManager();
 
 	void OnRoomLoad_Implementation() {}
 	void OnPlayerEnter_Implementation(){}
+	void OnRoomChaosBarFilled_Implementation() {}
 
 	UFUNCTION() void BeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -56,11 +63,15 @@ protected:
 	bool _bridgeRoom      = false;
 	bool _hasEntered      = false;
 	bool _roomIsCompleted = false;
-	 	
+	
+	UChaosManager* _chaosManager;
+
 	// -1 = it will not pick a specific entrance. 0 - 3 to specify what door to use.
 	UPROPERTY(EditAnywhere)	      int				   _prioritizeEntrance = -1;
 	UPROPERTY(BlueprintReadOnly)  int		           _roomDepth = -1;
 								  bool			       _colliderActiveOnSpawn = false;
+
+	UPROPERTY(EditAnywhere)       AEnemySpawner*	   _enemySpawner;
 	UPROPERTY(EditAnywhere)       TArray<ARoomAnchor*> _anchors;
 	UPROPERTY(EditAnywhere)       UBoxComponent*       _playerEnterTrigger;
 	UPROPERTY(BlueprintReadWrite) ALevelGenerator*     _levelGenerator = nullptr;
