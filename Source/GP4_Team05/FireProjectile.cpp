@@ -7,6 +7,18 @@
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
+void AFireProjectile::SpawnProjectile(int upgradeAmount, APlayerCharacter* owningPlayer)
+{
+	Super::SpawnProjectile(upgradeAmount, owningPlayer);
+	
+	if (upgradeAmount >= biggerOilExplosionThreshold)
+	{
+		_biggerOilExplosion = true;
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "bigger explosion");
+	}
+}
+
+
 void AFireProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -79,7 +91,7 @@ void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
 		AExplosiveBarrel* barrel = Cast<AExplosiveBarrel>(Character);
 		if (!barrel->_oilSpilled)
 		{
-			barrel->Explode();
+			barrel->Explode(_biggerOilExplosion);
 			barrel->Despawn();
 			return;
 		}
