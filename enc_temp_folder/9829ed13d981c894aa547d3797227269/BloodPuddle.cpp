@@ -144,7 +144,7 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 					
 	}
 }
-/*ABloodPuddle* ABloodPuddle::SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation)
+ABloodPuddle* ABloodPuddle::SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation)
 {
 	UWorld* World = GWorld;  // Use GWorld or call GetWorld() on an actor
 	if (World)
@@ -153,7 +153,7 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 	   // return World->SpawnActor<ABloodPuddle>(PuddleBP.Object, SpawnLocation, SpawnRotation);
 	}
 	return nullptr;
-	if (Actor)
+	/*if (Actor)
 	{
 		UWorld* World = Actor->GetWorld();
 		if (World)
@@ -164,6 +164,6 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 			return World->SpawnActor<ABloodPuddle>(ABloodPuddle::StaticClass(), Location, Rotation);
 		}
 	}
-	return nullptr;
-}*/
+	return nullptr;*/
+}
 
