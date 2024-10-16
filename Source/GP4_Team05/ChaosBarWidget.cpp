@@ -8,9 +8,9 @@
 
 void UChaosBarWidget::UpdateBar(float chaosLevel, float maxChaos)
 {
-	_maxChaos = maxChaos;
-	_targetChaos = chaosLevel;
-	_previousChaos = _currentChaos;
+	_maxChaos        = maxChaos;
+	_targetChaos     = chaosLevel;
+	_previousChaos   = _currentChaos;
 	_timeSinceUpdate = 0;
 }
 
@@ -25,17 +25,17 @@ void UChaosBarWidget::TickBar(float deltaTime)
 	
 	_currentChaos = FMath::Lerp(_currentChaos, _targetChaos, easeInOutQuint(_timeSinceUpdate));
 	
-	_chaosBar->SetPercent(_currentChaos/_maxChaos);
+	_chaosBar->SetPercent(/_maxChaos);
 
-	if (_currentChaos >= _maxChaos && !_chaosBarFull)
-	{
-		ChaosBarFull();
-	}
-
-	if (_currentChaos < _maxChaos && _chaosBarFull)
-	{
-		ChaosBarReset();
-	}
+	//if (_currentChaos >= _maxChaos && !_chaosBarFull)
+	//{
+	//	ChaosBarFull();
+	//}
+	//
+	//if (_currentChaos < _maxChaos && _chaosBarFull)
+	//{
+	//	ChaosBarReset();
+	//}
 }
 
 float UChaosBarWidget::easeInOutQuint(float x)

@@ -94,7 +94,7 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 				
 				_chaosManager = check->GetComponentByClass<UChaosManager>();
 				if(_chaosManager)
-					ResetChaosManager();
+				   ResetChaosManager();
 			}
 
 			OnPlayerEnter();
