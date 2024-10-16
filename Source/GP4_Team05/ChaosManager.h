@@ -46,4 +46,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable) void bloodPickup();
 	UFUNCTION(BlueprintCallable) void enemyKilled();
+	//intended for miscellaneous sources of chaos 
+	UFUNCTION(BlueprintCallable) void addChaos	 (int chaosToAdd);
 };
