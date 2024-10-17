@@ -30,12 +30,6 @@ void AFireProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	AActor* AuraHandlerActor = UGameplayStatics::GetActorOfClass(GetWorld(), AAuraHandler::StaticClass());
-
-	if (AuraHandlerActor)
-	{
-		_handler = Cast<AAuraHandler>(AuraHandlerActor);
-	}
 
 	_lingeringFireActor = GetWorld()->SpawnActor<ALingeringFire>(lingeringFire);
 	_lingeringFireActor->DespawnFire();

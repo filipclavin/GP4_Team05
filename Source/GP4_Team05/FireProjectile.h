@@ -13,8 +13,6 @@ class AFireProjectile : public AProjectileBaseClass
 	
 public:
 	
-	AAuraHandler* _handler = nullptr;
-
 	virtual void SpawnProjectile(int upgradeAmount, APlayerCharacter* owningPlayer) override;
 
 	virtual void BeginPlay() override;
