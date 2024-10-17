@@ -3,6 +3,7 @@
 
 #include "EnemySpawner.h"
 
+#include "AIController.h"
 #include "BaseEnemyClass.h"
 #include "SpawnArea.h"
 #include "ChaosManager.h"
@@ -67,11 +68,6 @@ void AEnemySpawner::SpawnNextWave()
 		}
 
 		TSet<ABaseEnemyClass*> toRemoveFromPool;
-
-		while (pool.Num() < finalCount)
-		{
-			PrepareEnemy(group);
-		}
 		
 		uint16 count = 0;
 		for (ABaseEnemyClass* enemy : pool)
@@ -94,13 +90,15 @@ void AEnemySpawner::SpawnNextWave()
 		
 	}
 
-	if (_currentWaveIndex == _waves.Num()) _currentWaveIndex = -1;
+	float duration = _waves[_currentWaveIndex].Duration;
+	
+	if (_currentWaveIndex == _waves.Num() - 1) _currentWaveIndex = -1;
 	
 	GetWorld()->GetTimerManager().SetTimer(
 		_waveTimer,
 		this,
 		&AEnemySpawner::SpawnNextWave,
-		_waves[_currentWaveIndex].Duration,
+		duration,
 		false
 	);
 }
@@ -117,6 +115,8 @@ void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint
 	);
 	enemy->SetActorHiddenInGame(false);
 	enemy->SetActorTickEnabled(true);
+	enemy->_controller->Possess(enemy);
+	
 	enemy->OnSpawned(this);
 }
 
@@ -125,6 +125,7 @@ void AEnemySpawner::DespawnEnemy(ABaseEnemyClass* enemy)
 	enemy->SetActorHiddenInGame(true);
 	enemy->SetActorEnableCollision(false);
 	enemy->SetActorTickEnabled(false);
+	enemy->_controller->UnPossess();
 	
 	_enemyPools[enemy->GetClass()].Add(enemy);
 }
@@ -134,6 +135,9 @@ AEnemySpawner::AEnemySpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	_root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(_root);
 }
 
 void AEnemySpawner::PrepareEnemy(FEnemyGroup& group)
@@ -148,6 +152,7 @@ void AEnemySpawner::PrepareEnemy(FEnemyGroup& group)
 	enemy->SetActorHiddenInGame(true);
 	enemy->SetActorEnableCollision(false);
 	enemy->SetActorTickEnabled(false);
+	enemy->_controller->UnPossess();
 
 	if (!_enemyPools.Contains(group.EnemyClass))
 	{
@@ -197,10 +202,12 @@ void AEnemySpawner::BeginPlay()
 	_navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(_player);
 
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
 	PrepareEnemies();
-
 	if (_waves.Num() > 0)
+	{
 		SpawnNextWave();
+	}
 }
 
 // Called every frame
