@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "AuraCharacter.h"
+#include "GameplayTagAssetInterface.h"
+#include "NativeGameplayTags.h"
 #include "BaseEnemyClass.generated.h"
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Spawned)
 
 class AAIController;
 class UBoxComponent;
@@ -13,13 +17,14 @@ class AEnemySpawner;
  * 
  */
 UCLASS()
-class GP4_TEAM05_API ABaseEnemyClass : public AAuraCharacter
+class GP4_TEAM05_API ABaseEnemyClass : public AAuraCharacter, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override { TagContainer = _tags; }
 
 	void OnSpawned(AEnemySpawner* spawner);
 
@@ -51,6 +56,8 @@ protected:
 	TArray<float> _thresholds;
 
 	UPROPERTY() ACharacter* _playerCharacter = nullptr;
+
+	UPROPERTY() FGameplayTagContainer _tags;
 
 	UFUNCTION(BlueprintCallable) void MeleeAttack			();
 	//incase you want to add extra logic to move orders

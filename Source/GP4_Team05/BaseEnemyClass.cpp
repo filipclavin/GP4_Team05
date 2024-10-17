@@ -9,6 +9,8 @@
 #include "BloodPuddle.h"
 #include "EnemySpawner.h"
 
+UE_DEFINE_GAMEPLAY_TAG(TAG_Spawned, "Spawned")
+
 ABaseEnemyClass::ABaseEnemyClass()
 {
 	_meleeHitbox = CreateDefaultSubobject<UBoxComponent>("melee hitbox");
@@ -53,6 +55,7 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 void ABaseEnemyClass::OnSpawned(AEnemySpawner* spawner)
 {
 	_spawner = spawner;
+	_tags.AddTag(TAG_Spawned);
 
 	EnemyMoveToActor(_playerCharacter);
 }
