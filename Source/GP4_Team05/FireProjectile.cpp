@@ -3,8 +3,10 @@
 #include "AuraDataInclude.h"
 #include "AuraCharacter.h"
 #include "AuraHandler.h"
+#include "BaseEnemyClass.h"
 #include "ExplosiveBarrel.h"
 #include "PlayerCharacter.h"
+#include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void AFireProjectile::SpawnProjectile(int upgradeAmount, APlayerCharacter* owningPlayer)
@@ -15,6 +17,11 @@ void AFireProjectile::SpawnProjectile(int upgradeAmount, APlayerCharacter* ownin
 	{
 		_biggerOilExplosion = true;
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "bigger explosion");
+	}
+	if (upgradeAmount >= lingeringFireThreshold)
+	{
+		_lingeringFire = true;
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "lingering fire");
 	}
 }
 
@@ -29,8 +36,10 @@ void AFireProjectile::BeginPlay()
 	{
 		_handler = Cast<AAuraHandler>(AuraHandlerActor);
 	}
-}
 
+	_lingeringFireActor = GetWorld()->SpawnActor<ALingeringFire>(lingeringFire);
+	_lingeringFireActor->DespawnFire();
+}
 
 void AFireProjectile::DealDamage(TArray<AActor*> hitCharacter)
 {
@@ -38,6 +47,9 @@ void AFireProjectile::DealDamage(TArray<AActor*> hitCharacter)
 	int numberOfForks = 0;
 
 	FireExplosion(hitCharacter[0]->GetActorLocation());
+	_lingeringFireActor->SetActorLocation(hitCharacter[0]->GetActorLocation());
+	_lingeringFireActor->SpawnFire(_projectileExplosionRadius);
+	
 	
 	for (AActor* hitActor : hitCharacter)
 	{
@@ -107,4 +119,13 @@ void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
 	
 	Character->QueueDamage(_explosionDamage, ElementTypes::FIRE);
 	_handler->CastAuraByName("FIRE", Character, nullptr);
+}
+
+void AFireProjectile::SetOnFire(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->IsA(ABaseEnemyClass::StaticClass()))
+	{
+		dealFireDamage(Cast<AAuraCharacter>(OtherActor));
+	}
 }
