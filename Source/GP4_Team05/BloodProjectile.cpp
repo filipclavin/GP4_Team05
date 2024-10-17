@@ -1,5 +1,6 @@
 #include "BloodProjectile.h"
 
+#include "AuraHandler.h"
 #include "BaseEnemyClass.h"
 #include "ChaosManager.h"
 #include "PlayerCharacter.h"
@@ -24,6 +25,18 @@ void ABloodProjectile::SpawnProjectile(int upgradeAmount, APlayerCharacter* owni
 	coneRoot->SetRelativeScale3D(FVector(_projectileRange/100.f));
 
 	_owningPlayer->UpdateAurasOnAttackCast(BLOOD_ATTACK);
+
+	if (upgradeAmount >= AddArmorThreshold)
+	{
+		addArmor = true;
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "gain armor");
+	}
+
+	if (upgradeAmount >= GainHealthThreshold)
+	{
+		healPlayer = true;
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "heal player");
+	}
 }
 
 
@@ -43,7 +56,11 @@ void ABloodProjectile::Tick(float DeltaSeconds)
 
 	if (!overlappingActors.IsEmpty())
 	{
-		
+		if (addArmor)
+		{
+		_handler->CastAuraByName("BLOOD ARMOR", _owningPlayer, nullptr);
+			
+		}
 		DealDamage(overlappingActors);
 		
 	}
@@ -81,6 +98,10 @@ void ABloodProjectile::DealDamage(TArray<AActor*> hitCharacter)
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, hitActor->GetName() + " Hit");
 
 				_chaosManager->addChaos(ChaosAddPerHit);
+				if (healPlayer)
+				{
+					_owningPlayer->QueueHeal(healPerHit);
+				}
 				
 				hitActors.Emplace(hitActor);
 				_enemiesHit++;

@@ -20,12 +20,19 @@ public:
 	UPROPERTY(EditAnywhere, Category="Projectile Stats") float abilityDuration = 0.4;
 	UPROPERTY(EditAnywhere, Category="Projectile Stats") float AttackConeAngle = 0.3;
 	UPROPERTY(EditAnywhere, Category="Projectile Stats") int   ChaosAddPerHit  = 100;
+	UPROPERTY(EditAnywhere, Category="Projectile Stats") int   healPerHit	    = 10;
+	UPROPERTY(EditAnywhere, Category="Projectile Stats") int   AddArmorThreshold = 3;
+	UPROPERTY(EditAnywhere, Category="Projectile Stats") int   GainHealthThreshold = 4;
+	UPROPERTY()TSet<AActor*> hitActors;
 
-	TSet<AActor*> hitActors;
-
+	bool addArmor = false;
+	bool healPlayer = false;
+	
 	float _durationTimer = 0;
 	int	  _enemiesHit	 = 0;
 
 	UPROPERTY(VisibleAnywhere)UStaticMeshComponent* coneMesh = nullptr;
 	UPROPERTY(VisibleAnywhere)USceneComponent*		coneRoot = nullptr;
+
+	
 };

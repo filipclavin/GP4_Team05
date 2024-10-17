@@ -10,6 +10,7 @@ class APlayerCharacter;
 class AAuraCharacter;
 class USphereComponent;
 class UChaosManager;
+class AAuraHandler;
 
 USTRUCT()
 struct FStatIncrease
@@ -36,7 +37,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
+	UPROPERTY()AAuraHandler* _handler = nullptr;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(VisibleAnywhere) USphereComponent* _projectileCollider = nullptr;

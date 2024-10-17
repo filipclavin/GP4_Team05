@@ -4,6 +4,7 @@
 #include "ProjectileBaseClass.h"
 
 #include "AuraCharacter.h"
+#include "AuraHandler.h"
 #include "PlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,6 +25,13 @@ void AProjectileBaseClass::BeginPlay()
 {
 	Super::BeginPlay();
 	_projectileCollider->OnComponentBeginOverlap.AddDynamic(this, &AProjectileBaseClass::HitEnemies);
+
+	AActor* AuraHandlerActor = UGameplayStatics::GetActorOfClass(GetWorld(), AAuraHandler::StaticClass());
+
+	if (AuraHandlerActor)
+	{
+		_handler = Cast<AAuraHandler>(AuraHandlerActor);
+	}
 }
 
 // Called every frame

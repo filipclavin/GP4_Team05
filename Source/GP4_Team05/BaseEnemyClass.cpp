@@ -55,8 +55,6 @@ void ABaseEnemyClass::OnSpawned(AEnemySpawner* spawner)
 {
 	_spawner = spawner;
 	_tags.AddTag(TAG_Spawned);
-
-	EnemyMoveToActor(_playerCharacter);
 }
 
 void ABaseEnemyClass::MeleeAttack()
