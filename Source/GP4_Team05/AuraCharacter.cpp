@@ -85,7 +85,7 @@ void AAuraCharacter::UpdateAuras(const float deltaTime)
 {
 	if (_characterIsActive) {
 		if (!_combinedStats->_isAlive) {
-			OnDeath();
+			Die();
 			if (GEngine)
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "DEAD!");
 			_characterIsActive = false;
@@ -125,7 +125,7 @@ void AAuraCharacter::UpdateAuras(const float deltaTime)
 	}
 }
 
-void AAuraCharacter::OnDeath()
+void AAuraCharacter::Die()
 {
 	for (uint8 i = 0; i < AURA_TYPE_COUNT; i++)
 	{

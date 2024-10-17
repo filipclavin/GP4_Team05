@@ -3,6 +3,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "AuraCharacter.h"
+#include "EnemySpawner.h"
 #include "NavigationSystem.h"
 #include "ChaosManager.h"
 #include "RoomAnchor.h"

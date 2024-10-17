@@ -100,8 +100,13 @@ void AExplosiveBarrel::EndFire()
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "despawning fire");
 }
 
-void AExplosiveBarrel::Explode()
+void AExplosiveBarrel::Explode(bool biggerExplode)
 {
+	if (biggerExplode)
+	{
+		explosionRadius = biggerExplosionRadius;
+	}
+	
 	TArray<AActor*> hitEnemies;
 	TArray<AActor*> IgnoreArray;
 

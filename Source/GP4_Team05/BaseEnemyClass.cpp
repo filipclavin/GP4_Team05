@@ -9,6 +9,8 @@
 #include "BloodPuddle.h"
 #include "EnemySpawner.h"
 
+UE_DEFINE_GAMEPLAY_TAG(TAG_Spawned, "Spawned")
+
 ABaseEnemyClass::ABaseEnemyClass()
 {
 	_meleeHitbox = CreateDefaultSubobject<UBoxComponent>("melee hitbox");
@@ -52,6 +54,7 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 void ABaseEnemyClass::OnSpawned(AEnemySpawner* spawner)
 {
 	_spawner = spawner;
+	_tags.AddTag(TAG_Spawned);
 
 	EnemyMoveToActor(_playerCharacter);
 }
@@ -69,7 +72,7 @@ void ABaseEnemyClass::MeleeAttack()
 	{
 		if (HitActor == playerActor)
 		{
-			Cast<AAuraCharacter>(playerActor)->QueueDamage(_attackDamage, FIRE);
+			Cast<AAuraCharacter>(playerActor)->QueueDamage(_attackDamage, PHYSICAL);
 			_attackTimer = 0;
 		}
 	}
@@ -110,27 +113,32 @@ void ABaseEnemyClass::incrementTimerCounter(float deltatime)
 	_attackTimer += deltatime;
 }
 
-void ABaseEnemyClass::OnDeath()
+void ABaseEnemyClass::Die()
 {
-	Super::OnDeath();
+	OnDeath();
+	Super::Die();
 	
+	//FVector DeathLocation = GetActorLocation();
+	//FRotator DeathRotation = GetActorRotation();
+	//ABloodPuddle* BloodPuddle = ABloodPuddle::SpawnPuddle(DeathLocation, DeathRotation);
+	//if (BloodPuddle)
+	//{
+	//	FString LocationString = DeathLocation.ToString();
+	//	
+	//	   if (GEngine)
+	//		   GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Blood Puddle spawned at: %s"), *LocationString));
+	//}
+	//else
+	//{
+	//	if (GEngine)
+	//		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Failed to spawn Blood Puddle!)");
+	//	
+	//}
+}
+
+void ABaseEnemyClass::Despawn()
+{
 	_controller->StopMovement();
-	FVector DeathLocation  = GetActorLocation();
-	FRotator DeathRotation = GetActorRotation();
-	ABloodPuddle* BloodPuddle = ABloodPuddle::SpawnPuddle(DeathLocation, DeathRotation);
-	if (BloodPuddle)
-	{
-		FString LocationString = DeathLocation.ToString();
-		
-		   if (GEngine)
-			   GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Blood Puddle spawned at: %s"), *LocationString));
-	}
-	else
-	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Failed to spawn Blood Puddle!)");
-		
-	}
 	_spawner->DespawnEnemy(this);
 }
 

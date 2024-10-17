@@ -31,10 +31,12 @@ public:
 	UFUNCTION(BlueprintCallable) void EndFire();
 
 	void SpreadFire();
-	void Explode   ();
+	void Explode   (bool biggerExplode = false);
 
-	UPROPERTY(EditDefaultsOnly, Category="explosion") int explosionRadius = 300;
-	UPROPERTY(EditDefaultsOnly, Category="explosion") int explosionDamage = 20;
+	UPROPERTY(EditDefaultsOnly, Category="explosion") int explosionRadius		= 300;
+	//to be used when the fire ball is upgraded
+	UPROPERTY(EditDefaultsOnly, Category="explosion") int biggerExplosionRadius = 600;
+	UPROPERTY(EditDefaultsOnly, Category="explosion") int explosionDamage		= 20;
 
 
 	UFUNCTION(BlueprintImplementableEvent) void SpillOilEvent();

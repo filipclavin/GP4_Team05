@@ -17,7 +17,7 @@ ABloodPuddle::ABloodPuddle()
 	_puddleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PuddleMesh"));
 	SetRootComponent(_puddleMesh);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> PuddleMeshAsset(TEXT("StaticMesh'/Game/Path/To/Your/BloodPuddleMesh.BloodPuddleMesh'")); // Update the path accordingly
+	/*static ConstructorHelpers::FObjectFinder<UStaticMesh> PuddleMeshAsset(TEXT("StaticMesh'/Game/Path/To/Your/BloodPuddleMesh.BloodPuddleMesh'")); // Update the path accordingly
 	if (PuddleMeshAsset.Succeeded())
 	{
 		_puddleMesh->SetStaticMesh(PuddleMeshAsset.Object);
@@ -26,14 +26,12 @@ ABloodPuddle::ABloodPuddle()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to load blood puddle mesh!"));
-	}
+	}*/
 
 
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	_collisionBox->SetupAttachment(RootComponent);
 	_collisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABloodPuddle::OnPlayerEnterPuddle);
-
-	
 
 	//_fadeSpeed = 0.5f;
 	_fadeSpeedStart = 0.2f;
@@ -143,25 +141,27 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 	//				
 	//}
 }
-ABloodPuddle* ABloodPuddle::SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation)
+/*ABloodPuddle* ABloodPuddle::SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation)
 {
-	//UWorld* World = GetWorld();  // Use GWorld or call GetWorld() on an actor
-	//if (World)
-	//{
-		//static ConstructorHelpers::FObjectFinder<UClass> PuddleBP(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_BloodPuddle.BP_BloodPuddle'"));
-		//return GetWorld()->SpawnActor<ABloodPuddle>(PuddleBP.Object, SpawnLocation, SpawnRotation);
-	//}
+	UWorld* World = GWorld;  // Use GWorld or call GetWorld() on an actor
+	if (World)
+	{
+		//static ConstructorHelpers::FObjectFinder<UClass> PuddleBP(TEXT("/Game/Blueprints/BP_BloodPuddle.BP_BloodPuddle_C"));
+	   // return World->SpawnActor<ABloodPuddle>(PuddleBP.Object, SpawnLocation, SpawnRotation);
+	}
+	
 	return nullptr;
-	/*if (Actor)
+	if (Actor)
 	{
 		UWorld* World = Actor->GetWorld();
 		if (World)
-		{
+		{8
+
 			FVector Location = Actor->GetActorLocation();
 			FRotator Rotation = Actor->GetActorRotation();
 			return World->SpawnActor<ABloodPuddle>(ABloodPuddle::StaticClass(), Location, Rotation);
 		}
 	}
-	return nullptr;*/
-}
+	return nullptr;
+}*/
 
