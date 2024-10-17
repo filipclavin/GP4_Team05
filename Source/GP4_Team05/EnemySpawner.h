@@ -62,24 +62,29 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 	UPROPERTY() UNavigationSystemV1*	_navSys			= nullptr;
 
 	TMap<TSubclassOf<ABaseEnemyClass>, TSet<ABaseEnemyClass*>> _enemyPools;
+
+	UPROPERTY() USceneComponent* _root = nullptr;
 	
 	FActorSpawnParameters spawnParams;
 	
-	void SpawnNextWave();
 	void SpawnEnemy
 	(
 		ABaseEnemyClass* enemy,
 		const FVector& spawnPoint = FVector::ZeroVector
 	);
+	void SpawnNextWave();
+	
 	void DespawnEnemy(ABaseEnemyClass* enemy);
+	
 	void PrepareEnemy(FEnemyGroup& group);
 	void PrepareEnemies();
+	
 	int ApplyRoomDepthMultiplier(int count, float depthScalingFactor ) const;
 	
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

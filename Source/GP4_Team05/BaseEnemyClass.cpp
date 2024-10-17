@@ -114,11 +114,11 @@ void ABaseEnemyClass::incrementTimerCounter(float deltatime)
 	_attackTimer += deltatime;
 }
 
-void ABaseEnemyClass::OnDeath()
+void ABaseEnemyClass::Die()
 {
-	Super::OnDeath();
+	OnDeath();
+	Super::Die();
 	
-	_controller->StopMovement();
 	//FVector DeathLocation = GetActorLocation();
 	//FRotator DeathRotation = GetActorRotation();
 	//ABloodPuddle* BloodPuddle = ABloodPuddle::SpawnPuddle(DeathLocation, DeathRotation);
@@ -135,6 +135,11 @@ void ABaseEnemyClass::OnDeath()
 	//		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Failed to spawn Blood Puddle!)");
 	//	
 	//}
+}
+
+void ABaseEnemyClass::Despawn()
+{
+	_controller->StopMovement();
 	_spawner->DespawnEnemy(this);
 }
 
