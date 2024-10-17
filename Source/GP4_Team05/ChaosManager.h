@@ -20,6 +20,7 @@ public:
 	void ScaleChaosBar();
 	void ScaleChaosGain(float gainIncreas);
 	void ResetChaosBarProgress();
+	void DisableChaosBar(bool isActive);
 
 	float GetCurrentChaos();
 

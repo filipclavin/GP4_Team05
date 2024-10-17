@@ -74,7 +74,6 @@ void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 	}
 	
 	_currentRoom = newRoom;
-	//_currentRoom->_roomDepth = _currentRoomDepth;
 }
 
 void ALevelGenerator::BeginPlay()

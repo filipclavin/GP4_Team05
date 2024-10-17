@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Room.generated.h"
 
+class ANavMeshBoundsVolume;
 class UBoxComponent;
 class UChaosManager;
 class ALevelGenerator;
@@ -27,6 +28,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnRoomLoad();
 	// Called when roomed has filled chaos bar
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnRoomChaosBarFilled();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnInteractablePickup();
 	UFUNCTION(BlueprintCallable) void OnRoomComplete();
 
 	void ResetChaosManager();
@@ -34,6 +36,7 @@ public:
 	void OnRoomLoad_Implementation() {}
 	void OnPlayerEnter_Implementation(){}
 	void OnRoomChaosBarFilled_Implementation();
+	void OnInteractablePickup_Implementation();
 
 	UFUNCTION() void BeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -49,6 +52,7 @@ public:
 	void AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room);
 	ARoomAnchor* GetUnusedAnchor();
 	UFUNCTION(BlueprintCallable) ARoomAnchor* GetOccupiedAnchor();
+	UFUNCTION(BlueprintCallable) bool HasPickedUpBuff() { return _hasPickedUpInteractable; }
 
 	virtual void Tick(float deltaTime) override;
 
@@ -63,17 +67,19 @@ protected:
 	INT32 _occupiedAnchor = -1;
 	bool _bridgeRoom      = false;
 	bool _hasEntered      = false;
-	bool _roomIsCompleted = false;
 	
-	UChaosManager* _chaosManager;
-
+	UPROPERTY(BlueprintReadWrite) bool	         _hasPickedUpInteractable = false;
+	UPROPERTY(BlueprintReadOnly) UChaosManager*  _chaosManager;
+	UPROPERTY(BlueprintReadOnly) bool			 _roomIsCompleted = false;
 	// -1 = it will not pick a specific entrance. 0 - 3 to specify what door to use.
 	//UPROPERTY(BlueprintReadWrite) bool				    _roomCompleted = false;
 	UPROPERTY(EditAnywhere)	      int				   _prioritizeEntrance = -1;
 	UPROPERTY(BlueprintReadOnly)  int		           _roomDepth = -1;
-								  bool			       _colliderActiveOnSpawn = false;
-	UPROPERTY(EditAnywhere)       AEnemySpawner*	   _enemySpawner;
-	UPROPERTY(EditAnywhere)       TArray<ARoomAnchor*> _anchors;
-	UPROPERTY(EditAnywhere)       UBoxComponent*       _playerEnterTrigger;
-	UPROPERTY(BlueprintReadWrite) ALevelGenerator*     _levelGenerator = nullptr;
+	UPROPERTY(EditAnywhere)		  bool			       _colliderActiveOnSpawn = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) ANavMeshBoundsVolume* _navMesh      = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) AEnemySpawner*	      _enemySpawner = nullptr;
+	UPROPERTY(EditAnywhere)						TArray<ARoomAnchor*>  _anchors;
+	UPROPERTY(EditAnywhere)						UBoxComponent*        _playerEnterTrigger;
+	UPROPERTY(BlueprintReadWrite)				ALevelGenerator*      _levelGenerator = nullptr;
 };

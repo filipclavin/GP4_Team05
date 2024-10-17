@@ -65,7 +65,7 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 	
 	FActorSpawnParameters spawnParams;
 	
-	void SpawnNextWave();
+	UFUNCTION(BlueprintCallable) void SpawnNextWave();
 	void SpawnEnemy
 	(
 		ABaseEnemyClass* enemy,

@@ -54,10 +54,18 @@ void ARoom::ResetChaosManager()
 	{
 		_chaosManager->ResetChaosBarProgress();
 		_chaosManager->ScaleChaosBar();
+		_chaosManager->DisableChaosBar(true);
 	}
+	else 
+		_chaosManager->DisableChaosBar(false);
 }
 
 void ARoom::OnRoomChaosBarFilled_Implementation()
+{
+	OnRoomComplete();
+}
+
+void ARoom::OnInteractablePickup_Implementation()
 {
 	OnRoomComplete();
 }
@@ -105,9 +113,9 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 void ARoom::ActivateRoom()
 {
 	_colliderActiveOnSpawn = true;
-	//SetActorHiddenInGame(false);
-	
-	FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->Build();
+
+	if(_navMesh)
+		FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->Build();
 }
 
 void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
@@ -201,11 +209,12 @@ ARoomAnchor* ARoom::GetOccupiedAnchor()
 
 void ARoom::Tick(float deltaTime)
 {
+	Super::Tick(deltaTime);
 	if(!_roomIsCompleted)
 	{
 		if (_chaosManager)
 			if (_chaosManager->ChaosBarIsFilled()) 
-				OnRoomChaosBarFilled_Implementation();
+				OnRoomChaosBarFilled();
 	}
 }
 

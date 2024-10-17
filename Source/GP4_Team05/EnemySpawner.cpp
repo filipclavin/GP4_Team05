@@ -198,9 +198,6 @@ void AEnemySpawner::BeginPlay()
 
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	PrepareEnemies();
-
-	if (_waves.Num() > 0)
-		SpawnNextWave();
 }
 
 // Called every frame
