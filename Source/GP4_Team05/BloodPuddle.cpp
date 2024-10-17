@@ -68,7 +68,7 @@ void ABloodPuddle::BeginPlay()
 			_dynamicMaterial->SetScalarParameterValue(FName("Opacity"), 1.0f);
 		}
 	}
-	SetActorScale3D(FVector(1.0f));
+	SetActorScale3D(FVector(2.0f));
 	//_opacity = 1.0f;
 	
 }
