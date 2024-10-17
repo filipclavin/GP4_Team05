@@ -74,7 +74,6 @@ class GP4_TEAM05_API AEnemySpawner : public AActor
 		ABaseEnemyClass* enemy,
 		const FVector& spawnPoint = FVector::ZeroVector
 	);
-	void SpawnNextWave();
 	
 	void DespawnEnemy(ABaseEnemyClass* enemy);
 	
