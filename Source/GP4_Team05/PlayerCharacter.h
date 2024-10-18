@@ -53,7 +53,7 @@ private:
 	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
 
 	
-	UPROPERTY(VisibleAnywhere) UCameraComponent*	_playerCameraComponent = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UCameraComponent*	_playerCameraComponent = nullptr;
 	UPROPERTY(VisibleAnywhere) USpringArmComponent* _cameraArmComponent    = nullptr;
 	UPROPERTY(VisibleAnywhere) UBoxComponent*		_meleeHitbox		   = nullptr;
 	UPROPERTY(VisibleAnywhere) USphereComponent*	_dashHitbox			   = nullptr;
