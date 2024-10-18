@@ -53,7 +53,7 @@ private:
 	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
 
 	
-	UPROPERTY(VisibleAnywhere) UCameraComponent*	_playerCameraComponent = nullptr;
+	
 	UPROPERTY(VisibleAnywhere) USpringArmComponent* _cameraArmComponent    = nullptr;
 	UPROPERTY(VisibleAnywhere) UBoxComponent*		_meleeHitbox		   = nullptr;
 	UPROPERTY(VisibleAnywhere) USphereComponent*	_dashHitbox			   = nullptr;
@@ -164,8 +164,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _playerLevel   = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category=Upgrade) TArray<FPlayerUpgrades> Upgrades;
-
 	UFUNCTION(BlueprintCallable) void UpgradePlayer();
+
+		
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UCameraComponent*	_playerCameraComponent = nullptr;
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
