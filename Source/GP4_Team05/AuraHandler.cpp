@@ -89,6 +89,42 @@ FString AAuraHandler::GetAuraDescription(FString nameOfAura)
 	return "Aura not found :(";
 }
 
+TArray<UAura*> AAuraHandler::GetRandomAuraFromSpawnList()
+{
+	if(!_auraSpawnList.IsEmpty())
+	{
+		TArray<UAura*> auraRandomList = TArray<UAura*>();
+		for (INT32 i = 0; i < 3; i++)
+		{
+			INT32 randomIndex = 0;
+			UAura* aura = GetRandomAura(randomIndex);
+
+			for (INT32 j = 0; j < auraRandomList.Num(); j++)
+			{
+				if (j != i) 
+				{
+					if (aura == auraRandomList[j]) {
+						aura = GetRandomAura(randomIndex);
+					}
+				}
+			}
+				
+
+			// If aura cannot stack, remove it from the spawn pool!
+			if (!aura->_canStack)
+			{
+				_auraSpawnList[randomIndex] = _auraSpawnList[_auraSpawnList.Num() - 1];
+				_auraSpawnList.Pop();
+			}
+
+			auraRandomList.Add(aura);
+		}
+	
+		return auraRandomList;
+	}
+	return TArray<UAura*>();
+}
+
 void AAuraHandler::FetchAllAurasAttached()
 {
 	GetComponents<UAura>(_auraList);
@@ -101,6 +137,10 @@ void AAuraHandler::FetchAllAurasAttached()
 		aura->InitializeBasicProperties();
 		_auraNameMap.Add(aura->_auraName, i);
 
+		// Add Aura to spawn interactable list if it is set 
+		if (aura->_auraSpawnAsInteractable)
+			_auraSpawnList.Add(aura->AuraName());
+
 		// check what poolCount is higher, id aura->_poolCount is less than Minimun than it will override it!
 		int poolCount = aura->_poolCount < _minimunPoolCount ? _minimunPoolCount : aura->_poolCount;
 		aura->_auraPool.Reserve(poolCount); // reserve pool list
@@ -111,6 +151,12 @@ void AAuraHandler::FetchAllAurasAttached()
 			aura->_auraHandler = this;
 		}
 	}
+}
+
+UAura* AAuraHandler::GetRandomAura(INT32& randomIndex)
+{
+	randomIndex = FMath::RandRange(0, _auraSpawnList.Num() - 1);
+	return _auraList[_auraNameMap[_auraSpawnList[randomIndex]]];
 }
 
 UAura* AAuraHandler::GetPooledAura(UAura* aura)

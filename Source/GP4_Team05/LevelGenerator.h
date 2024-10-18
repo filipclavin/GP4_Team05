@@ -9,6 +9,7 @@
 class ARoom;
 class URoomGenerationData;
 class ULevelStreaming;
+class AAuraInteractableSelector;
 
 UCLASS()
 class GP4_TEAM05_API ALevelGenerator : public AActor
@@ -32,9 +33,10 @@ protected:
 
 	UPROPERTY(EditAnywhere) int     _maxNumberOfRooms;
 
-	ARoom*				 _currentRoom	   = nullptr;
-	ARoom*				 _bridgeRoom	   = nullptr;
-	URoomGenerationData* _roomGenDataAsset = nullptr;
+	ARoom*				       _currentRoom	     = nullptr;
+	ARoom*				       _bridgeRoom	     = nullptr;
+	URoomGenerationData*       _roomGenDataAsset = nullptr;
+	AAuraInteractableSelector* _auraSelector     = nullptr;
 
 private:
 	friend class AWorldGameMode;

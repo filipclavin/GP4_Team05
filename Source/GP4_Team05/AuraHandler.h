@@ -24,11 +24,15 @@ public:
 
 	UFUNCTION(BlueprintCallable) FString GetAuraDescription(FString nameOfAura);
 
+	TArray<UAura*> GetRandomAuraFromSpawnList();
+
 	void FetchAllAurasAttached();
 protected:
-	
+	UAura* GetRandomAura(INT32& randomIndex);
+
 	UPROPERTY(BlueprintReadOnly) 
 	TArray<UAura*>       _auraList;
+	TArray<FString>		 _auraSpawnList;
 	TMap<FString, INT32> _auraNameMap; 
 	
 	// The AActor that all the pooled Auras are attached to!

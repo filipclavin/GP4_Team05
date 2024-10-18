@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Room.generated.h"
 
+class AAuraInteractableSelector;
 class ANavMeshBoundsVolume;
 class UBoxComponent;
 class UChaosManager;
@@ -50,7 +51,8 @@ public:
 	void ActivateRoom();
 	
 	void AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room);
-	ARoomAnchor* GetUnusedAnchor();
+
+	UFUNCTION(BlueprintCallable) ARoomAnchor* GetUnusedAnchor();
 	UFUNCTION(BlueprintCallable) ARoomAnchor* GetOccupiedAnchor();
 	UFUNCTION(BlueprintCallable) bool HasPickedUpBuff() { return _hasPickedUpInteractable; }
 
@@ -68,9 +70,10 @@ protected:
 	bool _bridgeRoom      = false;
 	bool _hasEntered      = false;
 	
-	UPROPERTY(BlueprintReadWrite) bool	         _hasPickedUpInteractable = false;
-	UPROPERTY(BlueprintReadOnly) UChaosManager*  _chaosManager;
-	UPROPERTY(BlueprintReadOnly) bool			 _roomIsCompleted = false;
+	UPROPERTY(BlueprintReadOnly) AAuraInteractableSelector* _auraSelector = nullptr;
+	UPROPERTY(BlueprintReadWrite) bool					    _hasPickedUpInteractable = false;
+	UPROPERTY(BlueprintReadOnly) UChaosManager*			    _chaosManager;
+	UPROPERTY(BlueprintReadOnly) bool					    _roomIsCompleted = false;
 	// -1 = it will not pick a specific entrance. 0 - 3 to specify what door to use.
 	//UPROPERTY(BlueprintReadWrite) bool				    _roomCompleted = false;
 	UPROPERTY(EditAnywhere)	      int				   _prioritizeEntrance = -1;
