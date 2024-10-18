@@ -41,6 +41,14 @@ void AEnemySpawner::SpawnNextWave()
 			UE_LOG(LogTemp, Error, TEXT("Enemy group has no spawn area assigned!"));
 			continue;
 		}
+		
+		TSet<ABaseEnemyClass*>& pool = _enemyPools[group.EnemyClass];
+
+		if (pool.Num() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No enemies in pool for %s, skipping this group..."), *group.EnemyClass->GetName());
+			continue;
+		}
 			
 		uint16 finalCount = ApplyRoomDepthMultiplier
 		(
@@ -49,7 +57,6 @@ void AEnemySpawner::SpawnNextWave()
 		);
 		UE_LOG(LogTemp, Warning, TEXT("Trying to spawn group of %d %ss"), finalCount, *group.EnemyClass->GetName());
 		
-		TSet<ABaseEnemyClass*>& pool = _enemyPools[group.EnemyClass];
 		if (pool.Num() < finalCount)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Not enough enemies in pool, only %d available!"), pool.Num());
