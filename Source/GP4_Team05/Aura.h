@@ -73,15 +73,17 @@ protected:
 	// If true this aura has a chance to spawn as an Interactable pickup at room completion. 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)  bool _auraSpawnAsInteractable = false;
 	// Name of aura.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)  FString _auraName;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraName;
 	// Description of Aura
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)  FString _auraDescription;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraDescription;
 	// Icon of the aura, used for UI, Auras with no icon will not appear in the UI.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)  UTexture2D* _icon;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) UTexture2D* _icon;
 	// Auras updates in the order of Buff -> Debuffs and to differentiate them in UI 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)  TEnumAsByte<AuraType> _type = AuraType::BUFF;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<AuraType> _type = AuraType::BUFF;
 	// This is only for ON_HIT auras, BUFF and DEBUFF are not affected by this. 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)  TEnumAsByte<AuraAttackType> _onAttackType = AuraAttackType::MELEE;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<AuraAttackType> _onAttackType    = AuraAttackType::MELEE;
+	// This is for when spawning as AuraInteractable to set it's color and effect for players to understand what type of element it affects. 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<ElementTypes>   _auraElementType = ElementTypes::MAGIC;
 	// Duration of aura, FLT_MAX = Infinite duration.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float         _duration = FLT_MAX; 	
 	// Tick Counter for how many times the aura should tick during it's duration.

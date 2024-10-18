@@ -83,50 +83,43 @@ void AAuraCharacter::BeginPlay()
 
 void AAuraCharacter::UpdateAuras(const float deltaTime)
 {
-	if (_characterIsActive) {
-		if (!_combinedStats->_isAlive) {
-			Die();
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "DEAD!");
-			_characterIsActive = false;
-		}
-		else
+	if (!_combinedStats->_isAlive) return;
+
+	ResetToBaseStats();
+	
+	for (uint8 i = 0; i < AURA_TYPE_COUNT; i++)
+	{
+		TArray<UAura*>& list = _auraList[i];
+		for (INT32 j = 0; j < list.Num(); j++)
 		{
-			ResetToBaseStats();
-			
-			for (uint8 i = 0; i < AURA_TYPE_COUNT; i++)
+			list[j]->DecreaseDuration(deltaTime);
+			if(i != AuraType::EFFECT)
 			{
-				TArray<UAura*>& list = _auraList[i];
-				for (INT32 j = 0; j < list.Num(); j++)
-				{
-					list[j]->DecreaseDuration(deltaTime);
-					if(i != AuraType::EFFECT)
-					{
-						list[j]->OnAuraUpdate(deltaTime);
-						if (list[j]->GetTickDuration() <= 0.0f)
-							list[j]->OnAuraTick();
-					}
-				
-					if (list[j]->GetDuration() <= 0.0f || list[j]->IsAuraActive() == false)
-						RemoveAura(j, AuraType(i));
-				}
+				list[j]->OnAuraUpdate(deltaTime);
+				if (list[j]->GetTickDuration() <= 0.0f)
+					list[j]->OnAuraTick();
 			}
-
-			// Fetch component once in UpdateAuras
-			if (!_movementComponent)
-				_movementComponent = GetComponentByClass<UCharacterMovementComponent>();
-
-			// Apply our movement stats to CharacterMovementComponent
-			if(_movementComponent){
-				_movementComponent->JumpZVelocity = _combinedStats->_jumpSpeed;
-				_movementComponent->MaxWalkSpeed  = _combinedStats->_movementSpeed;
-			}
+		
+			if (list[j]->GetDuration() <= 0.0f || list[j]->IsAuraActive() == false)
+				RemoveAura(j, AuraType(i));
 		}
+	}
+
+	// Fetch component once in UpdateAuras
+	if (!_movementComponent)
+		_movementComponent = GetComponentByClass<UCharacterMovementComponent>();
+
+	// Apply our movement stats to CharacterMovementComponent
+	if(_movementComponent){
+		_movementComponent->JumpZVelocity = _combinedStats->_jumpSpeed;
+		_movementComponent->MaxWalkSpeed  = _combinedStats->_movementSpeed;
 	}
 }
 
 void AAuraCharacter::Die()
 {
+	_combinedStats->_isAlive = false;
+	
 	for (uint8 i = 0; i < AURA_TYPE_COUNT; i++)
 	{
 		TArray<UAura*>& list = _auraList[i];

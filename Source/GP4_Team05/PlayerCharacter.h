@@ -53,7 +53,7 @@ private:
 	UPROPERTY(EditAnywhere, Category=Input) TSoftObjectPtr<UInputMappingContext> _defaultInputMapping;
 
 	
-	UPROPERTY(VisibleAnywhere) UCameraComponent*	_playerCameraComponent = nullptr;
+	
 	UPROPERTY(VisibleAnywhere) USpringArmComponent* _cameraArmComponent    = nullptr;
 	UPROPERTY(VisibleAnywhere) UBoxComponent*		_meleeHitbox		   = nullptr;
 	UPROPERTY(VisibleAnywhere) USphereComponent*	_dashHitbox			   = nullptr;
@@ -63,7 +63,6 @@ private:
 	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _heavyAttackMeleeDamage = 20.f;
 	//how long the attack must be charged before it becomes heavy
 	UPROPERTY(EditAnywhere, Category="Melee Stats") float _heavyAttackMeleeTime	  = 0.5f;
-	UPROPERTY(EditAnywhere, Category="Melee Stats") float _meleeSelfDamage		  = 0;
 
 	float _meleeCooldownTimer = 0.f;
 	float _meleeHeavyTimer    = 0.f;
@@ -164,8 +163,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _playerLevel   = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category=Upgrade) TArray<FPlayerUpgrades> Upgrades;
-
 	UFUNCTION(BlueprintCallable) void UpgradePlayer();
+
+		
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UCameraComponent*	_playerCameraComponent = nullptr;
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

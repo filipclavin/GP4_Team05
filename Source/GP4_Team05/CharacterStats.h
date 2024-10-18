@@ -7,6 +7,7 @@
 #include "AuraDataInclude.h"
 #include "CharacterStats.generated.h"
 
+class AAuraCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GP4_TEAM05_API UCharacterStats : public UActorComponent
@@ -17,6 +18,11 @@ public:
 	UCharacterStats();
 
 	void SetCharacterLevel(int level);
+
+	// The scaling used is percentage > 1 is percent increase < 1 is descrease
+	UFUNCTION(BlueprintCallable) void ScaleElementalDamageDealt(ElementTypes elementType, float scaling);
+	// The scaling used is percentage > 1 is percent increase < 1 is descrease
+	UFUNCTION(BlueprintCallable) void ScaleElementalDamageTaken(ElementTypes elementType, float scaling);
 
 	UFUNCTION(BlueprintCallable) int CalculateDamage(int damage, ElementTypes element);
 
@@ -61,8 +67,9 @@ public:
 	UPROPERTY(EditAnywhere) float _speedScaling       = 1.0f;
 	UPROPERTY(EditAnywhere) float _damageDealtScaling = 1.0f;
 
-
 protected:
+	AAuraCharacter* _parent;
+
 	struct IntakeData 
 	{
 		enum class Type

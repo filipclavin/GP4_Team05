@@ -1,4 +1,5 @@
 #include "CharacterStats.h"
+#include "AuraCharacter.h"
 
 UCharacterStats::UCharacterStats()
 {
@@ -21,6 +22,18 @@ void UCharacterStats::SetCharacterLevel(int level)
 		_movementSpeed  *= _speedScaling;
 		_allDamageDealt *= _damageDealtScaling;
 	}
+}
+
+void UCharacterStats::ScaleElementalDamageDealt(ElementTypes elementType, float scaling)
+{
+	if (elementType != ELEMENT_TYPE_COUNT && elementType!=MAGIC)
+		_elementDamageDealt[elementType] *= scaling;
+}
+
+void UCharacterStats::ScaleElementalDamageTaken(ElementTypes elementType, float scaling)
+{
+	if (elementType != ELEMENT_TYPE_COUNT && elementType!= MAGIC)
+		_elementDamageTaken[elementType] *= scaling;
 }
 
 int UCharacterStats::CalculateDamage(int damage, ElementTypes element)
@@ -71,6 +84,7 @@ bool UCharacterStats::IsCriticalStrike()
 void UCharacterStats::BeginPlay()
 {
 	Super::BeginPlay();
+	_parent = Cast<AAuraCharacter>(GetOwner());
 }
 
 void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -97,10 +111,12 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				
 				intake._stats = nullptr;
 				_currentHealth -= RoundToInt(newAmount);
+				_parent->OnDamageIntake();
 				break;
 			case IntakeData::Type::Heal:
 				newAmount = (intake._amount * _healingTaken);
 				_currentHealth += RoundToInt(newAmount);
+				_parent->OnHealIntake();
 				break;
 			}
 
@@ -110,16 +126,13 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 					_currentHealth = 1;
 				else 
 				{
-					_isAlive = false;
-					if (GEngine)
-						GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Aura Character is dead!"));
-					
+					Cast<AAuraCharacter>(GetOwner())->Kill();
 					break;
 				}
 			}
-
 		}
 		
+		if(!_intakeQueue.IsEmpty())
 		_intakeQueue.Empty();
 	}
 }
