@@ -34,9 +34,10 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere) UBoxComponent* _meleeHitbox = nullptr;
 
-	UPROPERTY(EditAnywhere, Category="attack stats")	 float _attackInterval = 0.5f;
-	UPROPERTY(EditAnywhere, Category="attack stats")	 int   _attackDamage   = 40;
-	UPROPERTY(EditDefaultsOnly, Category="attack stats") float _attackRange	   = 40;
+	UPROPERTY(EditAnywhere, Category="attack stats")	 float _attackInterval     = 0.5f;
+	UPROPERTY(EditAnywhere, Category="attack stats")	 int   _attackDamage       = 40;
+	UPROPERTY(EditDefaultsOnly, Category="attack stats") float _attackRange	       = 40;
+	UPROPERTY(EditAnywhere)								 float _chaosAmountOnDeath = 20.0f;
 	
 	float _attackTimer;
 	bool _inAttackRange;

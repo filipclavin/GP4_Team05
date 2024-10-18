@@ -28,16 +28,16 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraRemoved();
 	// Called if an affected AuraCharacter already has this aura (based on Aura ID).
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraExists();
-	// Called when AuraCharacter hits with an ability or regular attack. Note: it is not possible to specify what attack at the moment
+	// Called when AuraCharacter hits with an ability or regular attack. Attack is specified by AuraAttackType
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraAttackHit(AAuraCharacter* targetHit);
 
-	void OnAuraAttackHit_Implementation(AAuraCharacter* targetHit)  { targetHit;    }
-	void OnAuraCast_Implementation(AAuraCharacter* caster)      { caster;	    }
-	void OnAuraAdd_Implementation(AAuraCharacter* affectedChar) { affectedChar; }
-	void OnAuraUpdate_Implementation(const float deltaTime)     { deltaTime;    }
-	void OnAuraRemoved_Implementation()						    {			    }
-	void OnAuraTick_Implementation()						    {			    }
-	void OnAuraExists_Implementation()							{			    }
+	void OnAuraAttackHit_Implementation(AAuraCharacter* targetHit) { targetHit;    }
+	void OnAuraCast_Implementation(AAuraCharacter* caster)		   { caster;	   }
+	void OnAuraAdd_Implementation(AAuraCharacter* affectedChar)	   { affectedChar; }
+	void OnAuraUpdate_Implementation(const float deltaTime)		   { deltaTime;    }
+	void OnAuraRemoved_Implementation()							   {			   }
+	void OnAuraTick_Implementation()							   {			   }
+	void OnAuraExists_Implementation()							   {			   }
 
 	// Don't Update _currentDuration if Aura is infinite!
 	void DecreaseDuration(const float deltaTime);

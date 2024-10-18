@@ -180,6 +180,7 @@ void AAuraCharacter::RemoveAura(const size_t index, const AuraType type)
 
 void AAuraCharacter::ResetToBaseStats()
 {
+	_combinedStats->_maxHealth			= _baseStats->_maxHealth;
 	_combinedStats->_allDamageDealt		= _baseStats->_allDamageDealt;
 	_combinedStats->_allDamageTaken		= _baseStats->_allDamageTaken;
 	_combinedStats->_movementSpeed      = _baseStats->_movementSpeed;

@@ -8,9 +8,9 @@
 
 void UChaosBarWidget::UpdateBar(float chaosLevel, float maxChaos)
 {
-	_maxChaos = maxChaos;
-	_targetChaos = chaosLevel;
-	_previousChaos = _currentChaos;
+	_maxChaos        = maxChaos;
+	_targetChaos     = chaosLevel;
+	_previousChaos   = _currentChaos;
 	_timeSinceUpdate = 0;
 }
 
@@ -19,23 +19,20 @@ void UChaosBarWidget::SetUp()
 	_OrdinaryColor = _chaosBar->GetFillColorAndOpacity();
 }
 
+void UChaosBarWidget::DisableChaosBar(bool isActive)
+{
+	if (!isActive)
+		_chaosBar->SetVisibility(ESlateVisibility::Hidden);
+	else
+		_chaosBar->SetVisibility(ESlateVisibility::Visible);
+}
+
 void UChaosBarWidget::TickBar(float deltaTime)
 {
 	_timeSinceUpdate += deltaTime;
 	
 	_currentChaos = FMath::Lerp(_currentChaos, _targetChaos, easeInOutQuint(_timeSinceUpdate));
-	
 	_chaosBar->SetPercent(_currentChaos/_maxChaos);
-
-	if (_currentChaos >= _maxChaos && !_chaosBarFull)
-	{
-		ChaosBarFull();
-	}
-
-	if (_currentChaos < _maxChaos && _chaosBarFull)
-	{
-		ChaosBarReset();
-	}
 }
 
 float UChaosBarWidget::easeInOutQuint(float x)

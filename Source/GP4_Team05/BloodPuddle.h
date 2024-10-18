@@ -7,6 +7,7 @@
 #include "BloodPuddle.generated.h"
 
 class UChaosManager;
+class AAuraHandler;
 
 UCLASS()
 class GP4_TEAM05_API ABloodPuddle : public AActor
@@ -50,6 +51,7 @@ protected:
 
 	UPROPERTY()
 	class AAuraCharacter* _auraCharacter;
+	class AAuraHandler*	  _auraHandler;
 
 	//this is just for a temporary implementation of adding chaos, CHANGE LATER! -Gustav
 	UPROPERTY()
@@ -63,7 +65,6 @@ protected:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
 
-	
 	void FadeOut(float DeltaTime);
 	void ApplyHealing(float DeltaTime);
 	void ShrinkPuddle(float DeltaTime);

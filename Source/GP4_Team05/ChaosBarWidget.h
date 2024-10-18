@@ -20,7 +20,13 @@ public:
 	UFUNCTION(BlueprintCallable) void TickBar	(float deltaTime);
 	UFUNCTION(BlueprintCallable) void SetUp		();
 
-	
+	void SetCurrentChaos(float chaos) {
+		_currentChaos = chaos;
+	}
+
+	void DisableChaosBar(bool disable);
+
+
 protected:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget)) UProgressBar* _chaosBar;

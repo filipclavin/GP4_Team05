@@ -41,13 +41,12 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	UpdateAuras(DeltaSeconds);
-	
 	UpdateTickInterval();
 
-	if (_combinedStats->_currentHealth <= 0 && !dead)
+	if (!_combinedStats->_isAlive && !dead)
 	{
 		//this is a very stupid implementation and should be changed later
-		UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetComponentByClass<UChaosManager>()->enemyKilled();
+		UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetComponentByClass<UChaosManager>()->enemyKilled(_chaosAmountOnDeath);
 		dead = true;
 	}
 }

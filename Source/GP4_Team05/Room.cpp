@@ -5,6 +5,7 @@
 #include "AuraCharacter.h"
 #include "EnemySpawner.h"
 #include "NavigationSystem.h"
+#include "ChaosManager.h"
 #include "RoomAnchor.h"
 #include "AI/NavigationSystemBase.h"
 
@@ -48,6 +49,28 @@ void ARoom::OnRoomComplete()
 	}
 }
 
+void ARoom::ResetChaosManager()
+{
+	if (_enemySpawner) 
+	{
+		_chaosManager->ResetChaosBarProgress();
+		_chaosManager->ScaleChaosBar();
+		_chaosManager->DisableChaosBar(true);
+	}
+	else 
+		_chaosManager->DisableChaosBar(false);
+}
+
+void ARoom::OnRoomChaosBarFilled_Implementation()
+{
+	OnRoomComplete();
+}
+
+void ARoom::OnInteractablePickup_Implementation()
+{
+	OnRoomComplete();
+}
+
 void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
  	if (!_hasEntered) {
@@ -77,6 +100,10 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 			{
 				if(_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor())
 					_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->CloseAnchorDoor();
+				
+				_chaosManager = check->GetComponentByClass<UChaosManager>();
+				if(_chaosManager)
+				   ResetChaosManager();
 			}
 
 			OnPlayerEnter();
@@ -87,9 +114,9 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 void ARoom::ActivateRoom()
 {
 	_colliderActiveOnSpawn = true;
-	//SetActorHiddenInGame(false);
-	
-	FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->Build();
+
+	if(_navMesh)
+		FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->Build();
 }
 
 void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
@@ -179,6 +206,17 @@ ARoomAnchor* ARoom::GetOccupiedAnchor()
 		return _anchors[_occupiedAnchor];
 	else
 		return nullptr;
+}
+
+void ARoom::Tick(float deltaTime)
+{
+	Super::Tick(deltaTime);
+	if(!_roomIsCompleted)
+	{
+		if (_chaosManager)
+			if (_chaosManager->ChaosBarIsFilled()) 
+				OnRoomChaosBarFilled();
+	}
 }
 
 void ARoom::FetchLevelGenerator()

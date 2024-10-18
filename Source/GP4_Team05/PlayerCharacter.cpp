@@ -430,7 +430,7 @@ void APlayerCharacter::UpgradePlayer()
 	if (Upgrades.Num() > _playerLevel)
 	{
 		GetStats()->_healingTaken += Upgrades[_playerLevel].BloodAbsorb;
-     	GetComponentByClass<UChaosManager>()->_chaosBloodGain += Upgrades[_playerLevel].BloodAbsorb;
+     	GetComponentByClass<UChaosManager>()->ScaleChaosGain(Upgrades[_playerLevel].BloodAbsorb);
      	_dashSpeed += Upgrades[_playerLevel].DashSpeed;
      	_lightAttackMeleeDamage += Upgrades[_playerLevel].LightMeleeDamage;
      	_heavyAttackMeleeDamage += Upgrades[_playerLevel].HeavyMeleeDamage;

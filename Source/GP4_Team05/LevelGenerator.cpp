@@ -21,7 +21,7 @@ void ALevelGenerator::LoadNewRoom()
 
 	_unloadLastRoom = true;
 	_unloadDuration = 1.0f;
-	_loadDuration   = 1.0f;
+	_loadDuration   = 3.0f;
 	_waitForRoom    = true;
 
 	bool success = false;
@@ -74,7 +74,6 @@ void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 	}
 	
 	_currentRoom = newRoom;
-	//_currentRoom->_roomDepth = _currentRoomDepth;
 }
 
 void ALevelGenerator::BeginPlay()
@@ -116,16 +115,6 @@ void ALevelGenerator::Tick(float deltaTime)
 		_removeInstanceFromList = true;
 		_unloadIndex++;
 		_unloadLastRoom = false;
-	}
-
-	// This is for testing purposes, should be removed when remove can be completed via objective
-	if (_currentRoom) {
-		if (_currentRoom->_hasEntered) 
-		{
-			_currentRoom->_testDuration -= deltaTime;
-			if (_currentRoom->_testDuration <= 0.0f)
-				_currentRoom->OnRoomComplete();
-		}
 	}
 
 	_unloadDuration -= _unloadDuration > 0.0f ? deltaTime : 0.0f;

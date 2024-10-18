@@ -17,20 +17,26 @@ public:
 	// Sets default values for this component's properties
 	UChaosManager();
 
-	//The amount of chaos for a full bar
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _maxChaos		     = 1000;
-	//how much the full chaos will get multiplied after the bar gets filled
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosScaling	     = 1.2f;
-	//how much chaos per second you will gain by collecting blood
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosBloodGain    = 10;
-	//how much chaos you will gain by killing enemies
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosEnemyGain    = 100;
-	//time in seconds that the chaos bar will be full
-	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosFullDuration = 4;
+	void ScaleChaosBar();
+	void ScaleChaosGain(float gainIncreas);
+	void ResetChaosBarProgress();
+	void DisableChaosBar(bool isActive);
 
-	float _currentChaos = 0;
+	float GetCurrentChaos();
+
+	bool ChaosBarIsFilled();
+
 	bool  _chaosFull	= false;
 protected:
+
+	//The amount of chaos for a full bar
+	UPROPERTY(EditAnywhere, Category="chaos stats") float _maxChaos		   = 1000;
+	//How much the chaos bar scales, only scales per rooms that uses the chaos bar.
+	UPROPERTY(EditAnywhere, Category="chaos stats") float _maxChaosBarScaling = 1.2f;
+	//how much chaos per second you will gain by collecting blood. Can move this to an aura instead.
+	UPROPERTY(EditAnywhere, Category="chaos stats") float _chaosGainScaling	= 1.0f;
+		
+	float _currentChaos = 0;
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
@@ -44,8 +50,8 @@ public:
 	UFUNCTION(BlueprintCallable) void setupChaosManager(UChaosBarWidget* widget);
 
 	
-	UFUNCTION(BlueprintCallable) void bloodPickup();
-	UFUNCTION(BlueprintCallable) void enemyKilled();
+	//UFUNCTION(BlueprintCallable) void bloodPickup();
+	UFUNCTION(BlueprintCallable) void enemyKilled(float chaosAmount);
 	//intended for miscellaneous sources of chaos 
 	UFUNCTION(BlueprintCallable) void addChaos	 (int chaosToAdd);
 };

@@ -77,6 +77,9 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (_currentHealth > _maxHealth)
+		_currentHealth = _maxHealth;
+
 	if (_isAlive) 
 	{
 		for (INT32 i = 0; i < _intakeQueue.Num(); i++)
@@ -115,9 +118,8 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				}
 			}
 
-			if (_currentHealth > _maxHealth)
-				_currentHealth = _maxHealth;
 		}
+		
 		_intakeQueue.Empty();
 	}
 }
