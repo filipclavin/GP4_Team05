@@ -239,7 +239,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 			{
 				AAuraCharacter* target = Cast<AAuraCharacter>(HitActor);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, HitActor->GetName() + " hit");
-				target->QueueDamage(_lightAttackMeleeDamage, PHYSICAL);
+				target->QueueDamage(damage, PHYSICAL);
 				UpdateAurasOnAttackHits(target, MELEE);
 			}
 		}
