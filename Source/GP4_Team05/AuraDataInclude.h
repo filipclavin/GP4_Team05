@@ -33,11 +33,12 @@ enum AuraAttackType
 UENUM(BlueprintType)
 enum ElementTypes : uint8
 {
+	// Magic is reserved visually for AuraInteractable general buffs
+	MAGIC, 
 	PHYSICAL,
 	FIRE,
 	LIGHTNING,
-	WATER,
-	EARTH,
+	BLOOD,
 	// Count is only for coding usages!
 	ELEMENT_TYPE_COUNT
 };
