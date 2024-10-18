@@ -208,7 +208,6 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 	
 
 	UpdateAurasOnAttackCast(MELEE);
-	QueueDamage(_meleeSelfDamage, PHYSICAL);
 
 	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
 
