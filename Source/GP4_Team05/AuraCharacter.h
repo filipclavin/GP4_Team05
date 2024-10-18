@@ -68,7 +68,6 @@ protected:
 	UFUNCTION(BlueprintCallable) void UpdateAuras(const float deltaTime);
 	UFUNCTION(BlueprintCallable) virtual void Die();
 
-	UPROPERTY(BlueprintReadWrite) bool _characterIsActive = true;
 private:
 	friend class AAuraHandler;
 

@@ -14,13 +14,21 @@
 
 void AEnemySpawner::SpawnNextWave()
 {
-	if (_chaosManager->_chaosFull) return;
+	if (_chaosManager->_chaosFull)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Chaos is full, not spawning any more enemies!"));
+		return;
+	}
 
 	_currentWaveIndex++;
 
 	for (FEnemyGroup& group : _waves[_currentWaveIndex].EnemyGroups)
 	{
-		if (group.Count == 0) continue;
+		if (group.Count == 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Enemy group count is 0!"));
+			continue;
+		}
 
 		if (!group.EnemyClass)
 		{
@@ -92,7 +100,11 @@ void AEnemySpawner::SpawnNextWave()
 
 	float duration = _waves[_currentWaveIndex].Duration;
 	
-	if (_currentWaveIndex == _waves.Num() - 1) _currentWaveIndex = -1;
+	if (_currentWaveIndex == _waves.Num() - 1)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reached final wave, looping back to first wave!"));
+		_currentWaveIndex = -1;
+	}
 	
 	GetWorld()->GetTimerManager().SetTimer(
 		_waveTimer,
@@ -115,7 +127,6 @@ void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint
 	);
 	enemy->SetActorHiddenInGame(false);
 	enemy->SetActorTickEnabled(true);
-	enemy->_controller->Possess(enemy);
 	
 	enemy->InitSpawned(this);
 }
@@ -125,7 +136,6 @@ void AEnemySpawner::DespawnEnemy(ABaseEnemyClass* enemy)
 	enemy->SetActorHiddenInGame(true);
 	enemy->SetActorEnableCollision(false);
 	enemy->SetActorTickEnabled(false);
-	enemy->_controller->UnPossess();
 	
 	_enemyPools[enemy->GetClass()].Add(enemy);
 }

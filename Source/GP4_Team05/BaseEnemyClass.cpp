@@ -57,6 +57,7 @@ void ABaseEnemyClass::InitSpawned(AEnemySpawner* spawner)
 	_spawner = spawner;
 	_combinedStats->_currentHealth = _combinedStats->_maxHealth;
 	_combinedStats->_isAlive = true;
+	_controller->Possess(this);
 	_tags.AddTag(TAG_Spawned);
 	_tags.AddTag(TAG_Alive);
 	OnSpawned();
@@ -119,6 +120,7 @@ void ABaseEnemyClass::incrementTimerCounter(float deltatime)
 void ABaseEnemyClass::Die()
 {
 	_tags.RemoveTag(TAG_Alive);
+	_controller->UnPossess();
 	OnDeath();
 	Super::Die();
 	
