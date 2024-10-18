@@ -10,6 +10,7 @@
 #include "EnemySpawner.h"
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_Spawned, "Spawned")
+UE_DEFINE_GAMEPLAY_TAG(TAG_Alive, "Alive")
 
 ABaseEnemyClass::ABaseEnemyClass()
 {
@@ -51,10 +52,12 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 	}
 }
 
-void ABaseEnemyClass::OnSpawned(AEnemySpawner* spawner)
+void ABaseEnemyClass::InitSpawned(AEnemySpawner* spawner)
 {
 	_spawner = spawner;
 	_tags.AddTag(TAG_Spawned);
+	_tags.AddTag(TAG_Alive);
+	OnSpawned();
 }
 
 void ABaseEnemyClass::MeleeAttack()
@@ -113,6 +116,7 @@ void ABaseEnemyClass::incrementTimerCounter(float deltatime)
 
 void ABaseEnemyClass::Die()
 {
+	_tags.RemoveTag(TAG_Alive);
 	OnDeath();
 	Super::Die();
 	

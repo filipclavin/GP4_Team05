@@ -117,7 +117,7 @@ void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint
 	enemy->SetActorTickEnabled(true);
 	enemy->_controller->Possess(enemy);
 	
-	enemy->OnSpawned(this);
+	enemy->InitSpawned(this);
 }
 
 void AEnemySpawner::DespawnEnemy(ABaseEnemyClass* enemy)

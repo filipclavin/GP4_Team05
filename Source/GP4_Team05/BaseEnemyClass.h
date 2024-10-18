@@ -9,6 +9,7 @@
 #include "BaseEnemyClass.generated.h"
 
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Spawned)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Alive)
 
 class AAIController;
 class UBoxComponent;
@@ -25,8 +26,6 @@ class GP4_TEAM05_API ABaseEnemyClass : public AAuraCharacter, public IGameplayTa
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override { TagContainer = _tags; }
-
-	void OnSpawned(AEnemySpawner* spawner);
 
 public:
 	ABaseEnemyClass();
@@ -68,7 +67,11 @@ protected:
 	//returns if the actor is within attack range
 	UFUNCTION(BlueprintCallable) bool IsWithinRange			(AActor* otherActor);
 	UFUNCTION(BlueprintCallable) void incrementTimerCounter (float deltatime);
-
+	
+	UFUNCTION(BlueprintNativeEvent) void OnSpawned();
+	void OnSpawned_Implementation() {}
+	void InitSpawned(AEnemySpawner* spawner);
+	
 	UFUNCTION(BlueprintNativeEvent) void OnDeath();
 	void OnDeath_Implementation() {}
 	virtual void Die() override;
