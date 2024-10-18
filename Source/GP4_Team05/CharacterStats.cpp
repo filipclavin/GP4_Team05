@@ -126,10 +126,7 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 					_currentHealth = 1;
 				else 
 				{
-					_isAlive = false;
-					if (GEngine)
-						GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Aura Character is dead!"));
-					
+					Cast<AAuraCharacter>(GetOwner())->Kill();
 					break;
 				}
 			}
