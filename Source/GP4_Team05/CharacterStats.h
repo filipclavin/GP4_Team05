@@ -7,6 +7,7 @@
 #include "AuraDataInclude.h"
 #include "CharacterStats.generated.h"
 
+class AAuraCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GP4_TEAM05_API UCharacterStats : public UActorComponent
@@ -65,6 +66,8 @@ public:
 
 
 protected:
+	AAuraCharacter* _parent;
+
 	struct IntakeData 
 	{
 		enum class Type

@@ -1,4 +1,5 @@
 #include "CharacterStats.h"
+#include "AuraCharacter.h"
 
 UCharacterStats::UCharacterStats()
 {
@@ -71,6 +72,7 @@ bool UCharacterStats::IsCriticalStrike()
 void UCharacterStats::BeginPlay()
 {
 	Super::BeginPlay();
+	_parent = Cast<AAuraCharacter>(GetOwner());
 }
 
 void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -97,10 +99,12 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				
 				intake._stats = nullptr;
 				_currentHealth -= RoundToInt(newAmount);
+				_parent->OnDamageIntake();
 				break;
 			case IntakeData::Type::Heal:
 				newAmount = (intake._amount * _healingTaken);
 				_currentHealth += RoundToInt(newAmount);
+				_parent->OnHealIntake();
 				break;
 			}
 
@@ -117,7 +121,6 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 					break;
 				}
 			}
-
 		}
 		
 		_intakeQueue.Empty();

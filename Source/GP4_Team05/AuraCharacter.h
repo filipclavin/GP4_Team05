@@ -20,6 +20,11 @@ class GP4_TEAM05_API AAuraCharacter : public ACharacter
 public:
 	AAuraCharacter();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnDamageIntake();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnHealIntake();
+	void OnDamageIntake_Implementation(){}
+	void OnHealIntake_Implementation(){}
+
 	UFUNCTION(BlueprintCallable) bool HasAuraWithID(int id);
 	UFUNCTION(BlueprintCallable) bool HasAuraWithName(FString name);
 
@@ -32,6 +37,7 @@ public:
 
 	UFUNCTION(BlueprintCallable) const TArray<UAura*>& GetAffectedBuffs()   { return _auraList[BUFF]; }
 	UFUNCTION(BlueprintCallable) const TArray<UAura*>& GetAffectedDebuffs() { return _auraList[DEBUFF]; }
+
 
 	void UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackType attackType);
 	void UpdateAurasOnAttackCast(AuraAttackType attackType);
