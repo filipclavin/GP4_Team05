@@ -55,6 +55,7 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 void ABaseEnemyClass::InitSpawned(AEnemySpawner* spawner)
 {
 	_spawner = spawner;
+	_combinedStats->_currentHealth = _combinedStats->_maxHealth;
 	_tags.AddTag(TAG_Spawned);
 	_tags.AddTag(TAG_Alive);
 	OnSpawned();
