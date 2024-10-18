@@ -340,7 +340,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	}
 	else if (chosenAttack == 2)
 	{
-		QueueDamage(_bloodSelfDamage, PHYSICAL);
+		QueueDamage(_bloodSelfDamage*(1/_bloodLevel), PHYSICAL);
 		_bloodProjectileToUse->SpawnProjectile(_bloodLevel);
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Blood attack");
 	}
