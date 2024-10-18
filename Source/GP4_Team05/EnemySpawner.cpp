@@ -42,13 +42,19 @@ void AEnemySpawner::SpawnNextWave()
 			continue;
 		}
 			
-		int finalCount = ApplyRoomDepthMultiplier
+		uint16 finalCount = ApplyRoomDepthMultiplier
 		(
 			group.Count,
 			group.OverrideDepthScalingFactor ? group.DepthScalingFactor : _depthScalingFactor
 		);
+		UE_LOG(LogTemp, Warning, TEXT("Trying to spawn group of %d %ss"), finalCount, *group.EnemyClass->GetName());
 		
 		TSet<ABaseEnemyClass*>& pool = _enemyPools[group.EnemyClass];
+		if (pool.Num() < finalCount)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Not enough enemies in pool, only %d available!"), pool.Num());
+			finalCount = pool.Num();
+		}
 
 		FBoxSphereBounds bounds = group.SpawnArea->GetBounds();
 
@@ -77,23 +83,25 @@ void AEnemySpawner::SpawnNextWave()
 
 		TSet<ABaseEnemyClass*> toRemoveFromPool;
 		
-		uint16 count = 0;
+		uint16 numSpawned = 0;
 		for (ABaseEnemyClass* enemy : pool)
 		{
 			FVector spawnPoint = bounds.Origin +
 				FVector(
-					cols == 1 ? 0 : (count % cols) * bounds.BoxExtent.X * 2 / (cols - 1) - bounds.BoxExtent.X,
-					rows == 1 ? 0 : (count / cols) * bounds.BoxExtent.Y * 2 / (rows - 1) - bounds.BoxExtent.Y,
+					cols == 1 ? 0 : (numSpawned % cols) * bounds.BoxExtent.X * 2 / (cols - 1) - bounds.BoxExtent.X,
+					rows == 1 ? 0 : (numSpawned / cols) * bounds.BoxExtent.Y * 2 / (rows - 1) - bounds.BoxExtent.Y,
 					0
 				);
-			count++;
 			
 			SpawnEnemy(enemy, spawnPoint);
 			toRemoveFromPool.Add(enemy);
 
-			if (count == finalCount) break;
+			numSpawned++;
+			if (numSpawned == finalCount) break;
 		}
 
+		UE_LOG(LogTemp, Warning, TEXT("Spawned %d %ss"), numSpawned, *group.EnemyClass->GetName());
+		
 		pool = pool.Difference(toRemoveFromPool);
 		
 	}
