@@ -24,6 +24,18 @@ void UCharacterStats::SetCharacterLevel(int level)
 	}
 }
 
+void UCharacterStats::ScaleElementalDamageDealt(ElementTypes elementType, float scaling)
+{
+	if (elementType != ELEMENT_TYPE_COUNT && elementType!=MAGIC)
+		_elementDamageDealt[elementType] *= scaling;
+}
+
+void UCharacterStats::ScaleElementalDamageTaken(ElementTypes elementType, float scaling)
+{
+	if (elementType != ELEMENT_TYPE_COUNT && elementType!= MAGIC)
+		_elementDamageTaken[elementType] *= scaling;
+}
+
 int UCharacterStats::CalculateDamage(int damage, ElementTypes element)
 {
 	float newDamage = ((damage * _elementDamageDealt.IsEmpty() ? 1.0f : _elementDamageDealt[element]) * _allDamageDealt) * IsCriticalStrike() ? 2 : 1;
@@ -123,6 +135,7 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			}
 		}
 		
+		if(!_intakeQueue.IsEmpty())
 		_intakeQueue.Empty();
 	}
 }

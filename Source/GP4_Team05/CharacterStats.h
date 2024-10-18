@@ -19,6 +19,11 @@ public:
 
 	void SetCharacterLevel(int level);
 
+	// The scaling used is percentage > 1 is percent increase < 1 is descrease
+	UFUNCTION(BlueprintCallable) void ScaleElementalDamageDealt(ElementTypes elementType, float scaling);
+	// The scaling used is percentage > 1 is percent increase < 1 is descrease
+	UFUNCTION(BlueprintCallable) void ScaleElementalDamageTaken(ElementTypes elementType, float scaling);
+
 	UFUNCTION(BlueprintCallable) int CalculateDamage(int damage, ElementTypes element);
 
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
@@ -63,7 +68,6 @@ public:
 	UPROPERTY(EditAnywhere) float _healthScaling      = 1.0f;
 	UPROPERTY(EditAnywhere) float _speedScaling       = 1.0f;
 	UPROPERTY(EditAnywhere) float _damageDealtScaling = 1.0f;
-
 
 protected:
 	AAuraCharacter* _parent;

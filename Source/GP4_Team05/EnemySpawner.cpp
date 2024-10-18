@@ -14,13 +14,21 @@
 
 void AEnemySpawner::SpawnNextWave()
 {
-	if (_chaosManager->_chaosFull) return;
+	if (_chaosManager->_chaosFull)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Chaos is full, not spawning any more enemies!"));
+		return;
+	}
 
 	_currentWaveIndex++;
 
 	for (FEnemyGroup& group : _waves[_currentWaveIndex].EnemyGroups)
 	{
-		if (group.Count == 0) continue;
+		if (group.Count == 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Enemy group count is 0!"));
+			continue;
+		}
 
 		if (!group.EnemyClass)
 		{
@@ -33,14 +41,27 @@ void AEnemySpawner::SpawnNextWave()
 			UE_LOG(LogTemp, Error, TEXT("Enemy group has no spawn area assigned!"));
 			continue;
 		}
+		
+		TSet<ABaseEnemyClass*>& pool = _enemyPools[group.EnemyClass];
+
+		if (pool.Num() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No enemies in pool for %s, skipping this group..."), *group.EnemyClass->GetName());
+			continue;
+		}
 			
-		int finalCount = ApplyRoomDepthMultiplier
+		uint16 finalCount = ApplyRoomDepthMultiplier
 		(
 			group.Count,
 			group.OverrideDepthScalingFactor ? group.DepthScalingFactor : _depthScalingFactor
 		);
+		UE_LOG(LogTemp, Warning, TEXT("Trying to spawn group of %d %ss"), finalCount, *group.EnemyClass->GetName());
 		
-		TSet<ABaseEnemyClass*>& pool = _enemyPools[group.EnemyClass];
+		if (pool.Num() < finalCount)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Not enough enemies in pool, only %d available!"), pool.Num());
+			finalCount = pool.Num();
+		}
 
 		FBoxSphereBounds bounds = group.SpawnArea->GetBounds();
 
@@ -69,30 +90,36 @@ void AEnemySpawner::SpawnNextWave()
 
 		TSet<ABaseEnemyClass*> toRemoveFromPool;
 		
-		uint16 count = 0;
+		uint16 numSpawned = 0;
 		for (ABaseEnemyClass* enemy : pool)
 		{
 			FVector spawnPoint = bounds.Origin +
 				FVector(
-					cols == 1 ? 0 : (count % cols) * bounds.BoxExtent.X * 2 / (cols - 1) - bounds.BoxExtent.X,
-					rows == 1 ? 0 : (count / cols) * bounds.BoxExtent.Y * 2 / (rows - 1) - bounds.BoxExtent.Y,
+					cols == 1 ? 0 : (numSpawned % cols) * bounds.BoxExtent.X * 2 / (cols - 1) - bounds.BoxExtent.X,
+					rows == 1 ? 0 : (numSpawned / cols) * bounds.BoxExtent.Y * 2 / (rows - 1) - bounds.BoxExtent.Y,
 					0
 				);
-			count++;
 			
 			SpawnEnemy(enemy, spawnPoint);
 			toRemoveFromPool.Add(enemy);
 
-			if (count == finalCount) break;
+			numSpawned++;
+			if (numSpawned == finalCount) break;
 		}
 
+		UE_LOG(LogTemp, Warning, TEXT("Spawned %d %ss"), numSpawned, *group.EnemyClass->GetName());
+		
 		pool = pool.Difference(toRemoveFromPool);
 		
 	}
 
 	float duration = _waves[_currentWaveIndex].Duration;
 	
-	if (_currentWaveIndex == _waves.Num() - 1) _currentWaveIndex = -1;
+	if (_currentWaveIndex == _waves.Num() - 1)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reached final wave, looping back to first wave!"));
+		_currentWaveIndex = -1;
+	}
 	
 	GetWorld()->GetTimerManager().SetTimer(
 		_waveTimer,
@@ -115,7 +142,6 @@ void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint
 	);
 	enemy->SetActorHiddenInGame(false);
 	enemy->SetActorTickEnabled(true);
-	enemy->_controller->Possess(enemy);
 	
 	enemy->InitSpawned(this);
 }
@@ -125,7 +151,6 @@ void AEnemySpawner::DespawnEnemy(ABaseEnemyClass* enemy)
 	enemy->SetActorHiddenInGame(true);
 	enemy->SetActorEnableCollision(false);
 	enemy->SetActorTickEnabled(false);
-	enemy->_controller->UnPossess();
 	
 	_enemyPools[enemy->GetClass()].Add(enemy);
 }

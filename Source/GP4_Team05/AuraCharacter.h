@@ -49,7 +49,7 @@ protected:
 	void AddAura(UAura* aura);
 	// Saves the aura ID and where it is in the buff/debuff list for quick and easy access. 
 
-	TMap<INT32/*Aura ID*/, TPair<AuraType, INT32>>     _auraIdMap;
+	TMap<INT32  /*Aura ID*/,   TPair<AuraType, INT32>> _auraIdMap;
 	TMap<FString/*Aura Name*/, TPair<AuraType, INT32>> _auraNameMap;
 
 	TStaticArray<TArray<UAura*>, AuraType::AURA_TYPE_COUNT> _auraList;
@@ -68,7 +68,6 @@ protected:
 	UFUNCTION(BlueprintCallable) void UpdateAuras(const float deltaTime);
 	UFUNCTION(BlueprintCallable) virtual void Die();
 
-	UPROPERTY(BlueprintReadWrite) bool _characterIsActive = true;
 private:
 	friend class AAuraHandler;
 
