@@ -88,6 +88,7 @@ void AFireProjectile::FireExplosion(FVector explodeOrigin)
 		
 		
 	}
+	fireHitEvent(explodeOrigin, _projectileExplosionRadius, hitEnemies);
 }
 
 void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
