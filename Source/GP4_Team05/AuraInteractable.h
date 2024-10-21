@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "AuraDataInclude.h"
 #include "AuraInteractable.generated.h"
 
 class AAuraInteractableSelector;
@@ -18,12 +19,13 @@ class GP4_TEAM05_API AAuraInteractable : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AAuraInteractable();
-	void SetSelectorAndAura(AAuraInteractableSelector* selector, FString auraName, FString description, AAuraHandler* auraHandler)
+	void SetSelectorAndAura(AAuraInteractableSelector* selector, FString auraName, FString description, ElementTypes type, AAuraHandler* auraHandler)
 	{
 		_auraSelector    = selector;
 		_auraName        = auraName;
 		_auraDescription = description;
 		_auraHandler     = auraHandler;
+		_elementType     = type;
 	}
 
 	UFUNCTION(BlueprintCallable) void OnPickup();
@@ -41,6 +43,7 @@ public:
 	UPROPERTY(BlueprintReadOnly) AAuraInteractableSelector* _auraSelector;
 	UPROPERTY(BlueprintReadOnly) FString					_auraName = "";
 	UPROPERTY(BlueprintReadOnly) FString					_auraDescription = "";
+	UPROPERTY(BlueprintReadOnly) TEnumAsByte<ElementTypes>	_elementType;
 
 	bool _canBePickedUp		   = true;
 

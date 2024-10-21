@@ -42,9 +42,10 @@ public:
 	// Don't Update _currentDuration if Aura is infinite!
 	void DecreaseDuration(const float deltaTime);
 
-	UFUNCTION(BlueprintCallable) const AuraType GetType()  { return _type; }
-	UFUNCTION(BlueprintCallable) const FString  AuraName() { return _auraName; }
-	UFUNCTION(BlueprintCallable) const int      GetID()	   { return _id; }
+	UFUNCTION(BlueprintCallable) const AuraType     GetType()        { return _type; }
+	UFUNCTION(BlueprintCallable) const ElementTypes GetElementType() { return _auraElementType; }
+	UFUNCTION(BlueprintCallable) const FString      AuraName()	     { return _auraName; }
+	UFUNCTION(BlueprintCallable) const int          GetID()		     { return _id; }
 
 	const AuraAttackType GetAuraAttackType()			   { return _onAttackType; };
 

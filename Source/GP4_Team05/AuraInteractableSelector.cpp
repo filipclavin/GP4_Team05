@@ -35,7 +35,7 @@ void AAuraInteractableSelector::SpawnInteractablesAtLocation(FVector location, F
 	{
 		AAuraInteractable* auraBuff = GetWorld()->SpawnActor<AAuraInteractable>(_interactableToSpawn, _spawnPosition[i]->GetComponentToWorld());
 		_currentInteractables.Add(auraBuff);
-		auraBuff->SetSelectorAndAura(this, auraList[i]->AuraName(), _auraHandler->GetAuraDescription(auraList[i]->AuraName()), _auraHandler);
+		auraBuff->SetSelectorAndAura(this, auraList[i]->AuraName(), _auraHandler->GetAuraDescription(auraList[i]->AuraName()), auraList[i]->GetElementType(), _auraHandler);
 		auraBuff->OnInteractableSpawn();
 	}
 }

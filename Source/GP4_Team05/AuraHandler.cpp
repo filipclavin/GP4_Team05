@@ -152,8 +152,8 @@ void AAuraHandler::FetchAllAurasAttached()
 		for (size_t j = 0; j < poolCount; j++)
 		{
 			// Create the pooling for the specific aura subclass
-			aura->CreatePooledAuras(_auraPoolingActor);
 			aura->_auraHandler = this;
+			aura->CreatePooledAuras(_auraPoolingActor);
 		}
 	}
 }

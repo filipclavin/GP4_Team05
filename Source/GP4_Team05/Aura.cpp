@@ -38,6 +38,7 @@ void UAura::CreatePooledAuras_Implementation(AActor* pooledActor)
 void UAura::UpdateAuraPool(UAura* newAura)
 {
 	newAura->InitializeBasicProperties();
+	newAura->ResetAura(this);
 	_auraPool.Add(newAura);
 }
 
@@ -45,13 +46,14 @@ void UAura::ResetAura(const UAura* aura)
 {
 	if (_id == -1) 
 	{
-		_auraHandler  = aura->_auraHandler;
-		_id           = aura->_id;
-		_icon		  = aura->_icon;
-		_auraName	  = aura->_auraName;
-		_type		  = aura->_type;
-		_onAttackType = aura->_onAttackType;
-		_tickCounter  = aura->_tickCounter;
+		_auraHandler     = aura->_auraHandler;
+		_id              = aura->_id;
+		_icon		     = aura->_icon;
+		_auraName	     = aura->_auraName;
+		_type		     = aura->_type;
+		_onAttackType    = aura->_onAttackType;
+		_tickCounter     = aura->_tickCounter;
+		_auraElementType = aura->_auraElementType;
 	}
 	
 	_duration		 = aura->_duration;
