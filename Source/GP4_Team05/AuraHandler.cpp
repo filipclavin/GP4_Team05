@@ -7,7 +7,7 @@ AAuraHandler::AAuraHandler()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
-// Returns aura ID bases on name, if it doesn't find specifed aura it returns INT32_MAX
+// Returns aura ID based on name, if it doesn't find specifed aura it returns INT32_MAX
 int AAuraHandler::GetAuraIDbyName(FString name)
 {
 	if (_auraNameMap.Contains(name))
@@ -55,11 +55,10 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 		UAura* affectedAura = target->AffectedByAura(id);
 		if (affectedAura)
 		{
+			// Effects call OnAuraCast on abilities instead.
 			if(affectedAura->GetType() != EFFECT)
-			{
 				affectedAura->OnAuraCast(caster);
-				affectedAura->OnAuraExists();
-			}
+			affectedAura->OnAuraExists();
 		}
 		else
 		{
@@ -89,6 +88,20 @@ FString AAuraHandler::GetAuraDescription(FString nameOfAura)
 	return "Aura not found :(";
 }
 
+void AAuraHandler::RemovePickupableAura(FString auraName)
+{
+	// If aura cannot stack, remove it from the spawn pool if the player has picked it up.
+	if (!_auraList[_auraNameMap[auraName]]->_canStack)
+	{
+		INT32 index = -1;
+		if (_auraSpawnList.Find(auraName, index)) 
+		{
+			_auraSpawnList[index] = _auraSpawnList[_auraSpawnList.Num() - 1];
+			_auraSpawnList.Pop();
+		}
+	}
+}
+
 TArray<UAura*> AAuraHandler::GetRandomAuraFromSpawnList()
 {
 	if(!_auraSpawnList.IsEmpty())
@@ -107,14 +120,6 @@ TArray<UAura*> AAuraHandler::GetRandomAuraFromSpawnList()
 						aura = GetRandomAura(randomIndex);
 					}
 				}
-			}
-				
-
-			// If aura cannot stack, remove it from the spawn pool!
-			if (!aura->_canStack)
-			{
-				_auraSpawnList[randomIndex] = _auraSpawnList[_auraSpawnList.Num() - 1];
-				_auraSpawnList.Pop();
 			}
 
 			auraRandomList.Add(aura);
