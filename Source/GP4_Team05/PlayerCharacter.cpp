@@ -442,3 +442,11 @@ void APlayerCharacter::UpgradePlayer()
 	}
 	
 }
+
+void APlayerCharacter::Die()
+{
+	PlayerDeathEvent();
+	
+	Super::Die();
+	
+}
