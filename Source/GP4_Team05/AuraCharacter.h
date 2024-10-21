@@ -20,17 +20,17 @@ class GP4_TEAM05_API AAuraCharacter : public ACharacter
 public:
 	AAuraCharacter();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnDamageIntake();
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnHealIntake();
-	void OnDamageIntake_Implementation(){}
-	void OnHealIntake_Implementation(){}
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnDamageIntake(int amount, ElementTypes elementType);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnHealIntake(int amount);
+	void OnDamageIntake_Implementation(int amount, ElementTypes elementType){}
+	void OnHealIntake_Implementation(int amount){}
 
 	UFUNCTION(BlueprintCallable) bool HasAuraWithID(int id);
 	UFUNCTION(BlueprintCallable) bool HasAuraWithName(FString name);
 
 	// Queus damage into a list that gets handled at the end of the frame
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
-	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats = nullptr);
+	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats = nullptr, bool selfDamageTaken = false);
 
 	UFUNCTION(BlueprintCallable) UCharacterStats* GetStats()     { return _combinedStats; }
 	UFUNCTION(BlueprintCallable) UCharacterStats* GetBaseStats() { return _baseStats; }

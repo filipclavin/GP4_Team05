@@ -27,7 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable) int CalculateDamage(int damage, ElementTypes element);
 
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
-	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats);
+	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats, bool selfDamageTaken = false);
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool  _isInvincible     = false;
@@ -40,7 +40,7 @@ public:
 	// (Damage * ElementDamageDealt) * AllDamageDealt  * crit = true ? 2 : 1 -> (DamageTaken * ElementDamageTaken) * AllDamageTaken
 
 	// Scalings
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _critStrikeChance = 0.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) int   _critStrikeChance = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _healingTaken	    = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _allDamageTaken   = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _allDamageDealt   = 1.0f;
@@ -78,6 +78,7 @@ protected:
 			Heal,
 		};
 
+		bool			 _selfDamageTaken = false; 
 		Type		     _type;
 		ElementTypes     _element;
 		UCharacterStats* _stats = nullptr;

@@ -51,13 +51,14 @@ void UCharacterStats::QueueHeal(int amount)
 	_intakeQueue.Add(data);
 }
 
-void UCharacterStats::QueueDamage(int amount, ElementTypes element, UCharacterStats* stats)
+void UCharacterStats::QueueDamage(int amount, ElementTypes element, UCharacterStats* stats, bool selfDamageTaken)
 {
 	IntakeData data;
 	data._amount = amount;
 	data._type = IntakeData::Type::Damage;
 	data._element = element;
 	data._stats = stats;
+	data._selfDamageTaken = selfDamageTaken;
 	_intakeQueue.Add(data);
 }
 
@@ -69,12 +70,12 @@ int UCharacterStats::RoundToInt(float amount)
 
 bool UCharacterStats::IsCriticalStrike()
 {
-	if (_critStrikeChance > 0.0f) 
+	if (_critStrikeChance > 0) 
 	{
-		if (_critStrikeChance >= 100.0f)
+		if (_critStrikeChance >= 100)
 			return true;
 
-		float crit = FMath::RandRange(0.0f, 100.0f);
+		int crit = FMath::RandRange(0, 100);
 		if (crit <= _critStrikeChance)
 			return true;
 	}
@@ -100,7 +101,8 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		{
 			IntakeData& intake = _intakeQueue[i];
 		
-			float newAmount = 0.0f;
+			float newAmount   = 0.0f;
+			int roundedAmount = 0;
 			switch (intake._type)
 			{
 			case IntakeData::Type::Damage:
@@ -109,14 +111,16 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				else
 					newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
 				
-				intake._stats = nullptr;
-				_currentHealth -= RoundToInt(newAmount);
-				_parent->OnDamageIntake();
+				roundedAmount = RoundToInt(newAmount);
+				_currentHealth -= roundedAmount;
+				if(!intake._selfDamageTaken)
+					_parent->OnDamageIntake(roundedAmount, intake._element);
 				break;
 			case IntakeData::Type::Heal:
 				newAmount = (intake._amount * _healingTaken);
-				_currentHealth += RoundToInt(newAmount);
-				_parent->OnHealIntake();
+				roundedAmount = RoundToInt(newAmount);
+				_currentHealth += roundedAmount;
+				_parent->OnHealIntake(roundedAmount);
 				break;
 			}
 
