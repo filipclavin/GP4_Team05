@@ -180,6 +180,7 @@ void AAuraCharacter::ResetToBaseStats()
 	_combinedStats->_elementDamageDealt = _baseStats->_elementDamageDealt;
 	_combinedStats->_elementDamageTaken = _baseStats->_elementDamageTaken;
 	_combinedStats->_jumpSpeed			= _baseStats->_jumpSpeed;
+	_combinedStats->_critStrikeChance   = _baseStats->_critStrikeChance;
 }
 
 void AAuraCharacter::Tick(float DeltaTime)
