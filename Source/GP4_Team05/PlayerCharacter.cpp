@@ -294,9 +294,17 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 	
 	
 	FVector AiMPoint = AimHit.bBlockingHit ? AimHit.Location: AimHit.TraceEnd;
+	
+	FVector BulletOrg = GetActorLocation();
 
-	FVector BulletOrg = GetActorLocation() + GetActorForwardVector()*200.f;
-	FVector BulletDir = AiMPoint - BulletOrg;
+	FVector BulletDir = _playerCameraComponent->GetForwardVector();
+
+	if (FVector::Dist(AiMPoint, BulletOrg) > 300)
+	{
+		BulletDir = AiMPoint - BulletOrg;
+	}
+
+	
 
 
 	if (chosenAttack == 0)
@@ -440,5 +448,13 @@ void APlayerCharacter::UpgradePlayer()
 	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "out of upgrades");
 	}
+	
+}
+
+void APlayerCharacter::Die()
+{
+	PlayerDeathEvent();
+	
+	Super::Die();
 	
 }

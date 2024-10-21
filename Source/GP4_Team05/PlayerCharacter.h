@@ -151,11 +151,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent) void StopAimEvent();
 	UFUNCTION(BlueprintImplementableEvent) void DashEvent();
 	UFUNCTION(BlueprintImplementableEvent) void FireConeEvent();
+	UFUNCTION(BlueprintImplementableEvent) void PlayerDeathEvent();
 
 	UPROPERTY(VisibleAnywhere, Category="Dash Stats")bool CurrentlyDashing = false;
 
 	void BeginPlay()				   override;
 	void Tick	  (float DeltaSeconds) override;
+	void Die	  ()				   override;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _fireLevel		= 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ability Level") int _electricLevel = 0;

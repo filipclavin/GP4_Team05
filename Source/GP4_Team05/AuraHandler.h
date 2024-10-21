@@ -23,6 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable) void CastAuraByName(FString name, AAuraCharacter* target, AAuraCharacter* caster);
 
 	UFUNCTION(BlueprintCallable) FString GetAuraDescription(FString nameOfAura);
+	UFUNCTION(BlueprintCallable) void RemovePickupableAura(FString auwaName);
 
 	TArray<UAura*> GetRandomAuraFromSpawnList();
 

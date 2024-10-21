@@ -44,6 +44,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _healingTaken	    = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _allDamageTaken   = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _allDamageDealt   = 1.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float _attackSpeed      = 1.0f;
 	/*
 		In Order of:
 		PHYSICAL,
