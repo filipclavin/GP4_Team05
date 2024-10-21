@@ -33,6 +33,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere)UStaticMeshComponent* coneMesh = nullptr;
 	UPROPERTY(VisibleAnywhere)USceneComponent*		coneRoot = nullptr;
-
 	
+	UFUNCTION(BlueprintImplementableEvent) void bloodHitEvent(const TArray<AActor*>& hitEnemies);
 };
