@@ -25,6 +25,8 @@ public:
 	}
 
 	void DisableChaosBar(bool disable);
+	void ChaosBarFull ();
+	void ChaosBarReset();
 
 
 protected:
@@ -44,8 +46,6 @@ protected:
 
 	float easeInOutQuint(float x);
 
-	void ChaosBarFull ();
-	void ChaosBarReset();
 
 	bool _chaosBarFull = false;
 };
