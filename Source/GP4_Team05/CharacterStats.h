@@ -49,8 +49,7 @@ public:
 		PHYSICAL,
 		FIRE,
 		LIGHTNING
-		WATER,
-		EARTH,
+		BLOOD
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageTaken	= {};
 	/*
@@ -58,8 +57,7 @@ public:
 		PHYSICAL,
 		FIRE,
 		LIGHTNING,
-		WATER,
-		EARTH,
+		BLOOD
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageDealt	= {};
 

@@ -39,8 +39,9 @@ void ARoom::BeginPlay()
 void ARoom::OnRoomComplete()
 {
 	if (!_roomIsCompleted) {
-		_levelGenerator->GetBridgeRoom()->_occupiedAnchor = -1;
-		_levelGenerator->GetBridgeRoom()->AnchorToRoom(GetUnusedAnchor(), this);
+		//_levelGenerator->GetBridgeRoom()->_occupiedAnchor = -1;
+		_levelGenerator->GetBridgeRoom()->GetUnusedAnchor();
+		_levelGenerator->GetBridgeRoom()->AnchorToRoom(GetOccupiedAnchor(), this);
 		_levelGenerator->GetBridgeRoom()->_hasEntered = false;
 		_roomIsCompleted = true;
 
@@ -104,6 +105,8 @@ void ARoom::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 				_chaosManager = check->GetComponentByClass<UChaosManager>();
 				if(_chaosManager)
 				   ResetChaosManager();
+
+				GetUnusedAnchor();
 			}
 
 			OnPlayerEnter();
@@ -122,11 +125,11 @@ void ARoom::ActivateRoom()
 void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
 {
 	if (anchor && !_anchors.IsEmpty()) {	
-		ARoomAnchor* selectedAnchor = GetUnusedAnchor();
+		ARoomAnchor* selectedAnchor = GetOccupiedAnchor();
 		
 		if (selectedAnchor) {
 			SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-			SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
+			SetActorLocation(FVector(0.0f, 0.0f, 0.0f), false, nullptr, ETeleportType::TeleportPhysics);
 
 			FVector anchorNoZ = selectedAnchor->GetActorLocation();
 			FVector roomNoZ   = GetActorLocation();
@@ -143,9 +146,9 @@ void ARoom::AnchorToRoom(const ARoomAnchor* anchor, const ARoom* room)
 			zDelta.X	   = 0.0f;
 			zDelta.Y	   = 0.0f;
 
-			SetActorLocation(anchor->GetActorLocation());
-			SetActorLocation(GetActorLocation() + dir);
-			SetActorLocation(GetActorLocation() + zDelta);
+			SetActorLocation(anchor->GetActorLocation(),  false, nullptr, ETeleportType::TeleportPhysics);
+			SetActorLocation(GetActorLocation() + dir,    false, nullptr, ETeleportType::TeleportPhysics);
+			SetActorLocation(GetActorLocation() + zDelta, false, nullptr, ETeleportType::TeleportPhysics);
 
 			FRotator newRotation;
 

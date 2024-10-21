@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/LevelStreamingDynamic.h"
 #include "RoomAnchor.h"
-
+#include "AuraInteractableSelector.h"
 
 ALevelGenerator::ALevelGenerator()
 {
@@ -65,15 +65,23 @@ void ALevelGenerator::LoadNewRoom()
 
 void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 {
-	if (newRoom == _bridgeRoom || !_bridgeRoom)
+	if (newRoom == _bridgeRoom || !_bridgeRoom) 
+	{
 		return;
+	}
 
 	if (_currentRoomDepth > -1) 
 	{
+		newRoom->GetUnusedAnchor();
 		newRoom->AnchorToRoom(_bridgeRoom->GetUnusedAnchor(), _bridgeRoom);
 	}
 	
 	_currentRoom = newRoom;
+	if(_auraSelector)
+	{
+		_currentRoom->_auraSelector = _auraSelector;
+		_auraSelector->SetCurrentRoom(_currentRoom);
+	}
 }
 
 void ALevelGenerator::BeginPlay()
@@ -122,7 +130,11 @@ void ALevelGenerator::Tick(float deltaTime)
 
 void ALevelGenerator::GenerateLevelList(URoomGenerationData* data)
 {
-	_bridgeRoom = Cast<ARoom>(UGameplayStatics::GetActorOfClass(GetWorld(), ARoom::StaticClass()));
+	_auraSelector = Cast<AAuraInteractableSelector>(UGameplayStatics::GetActorOfClass(GetWorld(), AAuraInteractableSelector::StaticClass()));
+	if (!_auraSelector)
+		return;
+
+	_bridgeRoom   = Cast<ARoom>(UGameplayStatics::GetActorOfClass(GetWorld(), ARoom::StaticClass()));
 	if(!_bridgeRoom)
 	{
 		if (GEngine)

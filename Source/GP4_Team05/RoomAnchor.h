@@ -23,11 +23,18 @@ public:
 
  	// Play sound effects, move a model, etc. 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAnchorDoorOpenAndClose(bool doorOpened);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void SetInteracblesSpawn();
 
 	void OnAnchorDoorOpenAndClose_Implementation(bool doorOpened) {}
-
-
+	void SetInteracblesSpawn_Implementation() { }
+	
+	UFUNCTION(BlueprintCallable) FVector GetInteractablesSpawnLocation() 
+	{
+		return _spawnLocation;
+	}
 protected:
+	UPROPERTY(BlueprintReadWrite) FVector _spawnLocation;
+
 	UPROPERTY(EditAnywhere)       UBoxComponent* _doorCollider;
   	UPROPERTY(BlueprintReadWrite) bool _isOccupied;
 };

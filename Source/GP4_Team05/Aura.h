@@ -70,6 +70,8 @@ protected:
 	bool _isActive  = false;
 	// General Aura values, These values do not need to be used by all auras
 
+	// If true this aura has a chance to spawn as an Interactable pickup at room completion. 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)  bool _auraSpawnAsInteractable = false;
 	// Name of aura.
 	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraName;
 	// Description of Aura
@@ -87,6 +89,8 @@ protected:
 	// Tick Counter for how many times the aura should tick during it's duration.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) int           _tickCounter = 0;    
 	UPROPERTY(BlueprintReadOnly)				AAuraHandler* _auraHandler;
+	// Check to see if aura can stack, mostly used for InteractableSelector to decide if we can spawn duplicates.
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) bool        _canStack = true;
 	// Private aura values, used to affect the target entity after a certain duration.
 
 	// The tick duration of the aura, decided by Duration / TickCounter (if aura is infinite then define TickDuration manually) 
