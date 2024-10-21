@@ -76,7 +76,7 @@ void ABaseEnemyClass::MeleeAttack()
 	{
 		if (HitActor == playerActor)
 		{
-			Cast<AAuraCharacter>(playerActor)->QueueDamage(_attackDamage, PHYSICAL);
+			Cast<AAuraCharacter>(playerActor)->QueueDamage(_attackDamage, PHYSICAL, GetStats());
 			_attackTimer = 0;
 		}
 	}

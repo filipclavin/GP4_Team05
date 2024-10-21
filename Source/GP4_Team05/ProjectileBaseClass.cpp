@@ -169,7 +169,7 @@ void AProjectileBaseClass::DealDamage(TArray<AActor*> hitCharacter)
     			//TODO change to lightning when its ready
     			AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(hitActor);
     			hitCharacter->QueueDamage(_projectileDamage, ElementTypes::LIGHTNING);
-    			_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, LIGHTNING_ATTACK);
+    			_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, LIGHTNING_ATTACK, _projectileDamage);
     			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
     			numberOfForks++;
     			

@@ -94,7 +94,7 @@ void ABloodProjectile::DealDamage(TArray<AActor*> hitCharacter)
 				AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(hitActor);
 				hitCharacter->QueueDamage(_projectileDamage, PHYSICAL);
 
-				_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, BLOOD_ATTACK);
+				_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, BLOOD_ATTACK, _projectileDamage);
 				
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, hitActor->GetName() + " Hit");
 

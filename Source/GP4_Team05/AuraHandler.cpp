@@ -56,7 +56,7 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 		if (affectedAura)
 		{
 			// Effects call OnAuraCast on abilities instead.
-			if(affectedAura->GetType() != EFFECT)
+			if(affectedAura->GetType() != EFFECT && affectedAura->GetType() != INTAKE)
 				affectedAura->OnAuraCast(caster);
 			affectedAura->OnAuraExists();
 		}
@@ -66,7 +66,7 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 			if (aura) 
 			{
 				aura->ActivateAura();
-				if(aura->GetType() != EFFECT)
+				if(aura->GetType() != EFFECT && aura->GetType() != INTAKE)
 					aura->OnAuraCast(caster);
 				target->AddAura(aura);
 			}

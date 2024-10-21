@@ -55,13 +55,13 @@ void AAuraCharacter::QueueDamage(int amount, ElementTypes element, UCharacterSta
 	_combinedStats->QueueDamage(amount, element, stats, selfDamageTaken);
 }
 
-void AAuraCharacter::UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackType attackType)
+void AAuraCharacter::UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackType attackType, int damageDone)
 {
 	TArray<UAura*>& auras = _auraList[EFFECT];
 	for (INT32 i = 0; i < _auraList[EFFECT].Num(); i++)
 	{
 		if(attackType == auras[i]->GetAuraAttackType())
-			auras[i]->OnAuraAttackHit(target);		
+			auras[i]->OnAuraAttackHit(target, damageDone);		
 	}
 }
 
@@ -73,6 +73,13 @@ void AAuraCharacter::UpdateAurasOnAttackCast(AuraAttackType attackType)
 		if (attackType == auras[i]->GetAuraAttackType())
 			auras[i]->OnAuraCast(this);
 	}
+}
+
+void AAuraCharacter::UpdateAurasOnDamageTaken(AAuraCharacter* attacker)
+{
+	if(attacker)
+		for (size_t i = 0; i < _auraList[INTAKE].Num(); i++)
+			_auraList[INTAKE][i]->OnAuraDamageTaken(attacker);
 }
 
 // Called when the game starts or when spawned

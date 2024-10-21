@@ -29,15 +29,18 @@ public:
 	// Called if an affected AuraCharacter already has this aura (based on Aura ID).
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraExists();
 	// Called when AuraCharacter hits with an ability or regular attack. Attack is specified by AuraAttackType
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraAttackHit(AAuraCharacter* targetHit);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraAttackHit(AAuraCharacter* targetHit, int damageDone);
+	// Called when AuraCharacter has gotten hit by an attack. Does not include self inflicted or enviromental damage.
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraDamageTaken(AAuraCharacter* attacker);
 
-	void OnAuraAttackHit_Implementation(AAuraCharacter* targetHit) { targetHit;    }
-	void OnAuraCast_Implementation(AAuraCharacter* caster)		   { caster;	   }
-	void OnAuraAdd_Implementation(AAuraCharacter* affectedChar)	   { affectedChar; }
-	void OnAuraUpdate_Implementation(const float deltaTime)		   { deltaTime;    }
-	void OnAuraRemoved_Implementation()							   {			   }
-	void OnAuraTick_Implementation()							   {			   }
-	void OnAuraExists_Implementation()							   {			   }
+	void OnAuraDamageTaken_Implementation(AAuraCharacter* attacker)				   { attacker;				 }
+	void OnAuraAttackHit_Implementation(AAuraCharacter* targetHit, int damageDone) { targetHit;  damageDone; }
+	void OnAuraCast_Implementation(AAuraCharacter* caster)		                   { caster;	             }
+	void OnAuraAdd_Implementation(AAuraCharacter* affectedChar)	                   { affectedChar;           }
+	void OnAuraUpdate_Implementation(const float deltaTime)		                   { deltaTime;              }
+	void OnAuraRemoved_Implementation()							                   {			             }
+	void OnAuraTick_Implementation()							                   {			             }
+	void OnAuraExists_Implementation()							                   {			             }
 
 	// Don't Update _currentDuration if Aura is infinite!
 	void DecreaseDuration(const float deltaTime);

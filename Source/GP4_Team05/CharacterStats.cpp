@@ -114,7 +114,11 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				roundedAmount = RoundToInt(newAmount);
 				_currentHealth -= roundedAmount;
 				if(!intake._selfDamageTaken)
+				{
 					_parent->OnDamageIntake(roundedAmount, intake._element);
+					if(intake._stats)
+						_parent->UpdateAurasOnDamageTaken(intake._stats->_parent);		
+				}
 				break;
 			case IntakeData::Type::Heal:
 				newAmount = (intake._amount * _healingTaken);
