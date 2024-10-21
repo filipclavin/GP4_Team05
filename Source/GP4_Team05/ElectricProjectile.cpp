@@ -123,6 +123,7 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow,
 		FString::FromInt(numberOfForks)+" of " +FString::FromInt(_projectileForking));
 
+	LightningHitEvent(alreadyHitActors);
 	DealDamage(alreadyHitActors);
 	
 	

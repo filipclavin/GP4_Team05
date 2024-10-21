@@ -23,6 +23,7 @@ void UChaosManager::ResetChaosBarProgress()
 {
 	_currentChaos = 0.0f;
 	_chaosBar->SetCurrentChaos(_currentChaos);
+	_chaosBar->ChaosBarReset();
 }
 
 void UChaosManager::DisableChaosBar(bool disable)
@@ -57,8 +58,10 @@ void UChaosManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	if (_chaosBar == nullptr)
 		return;
 	
-	if(!ChaosBarIsFilled())
-		_chaosBar->UpdateBar(_currentChaos, _maxChaos);
+	_chaosBar->UpdateBar(_currentChaos, _maxChaos);
+	if (ChaosBarIsFilled())
+		_chaosBar->ChaosBarFull();
+
 }
 
 void UChaosManager::setupChaosManager(UChaosBarWidget* widget)

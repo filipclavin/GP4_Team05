@@ -42,14 +42,18 @@ float UChaosBarWidget::easeInOutQuint(float x)
 
 void UChaosBarWidget::ChaosBarFull()
 {
-	_chaosBar->SetFillColorAndOpacity(_chaosBarFullColor);
-	_chaosBarFull = true;
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Chaos bar full"));
+	if (!_chaosBarFull) 
+	{
+		_chaosBar->SetFillColorAndOpacity(_chaosBarFullColor);
+		_chaosBarFull = true;
+	}
 }
 
 void UChaosBarWidget::ChaosBarReset()
 {
 	_chaosBar->SetFillColorAndOpacity(_OrdinaryColor);
+	_currentChaos = 0.0f;
+	_targetChaos = 0.0f;
+	_timeSinceUpdate = 0.0f;
 	_chaosBarFull = false;
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Chaos bar no longer full"));
 }

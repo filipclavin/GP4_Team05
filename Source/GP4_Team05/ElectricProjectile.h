@@ -17,5 +17,6 @@ public:
 
 	bool _filterEnemyType = false;
 	bool _overspillHits   = false;
-	
+
+	UFUNCTION(BlueprintImplementableEvent) void LightningHitEvent(const TArray<AActor*>& hitEnemies);
 };

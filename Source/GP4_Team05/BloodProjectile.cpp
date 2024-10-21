@@ -48,6 +48,7 @@ void ABloodProjectile::Tick(float DeltaSeconds)
 
 	if (_durationTimer > abilityDuration)
 	{
+		bloodHitEvent(hitActors.Array());
 		DespawnProjectile();
 	}
 
