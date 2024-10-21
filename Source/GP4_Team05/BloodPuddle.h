@@ -26,28 +26,19 @@ protected:
 	class UBoxComponent* _collisionBox;	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UStaticMeshComponent* _puddleMesh;
-	// Dynamic material to control fading
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Visual")
 	class UMaterialInstanceDynamic* _dynamicMaterial;	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade")
-	float _fadeSpeedStart;  // Fade speed at the start
+	float _fadeSpeedStart; 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade")
-	float _fadeSpeedEnd;  // Faster fade speed towards the end
+	float _fadeSpeedEnd; 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade")
-	float _shrinkSpeed;  // Shrink speed over time
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fade") float _fadeSpeed;
-		
-	// Percent of total health this puddle heals (e.g., 30% of max health)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
-	float _healingPercentage;
-	// Healing rate applied over time
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Healing")
-	float _healingRate;	
-	float _healingProgress;
-	//float _totalHealed;
+	float _shrinkSpeed;  
+					
 	float _opacity;	
 	bool  _bPlayerOnPuddle;
+	float _puddleTickDuration;  
+	const float _tickInterval = 1.0f;;
 
 	UPROPERTY()
 	class AAuraCharacter* _auraCharacter;
@@ -55,11 +46,7 @@ protected:
 
 	//this is just for a temporary implementation of adding chaos, CHANGE LATER! -Gustav
 	UPROPERTY()
-	      UChaosManager*  _chaosManager;
-		 /* UPROPERTY(EditDefaultsOnly, Category = "Blood Puddle")
-		  TSubclassOf<ABloodPuddle> BloodPuddleBlueprint;
-		  */
-	// Handle player stepping on the puddle
+	      UChaosManager*  _chaosManager;		 
 	UFUNCTION()
 	void OnPlayerEnterPuddle(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
@@ -72,7 +59,6 @@ protected:
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
-	//UFUNCTION(BlueprintCallable, Category = "BloodPuddle")
-	//static ABloodPuddle* SpawnPuddle(FVector SpawnLocation, FRotator SpawnRotation);
+	
 
 };

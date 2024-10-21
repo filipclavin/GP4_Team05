@@ -123,23 +123,7 @@ void ABaseEnemyClass::Die()
 	_controller->UnPossess();
 	OnDeath();
 	Super::Die();
-	
-	//FVector DeathLocation = GetActorLocation();
-	//FRotator DeathRotation = GetActorRotation();
-	//ABloodPuddle* BloodPuddle = ABloodPuddle::SpawnPuddle(DeathLocation, DeathRotation);
-	//if (BloodPuddle)
-	//{
-	//	FString LocationString = DeathLocation.ToString();
-	//	
-	//	   if (GEngine)
-	//		   GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Blood Puddle spawned at: %s"), *LocationString));
-	//}
-	//else
-	//{
-	//	if (GEngine)
-	//		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, "Failed to spawn Blood Puddle!)");
-	//	
-	//}
+		
 }
 
 void ABaseEnemyClass::Despawn()
