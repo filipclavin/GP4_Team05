@@ -10,6 +10,7 @@
 #include "LevelGenerator.h"
 #include "NavigationSystem.h"
 #include "AI/NavigationSystemBase.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void AEnemySpawner::SpawnNextWave()
@@ -67,7 +68,7 @@ void AEnemySpawner::SpawnNextWave()
 
 		float boxAspectRatio = bounds.BoxExtent.X / bounds.BoxExtent.Y;
 		int cols = FMath::Max(FMath::Floor(FMath::Sqrt(finalCount * boxAspectRatio)), 1);
-		int rows = FMath::Floor(static_cast<float>(finalCount) / cols);
+		int rows = FMath::Max(FMath::Floor(static_cast<float>(finalCount) / cols), 1);
 
 		while (cols * rows != finalCount)
 		{
@@ -79,12 +80,16 @@ void AEnemySpawner::SpawnNextWave()
 			}
 			else if (cols * rows > finalCount)
 			{
-				if ((cols - 1) * rows < finalCount && cols * (rows - 1) < finalCount)
+				if (gridAspectRatio > boxAspectRatio)
 				{
-					break;
+					if ((cols - 1) * rows < finalCount) break;
+					cols--;
 				}
-				
-				gridAspectRatio > boxAspectRatio ? cols-- : rows--;
+				else
+				{
+					if ((rows - 1) * cols < finalCount) break;
+					rows--;
+				}
 			}
 		}
 
@@ -132,10 +137,13 @@ void AEnemySpawner::SpawnNextWave()
 
 void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint)
 {
+	FNavLocation navLoc;
+	_navSys->ProjectPointToNavigation(spawnPoint, navLoc, FVector(1000, 1000, 1000));
+	
 	enemy->SetActorEnableCollision(true);
 	enemy->SetActorLocation
 	(
-		spawnPoint,
+		navLoc.Location + FVector(0, 0, enemy->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()),
 		false,
 		nullptr,
 		ETeleportType::TeleportPhysics
