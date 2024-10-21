@@ -42,8 +42,16 @@ void UPlayerWidget::UpdateHealth()
 	//at least one value in the division needs to be float in order to prevent the result from being an int
 	float currentHealth = _playerStats->_currentHealth;
 	float maxHealth		= _playerStats->_maxHealth;
-	
-	_healthBar->SetPercent(_playerStats->_currentHealth > 0 ? currentHealth / maxHealth : 0.0f);
+	float targetPercent = (currentHealth > 0) ? currentHealth / maxHealth : 0.0f;
+
+	// Adjust InterpSpeed to control how fast the bar fills or shrinks
+	const float InterpSpeed = 4.0f;
+	float currentBarPercent = _healthBar->Percent;
+	float newBarPercent = FMath::FInterpTo(currentBarPercent, targetPercent, GetWorld()->DeltaTimeSeconds, InterpSpeed);
+
+	_healthBar->SetPercent(newBarPercent);
+
+	//_healthBar->SetPercent(_playerStats->_currentHealth > 0 ? currentHealth / maxHealth : 0.0f);
 }
 
 void UPlayerWidget::SetupIconsAndTexts(UHorizontalBox* box, TArray<AuraTrackerData>& tracker, FString type)
