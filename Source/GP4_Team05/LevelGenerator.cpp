@@ -65,11 +65,14 @@ void ALevelGenerator::LoadNewRoom()
 
 void ALevelGenerator::SetCurrentRoom(ARoom* newRoom)
 {
-	if (newRoom == _bridgeRoom || !_bridgeRoom)
+	if (newRoom == _bridgeRoom || !_bridgeRoom) 
+	{
 		return;
+	}
 
 	if (_currentRoomDepth > -1) 
 	{
+		newRoom->GetUnusedAnchor();
 		newRoom->AnchorToRoom(_bridgeRoom->GetUnusedAnchor(), _bridgeRoom);
 	}
 	

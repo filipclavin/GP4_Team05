@@ -67,8 +67,8 @@ protected:
 	float _testDuration = 2.0f;
 	// Int to check which anchor we came from
 	INT32 _occupiedAnchor = -1;
-	bool _bridgeRoom      = false;
-	bool _hasEntered      = false;
+	bool  _bridgeRoom      = false;
+	bool  _hasEntered      = false;
 	
 	UPROPERTY(BlueprintReadOnly) AAuraInteractableSelector* _auraSelector = nullptr;
 	UPROPERTY(BlueprintReadWrite) bool					    _hasPickedUpInteractable = false;
