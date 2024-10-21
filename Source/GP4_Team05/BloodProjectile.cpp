@@ -48,8 +48,8 @@ void ABloodProjectile::Tick(float DeltaSeconds)
 
 	if (_durationTimer > abilityDuration)
 	{
-		DespawnProjectile();
 		bloodHitEvent(hitActors.Array());
+		DespawnProjectile();
 	}
 
 	TArray<AActor*> overlappingActors;
