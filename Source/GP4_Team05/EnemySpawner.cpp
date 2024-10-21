@@ -137,13 +137,15 @@ void AEnemySpawner::SpawnNextWave()
 
 void AEnemySpawner::SpawnEnemy(ABaseEnemyClass* enemy, const FVector& spawnPoint)
 {
+	float halfHeight = enemy->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	
 	FNavLocation navLoc;
-	_navSys->ProjectPointToNavigation(spawnPoint, navLoc, FVector(1000, 1000, 1000));
+	_navSys->ProjectPointToNavigation(spawnPoint, navLoc, FVector(1000, 1000, halfHeight + 50));
 	
 	enemy->SetActorEnableCollision(true);
 	enemy->SetActorLocation
 	(
-		navLoc.Location + FVector(0, 0, enemy->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()),
+		navLoc.Location + FVector(0, 0, halfHeight),
 		false,
 		nullptr,
 		ETeleportType::TeleportPhysics
