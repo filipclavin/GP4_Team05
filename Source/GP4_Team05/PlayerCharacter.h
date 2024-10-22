@@ -59,8 +59,6 @@ private:
 	UPROPERTY(VisibleAnywhere) USphereComponent*	_dashHitbox			   = nullptr;
 
 	UPROPERTY(EditAnywhere, Category="Melee Stats") float _meleeCooldown		  = 3.f;
-	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _lightAttackMeleeDamage = 10.f;
-	UPROPERTY(EditAnywhere, Category="Melee Stats") int   _heavyAttackMeleeDamage = 20.f;
 	//how long the attack must be charged before it becomes heavy
 	UPROPERTY(EditAnywhere, Category="Melee Stats") float _heavyAttackMeleeTime	  = 0.5f;
 
@@ -167,6 +165,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category=Upgrade) TArray<FPlayerUpgrades> Upgrades;
 	UFUNCTION(BlueprintCallable) void UpgradePlayer();
 
+	UPROPERTY(EditAnywhere, Category="Melee Stats", BlueprintReadWrite) int   _lightAttackMeleeDamage = 10.f;
+	UPROPERTY(EditAnywhere, Category="Melee Stats", BlueprintReadWrite) int   _heavyAttackMeleeDamage = 20.f;
 		
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UCameraComponent*	_playerCameraComponent = nullptr;
 protected:
