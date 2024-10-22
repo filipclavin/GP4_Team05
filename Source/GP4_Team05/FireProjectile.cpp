@@ -16,12 +16,10 @@ void AFireProjectile::SpawnProjectile(int upgradeAmount, APlayerCharacter* ownin
 	if (upgradeAmount >= biggerOilExplosionThreshold)
 	{
 		_biggerOilExplosion = true;
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "bigger explosion");
 	}
 	if (upgradeAmount >= lingeringFireThreshold)
 	{
 		_lingeringFire = true;
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "lingering fire");
 	}
 }
 
@@ -37,7 +35,6 @@ void AFireProjectile::BeginPlay()
 
 void AFireProjectile::DealDamage(TArray<AActor*> hitCharacter)
 {
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Fire");
 	int numberOfForks = 0;
 
 	FireExplosion(hitCharacter[0]->GetActorLocation());
@@ -53,12 +50,10 @@ void AFireProjectile::DealDamage(TArray<AActor*> hitCharacter)
 			
 			dealFireDamage(Cast<AAuraCharacter>(hitActor));
 			
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
 			numberOfForks++;
 
 			if (numberOfForks >= _projectileForking)
 			{
-				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "limit Reached");
 				break;
 			}
 		}
@@ -80,7 +75,6 @@ void AFireProjectile::FireExplosion(FVector explodeOrigin)
 	
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), explodeOrigin, _projectileExplosionRadius,
 		traceObjectTypes, AAuraCharacter::StaticClass(), IgnoreArray, hitEnemies);
-	DrawDebugSphere(GetWorld(), explodeOrigin, _projectileExplosionRadius, 12, FColor::Red, true, 4.0f);
 
 	for (AActor* HitEnemyActor : hitEnemies)
 	{

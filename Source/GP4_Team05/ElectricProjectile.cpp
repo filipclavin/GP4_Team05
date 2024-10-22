@@ -12,12 +12,10 @@ void AElectricProjectile::SpawnProjectile(int upgradeAmount, APlayerCharacter* o
 	if (upgradeAmount >= enemyTypeFilterThreshold)
 	{
 		_filterEnemyType = true;
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "filtering enemy type");
 	}
 	if (upgradeAmount >= enemyHitOverspillThreshold)
 	{
 		_overspillHits = true;
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "overspilling hits");
 	}
 }
 
@@ -69,7 +67,6 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 	{
 		if (numberOfForks >= _projectileForking)
 		{
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "limit Reached");
 			break;
 		}
 		lightningHits.Empty();
@@ -78,19 +75,15 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 		
 		UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange,
 		traceObjectTypes, AuraCharacterClass, alreadyHitActors, lightningHits);
-		DrawDebugSphere(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange, 12, FColor::Red, true, 4.0f);
 		
 
 		
 		UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange,
 		puddleObjectType, PuddleClass, alreadyHitActors, puddlesHits);
-		DrawDebugSphere(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange, 12, FColor::Red, true, 4.0f);
 		
 
 		for (AActor* hitActor : lightningHits)
 		{
-			DrawDebugLine(GetWorld(), Actor->GetActorLocation(), hitActor->GetActorLocation(),
-				FColor::Yellow, true, 4, 0, 1);
 			alreadyHitActors.Add(hitActor);
 			ActorsToProcess.Enqueue(hitActor);
 			numberOfForks++;
@@ -98,8 +91,6 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 
 		for (AActor* hitPuddle : puddlesHits)
 		{
-			DrawDebugLine(GetWorld(), Actor->GetActorLocation(), hitPuddle->GetActorLocation(),
-				FColor::Yellow, true, 4, 0, 1);
 			alreadyHitActors.Add(hitPuddle);
 			ActorsToProcess.Enqueue(hitPuddle);
 		}
@@ -110,18 +101,14 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 
 			UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange,
 			traceObjectTypes, AuraCharacterClass, alreadyHitActors, lightningHits);
-			DrawDebugSphere(GetWorld(), Actor->GetActorLocation(), _baseProjectileForkingRange, 12, FColor::Red, true, 4.0f);
 			
 			for (AActor* hitActor : lightningHits)
 			{
-				DrawDebugLine(GetWorld(), Actor->GetActorLocation(), hitActor->GetActorLocation(),
-					FColor::Yellow, true, 4, 0, 1);
 				alreadyHitActors.Add(hitActor);
 				ActorsToProcess.Enqueue(hitActor);
 				numberOfForks++;
 				if (numberOfForks >= _projectileForking)
 				{
-					GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "limit Reached");
 					break;
 				}
 			}
@@ -133,9 +120,6 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 		_electricityForks.Add(Actor, FLightningStruct(forks));
 		forks.Empty();
 	}
-
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow,
-		FString::FromInt(numberOfForks)+" of " +FString::FromInt(_projectileForking));
 
 	LightningHitEvent(_electricityForks);
 	DealDamage(alreadyHitActors);
