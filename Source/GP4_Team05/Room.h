@@ -32,6 +32,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnInteractablePickup();
 	UFUNCTION(BlueprintCallable) void OnRoomComplete();
 
+	//added by Gustav to clear the room from the blueprint on completion
+	UFUNCTION(BlueprintCallable) void ClearRoom();
+	
 	void ResetChaosManager();
 
 	void OnRoomLoad_Implementation() {}
