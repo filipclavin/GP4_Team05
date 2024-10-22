@@ -37,12 +37,13 @@ protected:
 	void SetupIconsAndTexts(UHorizontalBox* box, TArray<AuraTrackerData>& tracker, FString type);
 
 	float Precision(float f, int places);
+	int   RountToInt(float amount);
 
 	void UpdateAuras(const TArray<UAura*>& list, TArray<AuraTrackerData>& trackerData);
 
 	UPROPERTY(EditAnywhere) int       _maxTrackedAuras = 10;
-	UPROPERTY(EditAnywhere) float     _imageSizeX      = 1.0f;
-	UPROPERTY(EditAnywhere) float     _imageSizeY      = 1.0f;
+	UPROPERTY(EditAnywhere) float     _imageSizeX      = 2.0f;
+	UPROPERTY(EditAnywhere) float     _imageSizeY      = 2.0f;
 	UPROPERTY(EditAnywhere) float     _fontSize        = 20.0f;
 	UPROPERTY(EditAnywhere) FVector2D _textPosition    = { 0.0f, 0.0f };
 
@@ -50,10 +51,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite) UCharacterStats* _playerStats;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget)) UProgressBar* _healthBar;
+	UPROPERTY(EditAnywhere, meta = (BindWidget)) UTextBlock*   _healthText;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget)) UHorizontalBox* _buffsBox;
-
 	UPROPERTY(EditAnywhere, meta = (BindWidget)) UHorizontalBox* _debuffsBox;
+
 
 	TArray<AuraTrackerData> _buffsTracker;
 	TArray<AuraTrackerData> _debuffsTracker;

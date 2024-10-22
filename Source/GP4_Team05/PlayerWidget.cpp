@@ -7,6 +7,7 @@
 #include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Blueprint/WidgetTree.h"
 
 #include "Aura.h"
@@ -50,8 +51,12 @@ void UPlayerWidget::UpdateHealth()
 	float newBarPercent = FMath::FInterpTo(currentBarPercent, targetPercent, GetWorld()->DeltaTimeSeconds, InterpSpeed);
 
 	_healthBar->SetPercent(newBarPercent);
-
-	//_healthBar->SetPercent(_playerStats->_currentHealth > 0 ? currentHealth / maxHealth : 0.0f);
+	
+	FString toInt = "";
+	toInt.AppendInt(_playerStats->_currentHealth);
+	toInt += " / ";
+	toInt.AppendInt(_playerStats->_maxHealth);
+	_healthText->SetText(FText::FromString(toInt));
 }
 
 void UPlayerWidget::SetupIconsAndTexts(UHorizontalBox* box, TArray<AuraTrackerData>& tracker, FString type)
@@ -77,17 +82,26 @@ void UPlayerWidget::SetupIconsAndTexts(UHorizontalBox* box, TArray<AuraTrackerDa
 
 		data._verticalBox->AddChildToVerticalBox(data._text);
 		data._verticalBox->AddChildToVerticalBox(data._image);
-
+	
 		// Only want to render the text & icon when a buff is detected.
 		data._verticalBox->SetRenderOpacity(0.0f);
+
+		UHorizontalBoxSlot* slot = Cast<UHorizontalBoxSlot>(box->GetSlots()[i]);
+		slot->SetPadding(FMargin(15.0f, 0.0f));
 	}
 }
 
 // Want to move this to a helper class
 float UPlayerWidget::Precision(float f, int places)
 {
-	float n = powf(10.0f, places);
+	float n = powf(1.0f, places);
 	return roundf((f * n) / n);
+}
+
+int UPlayerWidget::RountToInt(float amount)
+{
+	amount = amount + 0.5f - (amount < 0);
+	return int(amount);
 }
 
 void UPlayerWidget::UpdateAuras(const TArray<UAura*>& list, TArray<AuraTrackerData>& trackerData)
@@ -104,7 +118,8 @@ void UPlayerWidget::UpdateAuras(const TArray<UAura*>& list, TArray<AuraTrackerDa
 				AuraTrackerData& data = trackerData[i];
 				data._verticalBox->SetRenderOpacity(1.0f);
 
-				FString duration = FString::SanitizeFloat(Precision(list[i]->GetDuration(), 2));
+				FString duration = "";
+				duration.AppendInt(RountToInt(list[i]->GetDuration()));//Precision(list[i]->GetDuration(), 2));
 				data._text->SetText(FText::FromString(duration));
 
 				data._image->SetBrushFromTexture(list[i]->GetIcon(), false);
