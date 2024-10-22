@@ -3,6 +3,8 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "AuraCharacter.h"
+#include "BaseEnemyClass.h"
+#include "BlueprintGameplayTagLibrary.h"
 #include "EnemySpawner.h"
 #include "NavigationSystem.h"
 #include "ChaosManager.h"
@@ -47,6 +49,8 @@ void ARoom::OnRoomComplete()
 
 		_levelGenerator->GetBridgeRoom()->GetOccupiedAnchor()->OpenAnchorDoor();
 		GetOccupiedAnchor()->OpenAnchorDoor();
+
+		
 	}
 }
 
@@ -227,3 +231,18 @@ void ARoom::FetchLevelGenerator()
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 }
 
+void ARoom::ClearRoom()
+{
+	FGameplayTagQueryExpression Expression;
+	Expression.AnyTagsMatch();
+	Expression.AddTag(TAG_Alive);
+                     		
+	TArray<AActor*> livingEnemies;
+	UBlueprintGameplayTagLibrary::GetAllActorsOfClassMatchingTagQuery(GetWorld(), ABaseEnemyClass::
+	StaticClass(),FGameplayTagQuery::BuildQuery(Expression), livingEnemies);
+	for (AActor* LivingEnemy : livingEnemies)
+	{
+		ABaseEnemyClass* Enemy = Cast<ABaseEnemyClass>(LivingEnemy);
+		Enemy->Kill();
+	}
+}

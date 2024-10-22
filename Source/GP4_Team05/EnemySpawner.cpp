@@ -15,7 +15,7 @@
 
 void AEnemySpawner::SpawnNextWave()
 {
-	if (_chaosManager->_chaosFull)
+	if (_chaosManager->ChaosBarIsFilled())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Chaos is full, not spawning any more enemies!"));
 		return;
