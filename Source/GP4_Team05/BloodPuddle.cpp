@@ -20,6 +20,8 @@ ABloodPuddle::ABloodPuddle()
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	_collisionBox->SetupAttachment(RootComponent);
 	_collisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABloodPuddle::OnPlayerEnterPuddle);
+	_collisionBox->OnComponentEndOverlap.AddDynamic(this, &ABloodPuddle::OnPlayerExitPuddle);
+
 
 	
 	_fadeSpeedStart = 0.2f;
@@ -65,7 +67,14 @@ void ABloodPuddle::OnPlayerEnterPuddle(UPrimitiveComponent* OverlappedComp, AAct
 		_bPlayerOnPuddle = true;
 	}
 }
-
+void ABloodPuddle::OnPlayerExitPuddle(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor && OtherActor->IsA(APlayerCharacter::StaticClass()))
+	{
+		_bPlayerOnPuddle = false;
+	}
+}
 
 void ABloodPuddle::Tick(float DeltaTime)
 {
@@ -78,7 +87,7 @@ void ABloodPuddle::Tick(float DeltaTime)
 		{
 			ApplyHealing(DeltaTime);
 			_puddleTickDuration = _tickInterval;
-			_bPlayerOnPuddle = false;
+			//_bPlayerOnPuddle = false;
 		}
 		_puddleTickDuration -= DeltaTime;
 		
@@ -119,6 +128,7 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 		return;  
 	
 	_auraHandler->CastAuraByName("Blood Offer", _auraCharacter, nullptr);
+	OnPlayerAbsorbingBlood();
 
 	}
 

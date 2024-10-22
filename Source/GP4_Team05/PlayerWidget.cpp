@@ -45,7 +45,7 @@ void UPlayerWidget::UpdateHealth()
 	float targetPercent = (currentHealth > 0) ? currentHealth / maxHealth : 0.0f;
 
 	// Adjust InterpSpeed to control how fast the bar fills or shrinks
-	const float InterpSpeed = 4.0f;
+	const float InterpSpeed = 6.0f;
 	float currentBarPercent = _healthBar->Percent;
 	float newBarPercent = FMath::FInterpTo(currentBarPercent, targetPercent, GetWorld()->DeltaTimeSeconds, InterpSpeed);
 
