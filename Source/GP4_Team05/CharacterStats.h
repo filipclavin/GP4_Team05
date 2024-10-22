@@ -24,7 +24,7 @@ public:
 	// The scaling used is percentage > 1 is percent increase < 1 is descrease
 	UFUNCTION(BlueprintCallable) void ScaleElementalDamageTaken(ElementTypes elementType, float scaling);
 
-	UFUNCTION(BlueprintCallable) int CalculateDamage(int damage, ElementTypes element);
+	UFUNCTION(BlueprintCallable) float CalculateDamage(int damage, ElementTypes element);
 
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
 	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats, bool selfDamageTaken = false);
@@ -92,7 +92,6 @@ protected:
 			
 	TArray<IntakeData> _intakeQueue;
 
-	int RoundToInt(float amount);
 	bool IsCriticalStrike();
 
 	int _currentLevel;

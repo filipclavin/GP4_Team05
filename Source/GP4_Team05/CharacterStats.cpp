@@ -37,10 +37,10 @@ void UCharacterStats::ScaleElementalDamageTaken(ElementTypes elementType, float 
 		_elementDamageTaken[elementType] *= scaling;
 }
 
-int UCharacterStats::CalculateDamage(int damage, ElementTypes element)
+float UCharacterStats::CalculateDamage(int damage, ElementTypes element)
 {
 	float newDamage = ((damage * _elementDamageDealt.IsEmpty() ? 1.0f : _elementDamageDealt[element]) * _allDamageDealt) * IsCriticalStrike() ? 2 : 1;
-	return RoundToInt(newDamage);
+	return newDamage;
 }
 
 void UCharacterStats::QueueHeal(int amount)
@@ -61,12 +61,6 @@ void UCharacterStats::QueueDamage(int amount, ElementTypes element, UCharacterSt
 	data._stats = stats;
 	data._selfDamageTaken = selfDamageTaken;
 	_intakeQueue.Add(data);
-}
-
-int UCharacterStats::RoundToInt(float amount)
-{
-	amount = amount + 0.5f - (amount < 0);
-	return int(amount);
 }
 
 bool UCharacterStats::IsCriticalStrike()
@@ -112,7 +106,7 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				else
 					newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
 				
-				roundedAmount = RoundToInt(newAmount);
+				roundedAmount = FMath::RoundToInt(newAmount);
 				_currentHealth -= roundedAmount;
 				if(!intake._selfDamageTaken)
 				{
@@ -123,7 +117,7 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				break;
 			case IntakeData::Type::Heal:
 				newAmount = (intake._amount * _healingTaken);
-				roundedAmount = RoundToInt(newAmount);
+				roundedAmount = FMath::RoundToInt(newAmount);
 				_currentHealth += roundedAmount;
 				_currentHealth = _currentHealth > _maxHealth ? _maxHealth : _currentHealth;
 				_parent->OnHealIntake(roundedAmount);
