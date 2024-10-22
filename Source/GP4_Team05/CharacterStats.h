@@ -66,9 +66,11 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)  bool _isAlive = true;
 	
-	UPROPERTY(EditAnywhere) float _healthScaling      = 1.0f;
-	UPROPERTY(EditAnywhere) float _speedScaling       = 1.0f;
-	UPROPERTY(EditAnywhere) float _damageDealtScaling = 1.0f;
+	UPROPERTY(EditAnywhere) float _healthScaling          = 1.0f;
+	UPROPERTY(EditAnywhere) float _speedScaling           = 1.0f;
+	UPROPERTY(EditAnywhere) float _damageDealtScaling     = 1.0f;
+	// For damage reduction it is from 1.0 -> 0.0f
+	UPROPERTY(EditAnywhere) float _damageReductionScaling = 1.0f;
 
 protected:
 	AAuraCharacter* _parent;

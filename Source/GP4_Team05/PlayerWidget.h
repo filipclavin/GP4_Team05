@@ -56,7 +56,6 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (BindWidget)) UHorizontalBox* _buffsBox;
 	UPROPERTY(EditAnywhere, meta = (BindWidget)) UHorizontalBox* _debuffsBox;
 
-
 	TArray<AuraTrackerData> _buffsTracker;
 	TArray<AuraTrackerData> _debuffsTracker;
 };

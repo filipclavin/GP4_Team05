@@ -19,6 +19,7 @@ void UCharacterStats::SetCharacterLevel(int level)
 	for (int i = 0; i < levelDelta; i++)
 	{
 		_maxHealth      *= _healthScaling;
+		_allDamageTaken *= _damageReductionScaling;
 		_movementSpeed  *= _speedScaling;
 		_allDamageDealt *= _damageDealtScaling;
 	}
@@ -124,6 +125,7 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				newAmount = (intake._amount * _healingTaken);
 				roundedAmount = RoundToInt(newAmount);
 				_currentHealth += roundedAmount;
+				_currentHealth = _currentHealth > _maxHealth ? _maxHealth : _currentHealth;
 				_parent->OnHealIntake(roundedAmount);
 				break;
 			}
