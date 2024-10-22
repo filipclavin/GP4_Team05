@@ -97,7 +97,6 @@ void AExplosiveBarrel::SetFire()
 void AExplosiveBarrel::EndFire()
 {
 	Despawn();
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "despawning fire");
 }
 
 void AExplosiveBarrel::Explode(bool biggerExplode)
@@ -119,7 +118,6 @@ void AExplosiveBarrel::Explode(bool biggerExplode)
 	
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), explosionRadius,
 		traceObjectTypes, AAuraCharacter::StaticClass(), IgnoreArray, hitEnemies);
-	DrawDebugSphere(GetWorld(), GetActorLocation(), explosionRadius, 12, FColor::Red, true, 4.0f);
 
 	for (AActor* HitEnemyActor : hitEnemies)
 	{
