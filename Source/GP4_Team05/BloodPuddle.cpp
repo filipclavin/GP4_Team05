@@ -23,7 +23,7 @@ ABloodPuddle::ABloodPuddle()
 	_collisionBox->OnComponentEndOverlap.AddDynamic(this, &ABloodPuddle::OnPlayerExitPuddle);
 
 
-	
+	_healingPercent = 1;
 	_fadeSpeedStart = 0.2f;
 	_fadeSpeedEnd = 1.5f;
 	_shrinkSpeed = 0.1f;
@@ -127,7 +127,8 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 	if (!_auraCharacter && !_auraHandler)
 		return;  
 	
-	_auraHandler->CastAuraByName("Blood Offer", _auraCharacter, nullptr);
+	_auraCharacter->QueueHeal(_healingPercent);
+	//_auraHandler->CastAuraByName("Blood Offer", _auraCharacter, nullptr);
 	OnPlayerAbsorbingBlood();
 
 	}
