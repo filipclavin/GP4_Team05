@@ -34,7 +34,9 @@ protected:
 	float _fadeSpeedEnd; 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puddle")
 	float _shrinkSpeed;  
-					
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Puddle")
+	int32 _healingPercent;
+
 	float _opacity;	
 	bool  _bPlayerOnPuddle;
 	float _puddleTickDuration;  
