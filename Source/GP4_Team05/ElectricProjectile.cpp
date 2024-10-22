@@ -35,6 +35,8 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 	TQueue<AActor*> ActorsToProcess;
 
 	UClass* AuraCharacterClass;
+	_electricityForks.Empty();
+	
 
 	if (!_filterEnemyType)
 	{
@@ -57,6 +59,7 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 		
 	alreadyHitActors.Add(hitCharacter);
 	ActorsToProcess.Enqueue(hitCharacter);
+	_initialHit = OtherActor;
 
 	int numberOfForks = 0;
 
@@ -116,14 +119,25 @@ UPrimitiveComponent*OtherComp, int32 OtherBodyIndexbool, bool bFromSweep, const 
 				alreadyHitActors.Add(hitActor);
 				ActorsToProcess.Enqueue(hitActor);
 				numberOfForks++;
+				if (numberOfForks >= _projectileForking)
+				{
+					GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "limit Reached");
+					break;
+				}
 			}
 		}
+		TArray<AActor*> forks;
+		forks += lightningHits;
+		forks += puddlesHits;
+		
+		_electricityForks.Add(Actor, FLightningStruct(forks));
+		forks.Empty();
 	}
 
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow,
 		FString::FromInt(numberOfForks)+" of " +FString::FromInt(_projectileForking));
 
-	LightningHitEvent(alreadyHitActors);
+	LightningHitEvent(_electricityForks);
 	DealDamage(alreadyHitActors);
 	
 	
