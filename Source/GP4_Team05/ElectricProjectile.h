@@ -2,6 +2,12 @@
 #include "ProjectileBaseClass.h"
 #include "ElectricProjectile.generated.h"
 
+USTRUCT(BlueprintType)
+struct FLightningStruct
+{
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadOnly) TArray<AActor*> forkedActors;
+};
 UCLASS()
 class AElectricProjectile : public AProjectileBaseClass
 {
@@ -18,5 +24,8 @@ public:
 	bool _filterEnemyType = false;
 	bool _overspillHits   = false;
 
-	UFUNCTION(BlueprintImplementableEvent) void LightningHitEvent(const TArray<AActor*>& hitEnemies);
+	UFUNCTION(BlueprintImplementableEvent) void LightningHitEvent(const TMap<AActor*, FLightningStruct>& electricityForks);
+
+	TMap<AActor*, FLightningStruct> _electricityForks;
+	const AActor* _initialHit = nullptr;
 };
