@@ -59,12 +59,11 @@ private:
 	UPROPERTY(VisibleAnywhere) USphereComponent*	_dashHitbox			   = nullptr;
 
 	UPROPERTY(EditAnywhere, Category="Melee Stats") float _meleeCooldown		  = 3.f;
-	//how long the attack must be charged before it becomes heavy
-	UPROPERTY(EditAnywhere, Category="Melee Stats") float _heavyAttackMeleeTime	  = 0.5f;
 
 	float _meleeCooldownTimer = 0.f;
 	float _meleeHeavyTimer    = 0.f;
 	bool  _chargingAttack	  = false;
+	bool _attackPending		  = false;
 
 	UPROPERTY(EditAnywhere, Category="Ranged Stats") float				  _rangeCooldown = 3.f;
 	
@@ -167,8 +166,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Melee Stats", BlueprintReadWrite) int   _lightAttackMeleeDamage = 10.f;
 	UPROPERTY(EditAnywhere, Category="Melee Stats", BlueprintReadWrite) int   _heavyAttackMeleeDamage = 20.f;
+	//how long the attack must be charged before it becomes heavy
+	UPROPERTY(EditAnywhere, Category="Melee Stats", BlueprintReadWrite) float _heavyAttackMeleeTime	  = 0.5f;
 		
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UCameraComponent*	_playerCameraComponent = nullptr;
+
+	UFUNCTION(BlueprintCallable) void DealMeleeDamage();
+	
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
