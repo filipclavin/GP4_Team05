@@ -233,6 +233,9 @@ void ARoom::FetchLevelGenerator()
 
 void ARoom::ClearRoom()
 {
+	TArray<FTimerHandle> killTimers;
+	int currentEnemy = 0;
+	
 	FGameplayTagQueryExpression Expression;
 	Expression.AnyTagsMatch();
 	Expression.AddTag(TAG_Alive);
@@ -243,6 +246,10 @@ void ARoom::ClearRoom()
 	for (AActor* LivingEnemy : livingEnemies)
 	{
 		ABaseEnemyClass* Enemy = Cast<ABaseEnemyClass>(LivingEnemy);
-		Enemy->Kill();
+		killTimers.Add(FTimerHandle());
+
+		GetWorld()->GetTimerManager().SetTimer(killTimers[currentEnemy], FTimerDelegate::CreateLambda
+			([Enemy](){Enemy->Kill();}), FMath::RandRange(0.f, 2.f), false);
+		currentEnemy++;
 	}
 }
