@@ -38,7 +38,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="explosion") int biggerExplosionRadius = 600;
 	UPROPERTY(EditDefaultsOnly, Category="explosion") int explosionDamage		= 20;
 
+	//chance of the barrel despawning on begin play in percent
+	UPROPERTY(EditDefaultsOnly, Category="barrel") int despawnChance = 50;
 
+	
 	UFUNCTION(BlueprintImplementableEvent) void SpillOilEvent();
 	UFUNCTION(BlueprintImplementableEvent) void SetFireEvent ();
 };

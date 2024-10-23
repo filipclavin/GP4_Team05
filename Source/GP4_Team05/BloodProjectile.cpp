@@ -92,21 +92,27 @@ void ABloodProjectile::DealDamage(TArray<AActor*> hitCharacter)
 			if (AimDotProduct > 1.f-AttackConeAngle)
 			{
 				AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(hitActor);
-				hitCharacter->QueueDamage(_projectileDamage, PHYSICAL);
-
-				_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, BLOOD_ATTACK, _projectileDamage);
-				
-				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, hitActor->GetName() + " Hit");
-
-				_chaosManager->addChaos(ChaosAddPerHit);
-				if (healPlayer)
+				if (hitCharacter->GetStats()->_isAlive)
 				{
-					_owningPlayer->QueueHeal(healPerHit);
+					hitCharacter->QueueDamage(_projectileDamage, PHYSICAL);
+                                    
+					_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, BLOOD_ATTACK, _projectileDamage);
+                                    				
+					GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, hitActor->GetName() + " Hit");
+                                    
+					_chaosManager->addChaos(ChaosAddPerHit);
+					if (healPlayer)
+					{
+						_owningPlayer->QueueHeal(healPerHit);
+					}
+                                    				
+					hitActors.Emplace(hitActor);
+					_enemiesHit++;
 				}
 				
-				hitActors.Emplace(hitActor);
-				_enemiesHit++;
+				
 			}
+			
 		}
 	}
 }
