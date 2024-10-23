@@ -63,6 +63,7 @@ private:
 	float _meleeCooldownTimer = 0.f;
 	float _meleeHeavyTimer    = 0.f;
 	bool  _chargingAttack	  = false;
+	bool _attackPending		  = false;
 
 	UPROPERTY(EditAnywhere, Category="Ranged Stats") float				  _rangeCooldown = 3.f;
 	

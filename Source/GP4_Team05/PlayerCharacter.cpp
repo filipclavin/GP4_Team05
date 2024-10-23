@@ -194,7 +194,9 @@ void APlayerCharacter::BeginMeleeAction(const FInputActionValue& Value)
 {
 	if (_aiming) {return;}
 	if (_meleeCooldown > _meleeCooldownTimer){GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown"); return;}
+	if (_attackPending) {return;}
 
+	_attackPending = true;
 	_chargingAttack = true;
 	
 	BeginMeleeAttackEvent();
@@ -207,6 +209,8 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 	if (_meleeCooldown > _meleeCooldownTimer){GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "cooldown"); return;}
 	
 
+	_attackPending = true;
+	
 	UpdateAurasOnAttackCast(MELEE);
 
 	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
@@ -228,7 +232,8 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 void APlayerCharacter::DealMeleeDamage()
 {
 	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
-    
+
+	_attackPending = false;
 	
 	_meleeCooldownTimer = 0;
 	_meleeHeavyTimer = 0;	
