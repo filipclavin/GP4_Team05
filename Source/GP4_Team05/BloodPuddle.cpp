@@ -127,10 +127,15 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 	if (!_auraCharacter && !_auraHandler)
 		return;  
 	
-	_auraCharacter->QueueHeal(_healingPercent);
-	//_auraHandler->CastAuraByName("Blood Offer", _auraCharacter, nullptr);
+	// For healing percent based on Max HP you wanna go MaxHealth / _HealingPercent = healingValue! 
+	//_auraCharacter->QueueHeal(_healingPercent);
+	//if (_auraCharacter->GetStats()->_currentHealth == _auraCharacter->GetStats()->_maxHealth)
+			{
+			//	_chaosManager->addChaos();
+			}
+	_auraHandler->CastAuraByName("Blood Offer", _auraCharacter, nullptr);
 	OnPlayerAbsorbingBlood();
 
-	}
+}
 
 

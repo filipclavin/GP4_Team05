@@ -18,7 +18,8 @@ public:
 	UChaosManager();
 
 	void ScaleChaosBar();
-	void ScaleChaosGain(float gainIncreas);
+	//Chaos gain increase is Additive percentage!
+	UFUNCTION(BlueprintCallable) void ScaleChaosGain(float gainIncreas);
 	void ResetChaosBarProgress();
 	void DisableChaosBar(bool isActive);
 
