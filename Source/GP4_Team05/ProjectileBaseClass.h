@@ -24,6 +24,13 @@ struct FStatIncrease
 	UPROPERTY(EditDefaultsOnly) int additionalHitEnemiesCap	  = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FLightningStruct
+{
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadOnly) TArray<AActor*> forkedActors;
+};
+
 UCLASS()
 class GP4_TEAM05_API AProjectileBaseClass : public AActor
 {
@@ -78,4 +85,6 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 	UPROPERTY(EditDefaultsOnly, Category="Projectile Upgrade") TArray<FStatIncrease> upgradeStatIncreases;
 
 	int _upgradeAmount = 0;
+
+	TMap<AActor*, FLightningStruct> _electricityForks;
 };

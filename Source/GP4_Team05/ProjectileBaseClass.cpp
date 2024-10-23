@@ -148,10 +148,14 @@ void AProjectileBaseClass::HitEnemies(UPrimitiveComponent* OverlappedComponent,A
 			ActorsToProcess.Enqueue(hitActor);
 			numberOfForks++;
 		}
+
+		_electricityForks.Add(Actor, FLightningStruct(lightningHits));
 	}
 
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(numberOfForks) +" of " +FString::FromInt(_projectileForking));
 
+	_electricityForks.Empty();
+	
 	DealDamage(alreadyHitActors);
 	
 	

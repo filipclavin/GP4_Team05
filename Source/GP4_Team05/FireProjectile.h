@@ -40,5 +40,6 @@ public:
 	
 	UPROPERTY() ALingeringFire*	_lingeringFireActor = nullptr;
 
-	UFUNCTION(BlueprintImplementableEvent) void fireHitEvent(const FVector& origin, const int& radius, const TArray<AActor*>& hitEnemies);
+	UFUNCTION(BlueprintImplementableEvent) void fireHitEvent(const FVector& origin, const int& radius, const TArray<AActor*>& hitEnemies,
+		const TMap<AActor*, FLightningStruct>& electricityForks);
 };
