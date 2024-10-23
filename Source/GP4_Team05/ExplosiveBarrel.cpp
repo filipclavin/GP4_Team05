@@ -21,6 +21,11 @@ void AExplosiveBarrel::BeginPlay()
 	
 	GetMovementComponent()->Deactivate();
 
+	if (FMath::RandRange(0, 100) <= despawnChance)
+	{
+		Despawn();
+	}
+
 	AActor* AuraHandlerActor = UGameplayStatics::GetActorOfClass(GetWorld(), AAuraHandler::StaticClass());
 
 	if (AuraHandlerActor)
