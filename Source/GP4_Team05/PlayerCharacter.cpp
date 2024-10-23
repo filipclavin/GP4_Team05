@@ -209,15 +209,10 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 
 	UpdateAurasOnAttackCast(MELEE);
 
+	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
 
 	_chargingAttack = false;
 
-}
-
-void APlayerCharacter::DealMeleeDamage()
-{
-	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
-    
 	if (_heavyAttackMeleeTime < _meleeHeavyTimer)
 	{
 		HeavyMeleeAttackEvent();
@@ -228,6 +223,13 @@ void APlayerCharacter::DealMeleeDamage()
 		MeleeAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "light melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
 	}
+}
+
+void APlayerCharacter::DealMeleeDamage()
+{
+	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
+    
+	
 	_meleeCooldownTimer = 0;
 	_meleeHeavyTimer = 0;	
 	
