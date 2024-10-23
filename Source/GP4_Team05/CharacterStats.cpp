@@ -139,5 +139,10 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		if(!_intakeQueue.IsEmpty())
 		_intakeQueue.Empty();
 	}
+	else 
+	{
+		if(!_intakeQueue.IsEmpty())
+		_intakeQueue.Empty();
+	}
 }
 

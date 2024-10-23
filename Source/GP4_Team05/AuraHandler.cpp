@@ -49,30 +49,35 @@ void AAuraHandler::CastAuraByID(const int id, AAuraCharacter* target, AAuraChara
 //Cast aura based on Name
 void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCharacter* caster)
 {
+	if (!target)
+		return;
+
 	if(_auraNameMap.Contains(name))
 	{
-		INT32 id = _auraNameMap[name];
-		UAura* affectedAura = target->AffectedByAura(id);
-		if (affectedAura)
-		{
-			// Effects call OnAuraCast on abilities instead.
-			if(affectedAura->GetType() != EFFECT && affectedAura->GetType() != INTAKE)
-				affectedAura->OnAuraCast(caster);
-			affectedAura->OnAuraExists();
-		}
-		else
-		{
-			UAura* aura = GetPooledAura(_auraList[id]);
-			if (aura) 
+		if (target->GetStats()->_isAlive) {
+			INT32 id = _auraNameMap[name];
+			UAura* affectedAura = target->AffectedByAura(id);
+			if (affectedAura)
 			{
-				aura->ActivateAura();
-				if(aura->GetType() != EFFECT && aura->GetType() != INTAKE)
-					aura->OnAuraCast(caster);
-				target->AddAura(aura);
+				// Effects call OnAuraCast on abilities instead.
+				if(affectedAura->GetType() != EFFECT && affectedAura->GetType() != INTAKE)
+					affectedAura->OnAuraCast(caster);
+				affectedAura->OnAuraExists();
 			}
 			else
-				if(GEngine)
-					GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("No auras available or Aura does not exist!"));
+			{
+				UAura* aura = GetPooledAura(_auraList[id]);
+				if (aura) 
+				{
+					aura->ActivateAura();
+					if(aura->GetType() != EFFECT && aura->GetType() != INTAKE)
+						aura->OnAuraCast(caster);
+					target->AddAura(aura);
+				}
+				else
+					if(GEngine)
+						GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("No auras available or Aura does not exist!"));
+			}
 		}
 	}
 	else

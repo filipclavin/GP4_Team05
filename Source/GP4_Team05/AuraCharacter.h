@@ -69,12 +69,12 @@ protected:
 	UFUNCTION(BlueprintCallable) void UpdateAuras(const float deltaTime);
 	UFUNCTION(BlueprintCallable) virtual void Die();
 
+	void ResetToBaseStats();
 private:
 	friend class AAuraHandler;
 
 	UAura* AffectedByAura(const int id); // Used by AuraHandler
 	void RemoveAura(const size_t index, const AuraType type);
-	void ResetToBaseStats();
 
 
 public:
