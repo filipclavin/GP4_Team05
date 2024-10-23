@@ -209,8 +209,15 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 
 	UpdateAurasOnAttackCast(MELEE);
 
-	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
 
+	_chargingAttack = false;
+
+}
+
+void APlayerCharacter::DealMeleeDamage()
+{
+	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
+    
 	if (_heavyAttackMeleeTime < _meleeHeavyTimer)
 	{
 		HeavyMeleeAttackEvent();
@@ -222,9 +229,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "light melee attack, dealing: " + FString::SanitizeFloat(damage) + "damage");
 	}
 	_meleeCooldownTimer = 0;
-	_meleeHeavyTimer = 0;
-	_chargingAttack = false;
-	
+	_meleeHeavyTimer = 0;	
 	
 	TArray<AActor*> HitActors;
 	_meleeHitbox->GetOverlappingActors(HitActors);
@@ -245,6 +250,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 		
 	}
 }
+
 
 void APlayerCharacter::lightningAction(const FInputActionValue& Value)
 {

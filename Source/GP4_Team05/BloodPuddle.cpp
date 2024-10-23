@@ -14,11 +14,12 @@ ABloodPuddle::ABloodPuddle()
  	
 	PrimaryActorTick.bCanEverTick = true;
 	
-	_puddleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PuddleMesh"));
-	SetRootComponent(_puddleMesh);
-
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	_collisionBox->SetupAttachment(RootComponent);
+	SetRootComponent(_collisionBox);
+
+	
+	_puddleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PuddleMesh"));
+	_puddleMesh->SetupAttachment(_collisionBox);
 	_collisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABloodPuddle::OnPlayerEnterPuddle);
 	_collisionBox->OnComponentEndOverlap.AddDynamic(this, &ABloodPuddle::OnPlayerExitPuddle);
 
@@ -118,7 +119,9 @@ void ABloodPuddle::ShrinkPuddle(float DeltaTime)
 		{
 			FVector NewScale = FMath::VInterpTo(CurrentScale, FVector(0.1f), DeltaTime, _shrinkSpeed);
 			_puddleMesh->SetWorldScale3D(NewScale);
+			
 		}
+		
 	}
 }
 
