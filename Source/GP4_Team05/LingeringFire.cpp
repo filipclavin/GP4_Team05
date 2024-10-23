@@ -31,7 +31,6 @@ void ALingeringFire::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	TArray<AActor*> overLappingActors;
 	_fireCollider->GetOverlappingActors(overLappingActors, AAuraCharacter::StaticClass());
-	DrawDebugSphere(GetWorld(), GetActorLocation(), _fireCollider->GetScaledSphereRadius(), 12, FColor::Orange, true, 1.0f);
 	
 	for (AActor* Actor : overLappingActors)
 	{
