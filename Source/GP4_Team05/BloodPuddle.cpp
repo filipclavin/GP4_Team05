@@ -37,7 +37,7 @@ void ABloodPuddle::BeginPlay()
 {
 	Super::BeginPlay();
 
-	_puddleTickDuration = _tickInterval;
+	//_puddleTickDuration = _puddleTickInterval;
 
 	_auraCharacter = Cast<AAuraCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	_auraHandler   = Cast<AAuraHandler>(UGameplayStatics::GetActorOfClass(GetWorld(), AAuraHandler::StaticClass()));
@@ -86,7 +86,7 @@ void ABloodPuddle::Tick(float DeltaTime)
 		if(_puddleTickDuration <= 0)
 		{
 			ApplyHealing(DeltaTime);
-			_puddleTickDuration = _tickInterval;
+			_puddleTickDuration = _puddleTickInterval;
 			//_bPlayerOnPuddle = false;
 		}
 		_puddleTickDuration -= DeltaTime;

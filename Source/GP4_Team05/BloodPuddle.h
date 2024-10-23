@@ -36,11 +36,11 @@ protected:
 	float _shrinkSpeed;  
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Puddle")
 	int32 _healingPercent;
+	UPROPERTY(EditAnywhere) float _puddleTickInterval = 1.0f;;
 
 	float _opacity;	
 	bool  _bPlayerOnPuddle;
-	float _puddleTickDuration;  
-	const float _tickInterval = 1.0f;;
+	float _puddleTickDuration = 0.0f;  
 
 	UPROPERTY()
 	class AAuraCharacter* _auraCharacter;
