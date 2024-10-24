@@ -231,7 +231,7 @@ void APlayerCharacter::MeleeAction(const FInputActionValue& Value)
 
 void APlayerCharacter::DealMeleeDamage()
 {
-	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? _heavyAttackMeleeDamage : _lightAttackMeleeDamage;
+	float damage = _heavyAttackMeleeTime < _meleeHeavyTimer ? (_heavyAttackMeleeDamage/2) : _lightAttackMeleeDamage;
 
 	_attackPending = false;
 	
