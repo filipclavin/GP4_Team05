@@ -33,10 +33,8 @@ void ALevelGenerator::LoadNewRoom()
 
 	TSoftObjectPtr<UWorld> levelInstance;
 	if (_currentRoomDepth < _numberOfRooms)
-	{
-		int checkNumber = _currentRoomDepth % _numberOfRooms;
-		
-		if (_currentRoomDepth % _numberOfRooms == _roomGenDataAsset->_numOfRoomsPerPOI) 
+	{		
+		if (_countToPOIRoom == _roomGenDataAsset->_numOfRoomsPerPOI) 
 		{
 			if(_currentPOIRoom < _roomGenDataAsset->_POIRoomInstances.Num())
 			{
@@ -44,6 +42,7 @@ void ALevelGenerator::LoadNewRoom()
 				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, transform, success);
 			}
 			_currentPOIRoom++;
+			_countToPOIRoom = 0;
 		}
 		else 
 		{
@@ -54,6 +53,7 @@ void ALevelGenerator::LoadNewRoom()
 				_selectedRoom = _selectedRoom == _roomGenDataAsset->_regularRoomInstances.Num() - 1 ? 0 : +1;
 
 			levelInstance = _roomGenDataAsset->_regularRoomInstances[_selectedRoom];
+			_countToPOIRoom++;
 			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GetWorld(), levelInstance, transform, success);
 		}
 	}

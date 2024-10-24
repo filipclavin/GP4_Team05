@@ -56,4 +56,5 @@ private:
 	int   _unloadIndex            = -1;
 	int   _selectedRoom           = -1;
 	int   _previousRoom           = -1;
+	int   _countToPOIRoom		  = 0;
 };
