@@ -39,7 +39,9 @@ void UCharacterStats::ScaleElementalDamageTaken(ElementTypes elementType, float 
 
 float UCharacterStats::CalculateDamage(int damage, ElementTypes element)
 {
-	float newDamage = ((damage * _elementDamageDealt.IsEmpty() ? 1.0f : _elementDamageDealt[element]) * _allDamageDealt) * IsCriticalStrike() ? 2 : 1;
+	float newDamage = damage * (_elementDamageDealt.IsEmpty() ? 1.0f : _elementDamageDealt[element]);
+	newDamage *= _allDamageDealt;
+	newDamage *= IsCriticalStrike() ? 2 : 1;
 	return newDamage;
 }
 
