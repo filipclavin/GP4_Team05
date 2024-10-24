@@ -44,12 +44,6 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 	UpdateAuras(DeltaSeconds);
 	UpdateTickInterval();
 
-	if (!_combinedStats->_isAlive && !dead)
-	{
-		//this is a very stupid implementation and should be changed later
-		UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetComponentByClass<UChaosManager>()->enemyKilled(_chaosAmountOnDeath);
-		dead = true;
-	}
 }
 
 void ABaseEnemyClass::InitSpawned(AEnemySpawner* spawner)
@@ -120,6 +114,8 @@ void ABaseEnemyClass::incrementTimerCounter(float deltatime)
 
 void ABaseEnemyClass::Die()
 {
+	UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetComponentByClass<UChaosManager>()->enemyKilled(_chaosAmountOnDeath);
+	
 	_tags.RemoveTag(TAG_Alive);
 	_controller->UnPossess();
 	OnDeath();

@@ -41,7 +41,6 @@ protected:
 	float _attackTimer;
 	bool _inAttackRange;
 
-	bool dead = false;
 
 	UPROPERTY() AAIController* _controller = nullptr;
 	UPROPERTY() AEnemySpawner* _spawner = nullptr;
