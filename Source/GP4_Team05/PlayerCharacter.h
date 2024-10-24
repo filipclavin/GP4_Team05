@@ -144,6 +144,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent) void HeavyMeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginMeleeAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void RangedAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void FireAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void BloodAttackEvent();
+	UFUNCTION(BlueprintImplementableEvent) void ElectricAttackEvent();
 	UFUNCTION(BlueprintImplementableEvent) void BeginAimEvent();
 	UFUNCTION(BlueprintImplementableEvent) void StopAimEvent();
 	UFUNCTION(BlueprintImplementableEvent) void DashEvent();

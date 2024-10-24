@@ -335,6 +335,7 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		}
 		
 		UpdateAurasOnAttackCast(LIGHTNING_ATTACK);
+		ElectricAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_electricProjectileToUse));
 	
 }
@@ -356,12 +357,14 @@ void APlayerCharacter::RangeAttackAction(const FInputActionValue& Value)
 		}
 		
 		UpdateAurasOnAttackCast(FIRE_ATTACK);
+		FireAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, FString::FromInt(_fireProjectileToUse));
 	}
 	else if (chosenAttack == 2)
 	{
 		QueueDamage(_bloodSelfDamage*(1/(1+_bloodLevel)), PHYSICAL);
 		_bloodProjectileToUse->SpawnProjectile(_bloodLevel);
+		BloodAttackEvent();
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "Blood attack");
 	}
 	
