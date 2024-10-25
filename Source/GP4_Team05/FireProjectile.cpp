@@ -41,7 +41,7 @@ void AFireProjectile::DealDamage(TArray<AActor*> hitCharacter)
 	if (_lingeringFire)
 	{
 		_lingeringFireActor->SetActorLocation(hitCharacter[0]->GetActorLocation());
-		_lingeringFireActor->SpawnFire(_projectileExplosionRadius);
+		_lingeringFireActor->SpawnFire(_projectileExplosionRadius/2);
 	}
 	
 	
