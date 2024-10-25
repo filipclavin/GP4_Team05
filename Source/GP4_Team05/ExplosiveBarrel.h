@@ -44,4 +44,5 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent) void SpillOilEvent();
 	UFUNCTION(BlueprintImplementableEvent) void SetFireEvent ();
+	UFUNCTION(BlueprintImplementableEvent) void ExplodeEvent (int ExplodeRadius);
 };

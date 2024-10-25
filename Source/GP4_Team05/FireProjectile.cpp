@@ -38,8 +38,11 @@ void AFireProjectile::DealDamage(TArray<AActor*> hitCharacter)
 	int numberOfForks = 0;
 
 	FireExplosion(hitCharacter[0]->GetActorLocation());
-	_lingeringFireActor->SetActorLocation(hitCharacter[0]->GetActorLocation());
-	_lingeringFireActor->SpawnFire(_projectileExplosionRadius);
+	if (_lingeringFire)
+	{
+		_lingeringFireActor->SetActorLocation(hitCharacter[0]->GetActorLocation());
+		_lingeringFireActor->SpawnFire(_projectileExplosionRadius);
+	}
 	
 	
 	for (AActor* hitActor : hitCharacter)

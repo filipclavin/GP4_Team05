@@ -15,7 +15,7 @@ public:
 	
 	UPROPERTY() AAuraHandler* _handler = nullptr;
 	
-	UPROPERTY(VisibleAnywhere) USphereComponent* _fireCollider = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) USphereComponent* _fireCollider = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="fire stats") float _fireDuration = 4;
 	UPROPERTY(EditDefaultsOnly, Category="fire stats") int	 _fireDamage   = 5;

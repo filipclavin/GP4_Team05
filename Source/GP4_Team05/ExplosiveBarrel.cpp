@@ -110,6 +110,8 @@ void AExplosiveBarrel::Explode(bool biggerExplode)
 	{
 		explosionRadius = biggerExplosionRadius;
 	}
+
+	ExplodeEvent(explosionRadius);
 	
 	TArray<AActor*> hitEnemies;
 	TArray<AActor*> IgnoreArray;
