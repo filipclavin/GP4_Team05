@@ -184,11 +184,12 @@ void AEnemySpawner::PrepareEnemy(FEnemyGroup& group)
 		spawnParams
 	);
 				
+	enemy->GetBaseStats()->SetCharacterLevel(_levelGenerator->GetRoomDepth());
+	enemy->ResetToBaseStats();
 	enemy->SetActorHiddenInGame(true);
 	enemy->SetActorEnableCollision(false);
 	enemy->SetActorTickEnabled(false);
 	enemy->_controller->UnPossess();
-	enemy->GetBaseStats()->SetCharacterLevel(_levelGenerator->GetRoomDepth());
 
 	if (!_enemyPools.Contains(group.EnemyClass))
 	{
