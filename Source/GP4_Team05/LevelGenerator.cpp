@@ -20,7 +20,7 @@ void ALevelGenerator::LoadNewRoom()
 		return;
 
 	_unloadLastRoom = true;
-	_unloadDuration = 1.0f;
+	_unloadDuration = 10.0f;
 	_loadDuration   = 3.0f;
 	_waitForRoom    = true;
 
