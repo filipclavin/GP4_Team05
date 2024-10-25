@@ -18,7 +18,7 @@ void UCharacterStats::SetCharacterLevel(int level)
 	int levelDelta = level - _currentLevel;
 	for (int i = 0; i < levelDelta; i++)
 	{
-		_maxHealth      *= _healthScaling;
+		_maxHealth       = FMath::RoundToInt(_maxHealth* _healthScaling);
 		_allDamageTaken *= _damageReductionScaling;
 		_movementSpeed  *= _speedScaling;
 		_allDamageDealt *= _damageDealtScaling;
