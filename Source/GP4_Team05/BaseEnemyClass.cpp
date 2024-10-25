@@ -126,7 +126,12 @@ void ABaseEnemyClass::Die()
 void ABaseEnemyClass::Despawn()
 {
 	_controller->StopMovement();
-	_spawner->DespawnEnemy(this);
+
+	//FIX THIS LATER, WILL CAUSE MEMORY LEAK INSTEAD OF CRASH
+	if (_spawner)
+	{
+		_spawner->DespawnEnemy(this);
+	}
 }
 
 void ABaseEnemyClass::UpdateTickInterval()
