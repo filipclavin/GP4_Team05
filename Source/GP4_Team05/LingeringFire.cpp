@@ -46,6 +46,7 @@ void ALingeringFire::Tick(float DeltaSeconds)
 
 void ALingeringFire::DespawnFire()
 {
+	if (!this){return;}
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
 	SetActorTickEnabled(false);
@@ -59,6 +60,12 @@ void ALingeringFire::SpawnFire(int fireRadius)
 
 	_fireCollider->SetSphereRadius(fireRadius);
 
-	FTimerHandle DespawnHandle;
 	GetWorldTimerManager().SetTimer(DespawnHandle, FTimerDelegate::CreateLambda([this] {ALingeringFire::DespawnFire();}), _fireDuration, false);
+	
+}
+
+void ALingeringFire::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearTimer(DespawnHandle);
+	Super::EndPlay(EndPlayReason);
 }

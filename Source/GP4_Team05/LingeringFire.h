@@ -27,4 +27,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	void DespawnFire();
+
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UPROPERTY(BlueprintReadWrite) FTimerHandle DespawnHandle;
 };
