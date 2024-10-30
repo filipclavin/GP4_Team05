@@ -109,7 +109,7 @@ void AFireProjectile::dealFireDamage(AAuraCharacter* Character)
 
 	_owningPlayer->UpdateAurasOnAttackHits(Character, FIRE_ATTACK, _projectileDamage);
 	
-	Character->QueueDamage(_explosionDamage, ElementTypes::FIRE);
+	Character->QueueDamage(_explosionDamage, ElementTypes::FIRE, _owningPlayer->GetStats());
 	_handler->CastAuraByName("FIRE", Character, nullptr);
 }
 

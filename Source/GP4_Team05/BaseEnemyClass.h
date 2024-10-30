@@ -14,6 +14,8 @@ UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Alive)
 class AAIController;
 class UBoxComponent;
 class AEnemySpawner;
+class UDamageDisplay;
+class UWidgetComponent;
 /**
  * 
  */
@@ -77,6 +79,9 @@ protected:
 	UFUNCTION(BlueprintCallable) void Despawn();
 	
 	void UpdateTickInterval();
+
+	UPROPERTY(BlueprintReadWrite) UDamageDisplay*   _damageDisplayWidget;
+	UPROPERTY(EditAnywhere)       UWidgetComponent* _widget;
 
 	friend class AEnemySpawner;
 };

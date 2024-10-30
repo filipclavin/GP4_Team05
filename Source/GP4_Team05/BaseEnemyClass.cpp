@@ -3,7 +3,9 @@
 
 #include "BaseEnemyClass.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "DamageDisplay.h"
 #include "AIController.h"
 #include "ChaosManager.h"
 #include "BloodPuddle.h"
@@ -15,13 +17,21 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Alive, "Alive")
 ABaseEnemyClass::ABaseEnemyClass()
 {
 	_meleeHitbox = CreateDefaultSubobject<UBoxComponent>("melee hitbox");
+	_widget = CreateDefaultSubobject<UWidgetComponent>("WidgetComponent");
 	_meleeHitbox->SetupAttachment(RootComponent);
+	_widget->SetupAttachment(RootComponent);
 }
 
 void ABaseEnemyClass::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if(_widget->GetWidget())
+	{
+		_damageDisplayWidget = Cast<UDamageDisplay>(_widget->GetWidget());
+		_damageDisplayWidget->SetUpDamageDipslay();
+	}
+		
 	_controller = Cast<AAIController>(GetController());
 
 	if (_controller == nullptr){Destroy();}
@@ -43,7 +53,7 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 
 	UpdateAuras(DeltaSeconds);
 	UpdateTickInterval();
-
+	_damageDisplayWidget->TickDamageDisplays(DeltaSeconds);
 }
 
 void ABaseEnemyClass::InitSpawned(AEnemySpawner* spawner)
