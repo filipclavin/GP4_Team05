@@ -59,10 +59,14 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 			UAura* affectedAura = target->AffectedByAura(id);
 			if (affectedAura)
 			{
+				// Stacks are handled automatically
+				affectedAura->_currentStack++;
+				affectedAura->_currentStack = affectedAura->_currentStack > affectedAura->_maxStackCount ? affectedAura->_maxStackCount : affectedAura->_currentStack;
 				// Effects call OnAuraCast on abilities instead.
 				if(affectedAura->GetType() != EFFECT && affectedAura->GetType() != INTAKE)
 					affectedAura->OnAuraCast(caster);
 				affectedAura->OnAuraExists();
+			
 			}
 			else
 			{
@@ -72,6 +76,8 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 					aura->ActivateAura();
 					if(aura->GetType() != EFFECT && aura->GetType() != INTAKE)
 						aura->OnAuraCast(caster);
+
+					aura->_currentStack++;
 					target->AddAura(aura);
 				}
 				else

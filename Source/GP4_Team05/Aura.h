@@ -77,11 +77,11 @@ protected:
 	// If true this aura has a chance to spawn as an Interactable pickup at room completion. 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)  bool _auraSpawnAsInteractable = false;
 	// Name of aura.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraName;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraName = "";
 	// Description of Aura
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraDescription;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraDescription = "";
 	// Icon of the aura, used for UI, Auras with no icon will not appear in the UI.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) UTexture2D* _icon;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) UTexture2D* _icon = nullptr;
 	// Auras updates in the order of Buff -> Debuffs and to differentiate them in UI 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<AuraType> _type = AuraType::BUFF;
 	// This is only for ON_HIT auras, BUFF and DEBUFF are not affected by this. 
@@ -104,7 +104,8 @@ protected:
 	// Current tick of the aura, used to make the aura do something when a tick has reached 0
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) float    _currentTick     = 0.0f;
 	 // How many stacks the aura has
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) int      _stackCount	= 1;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)    int      _maxStackCount	  = 1;
+	UPROPERTY(BlueprintReadWrite)				   int      _currentStack = 0;
 
 	// Pooling information
 	// How much of this aura AuraHandler will pool, auras that appear less or are much shorter should have a lower pool count.

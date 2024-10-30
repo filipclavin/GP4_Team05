@@ -23,8 +23,16 @@ public:
 	UFUNCTION(BlueprintCallable) void ScaleElementalDamageDealt(ElementTypes elementType, float scaling);
 	// The scaling used is percentage > 1 is percent increase < 1 is descrease
 	UFUNCTION(BlueprintCallable) void ScaleElementalDamageTaken(ElementTypes elementType, float scaling);
+	
+	UFUNCTION(BlueprintCallable) void ScaleAllDamageTaken(float scaling);
+	UFUNCTION(BlueprintCallable) void ScaleAllDamageDealt(float scaling);
+	UFUNCTION(BlueprintCallable) void IncreaseMaxHealth(int healthAmount, bool healCurrentHealth);
+	UFUNCTION(BlueprintCallable) void ScaleAttackSpeed(float scaling);
+	UFUNCTION(BlueprintCallable) void ScaleMovmementSpeed(float scaling);
+	UFUNCTION(BlueprintCallable) void ScaleJumpHeight(float scaling);
+	UFUNCTION(BlueprintCallable) void IncreaseCriticalStrikeChance(int amount);
 
-	UFUNCTION(BlueprintCallable) float CalculateDamage(int damage, ElementTypes element);
+	UFUNCTION(BlueprintCallable) float CalculateDamage(int damage, ElementTypes element, bool& isCrit);
 
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
 	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats, bool selfDamageTaken = false);

@@ -20,9 +20,9 @@ class GP4_TEAM05_API AAuraCharacter : public ACharacter
 public:
 	AAuraCharacter();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnDamageIntake(int amount, ElementTypes elementType);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnDamageIntake(int amount, ElementTypes elementType, bool crit);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnHealIntake(int amount);
-	void OnDamageIntake_Implementation(int amount, ElementTypes elementType){}
+	void OnDamageIntake_Implementation(int amount, ElementTypes elementType, bool crit){}
 	void OnHealIntake_Implementation(int amount){}
 
 	UFUNCTION(BlueprintCallable) bool HasAuraWithID(int id);

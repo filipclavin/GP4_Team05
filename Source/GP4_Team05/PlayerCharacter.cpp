@@ -250,7 +250,7 @@ void APlayerCharacter::DealMeleeDamage()
 			{
 				AAuraCharacter* target = Cast<AAuraCharacter>(HitActor);
 				GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, HitActor->GetName() + " hit");
-				target->QueueDamage(damage, PHYSICAL);
+				target->QueueDamage(damage, PHYSICAL, GetStats());
 				UpdateAurasOnAttackHits(target, MELEE, damage);
 			}
 		}
@@ -441,7 +441,7 @@ UPrimitiveComponent* OtherComp, int32 OtherBodyIndexbool ,bool bFromSweep,const 
 		AAuraCharacter* HitCharacter = Cast<AAuraCharacter>(OtherActor);
 		
 		OtherActor->SetActorLocation(OtherActor->GetActorLocation() + knockbackDirection*_dashKnockBack);
-		HitCharacter->QueueDamage(_dashDamage, ElementTypes::PHYSICAL);
+		HitCharacter->QueueDamage(_dashDamage, ElementTypes::PHYSICAL, GetStats());
 
 		UpdateAurasOnAttackHits(HitCharacter, DASH, _dashDamage);
 		_dashHitActors.Add(OtherActor);

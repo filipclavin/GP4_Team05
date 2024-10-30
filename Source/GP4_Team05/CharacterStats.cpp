@@ -18,7 +18,7 @@ void UCharacterStats::SetCharacterLevel(int level)
 	int levelDelta = level - _currentLevel;
 	for (int i = 0; i < levelDelta; i++)
 	{
-		_maxHealth       = FMath::RoundToInt(_maxHealth* _healthScaling);
+		_maxHealth       = FMath::RoundToInt(_maxHealth * _healthScaling);
 		_allDamageTaken *= _damageReductionScaling;
 		_movementSpeed  *= _speedScaling;
 		_allDamageDealt *= _damageDealtScaling;
@@ -37,11 +37,40 @@ void UCharacterStats::ScaleElementalDamageTaken(ElementTypes elementType, float 
 		_elementDamageTaken[elementType] *= scaling;
 }
 
-float UCharacterStats::CalculateDamage(int damage, ElementTypes element)
+void UCharacterStats::ScaleAllDamageTaken(float scaling)
+{
+}
+
+void UCharacterStats::ScaleAllDamageDealt(float scaling)
+{
+}
+
+void UCharacterStats::IncreaseMaxHealth(int healthAmount, bool healCurrentHealth)
+{
+}
+
+void UCharacterStats::ScaleAttackSpeed(float scaling)
+{
+}
+
+void UCharacterStats::ScaleMovmementSpeed(float scaling)
+{
+}
+
+void UCharacterStats::IncreaseCriticalStrikeChance(int amount)
+{
+}
+
+void UCharacterStats::ScaleJumpHeight(float scaling)
+{
+}
+
+float UCharacterStats::CalculateDamage(int damage, ElementTypes element, bool& isCrit)
 {
 	float newDamage = damage * (_elementDamageDealt.IsEmpty() ? 1.0f : _elementDamageDealt[element]);
 	newDamage *= _allDamageDealt;
-	newDamage *= IsCriticalStrike() ? 2 : 1;
+	isCrit = IsCriticalStrike();
+	newDamage *= isCrit ? 2 : 1;
 	return newDamage;
 }
 
@@ -100,11 +129,12 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		
 			float newAmount   = 0.0f;
 			int roundedAmount = 0;
+			bool crit = false;
 			switch (intake._type)
 			{
 			case IntakeData::Type::Damage:
 				if(intake._stats)
-					newAmount = (intake._stats->CalculateDamage(intake._amount, intake._element) * _elementDamageTaken[intake._element]) * _allDamageTaken;
+					newAmount = (intake._stats->CalculateDamage(intake._amount, intake._element, crit) * _elementDamageTaken[intake._element]) * _allDamageTaken;
 				else
 					newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
 				
@@ -112,7 +142,7 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				_currentHealth -= roundedAmount;
 				if(!intake._selfDamageTaken)
 				{
-					_parent->OnDamageIntake(roundedAmount, intake._element);
+					_parent->OnDamageIntake(roundedAmount, intake._element, crit);
 					if(intake._stats)
 						_parent->UpdateAurasOnDamageTaken(intake._stats->_parent);		
 				}

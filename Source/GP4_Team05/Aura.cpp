@@ -60,7 +60,8 @@ void UAura::ResetAura(const UAura* aura)
 	_tickDuration    = aura->_tickDuration;
 	_currentTick     = aura->_currentTick;
 	_currentDuration = aura->_currentDuration;
-	_stackCount      = aura->_stackCount;
+	_maxStackCount   = aura->_maxStackCount;
+	_currentStack    = 0;
 
 	_affected = nullptr;
 	_caster   = nullptr;
