@@ -76,8 +76,9 @@ void UDamageDisplay::SetUpDamageDipslay()
 		FString index = "";
 		index.AppendInt(i);
 		_pooledDamageTexts[i]._text = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), FName(FString("Damage Text " + index)));
-		_pooledDamageTexts[i]._text->SetJustification(ETextJustify::Center);
+		_pooledDamageTexts[i]._text->SetFont(_fontInfo);
 		_pooledDamageTexts[i]._text->SetRenderOpacity(0.0f);
+		_pooledDamageTexts[i]._text->SetJustification(ETextJustify::Center);
 		_pooledDamageTexts[i]._text->Font.Size = _textSize;
 		_pooledDamageTexts[i]._isActive = false;
 		UCanvasPanelSlot* panel = _canvas->AddChildToCanvas(_pooledDamageTexts[i]._text);
@@ -85,6 +86,7 @@ void UDamageDisplay::SetUpDamageDipslay()
 		panel->SetPosition({ 0.0f, 0.0f });
 		panel->SetAlignment({ 0.5f, 0.5f });
 	}
+
 }
 
 void UDamageDisplay::TickDamageDisplays(const float deltaTime)

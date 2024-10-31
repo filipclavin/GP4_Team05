@@ -36,15 +36,13 @@ protected:
 	TArray<DamageText>  _pooledDamageTexts;
 	TArray<INT32>       _activeDamageTexts;
 
-	//UPROPERTY(EditAnywhere) TArray<UTextBlock*> _textBlocks;
 	UPROPERTY(EditAnywhere, meta = (BindWidget)) UCanvasPanel* _canvas    = nullptr;
-	//UPROPERTY(EditAnywhere, meta = (BindWidget)) UBorder*      _spawnArea = nullptr;
 
-
-	UPROPERTY(EditAnywhere) FColor _physicalColor;
-	UPROPERTY(EditAnywhere) FColor _fireColor;
-	UPROPERTY(EditAnywhere) FColor _lightningColor;
-	UPROPERTY(EditAnywhere) FColor _bloodColor;
+	UPROPERTY(EditAnywhere) FSlateFontInfo _fontInfo;
+	UPROPERTY(EditAnywhere) FColor         _physicalColor;
+	UPROPERTY(EditAnywhere) FColor         _fireColor;
+	UPROPERTY(EditAnywhere) FColor         _lightningColor;
+	UPROPERTY(EditAnywhere) FColor         _bloodColor;
 
 	UPROPERTY(EditAnywhere) FVector2D _spawnAreaSize	 = { 200.0f, 20.0f };
 	UPROPERTY(EditAnywhere) int		  _textPoolSize      = 10;
