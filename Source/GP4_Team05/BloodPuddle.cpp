@@ -136,7 +136,7 @@ void ABloodPuddle::ApplyHealing(float DeltaTime)
 			{
 			//	_chaosManager->addChaos();
 			}
-	_auraHandler->CastAuraByName("Blood Offer", _auraCharacter, nullptr);
+	_auraHandler->CastAuraByName(BloodOfferAuraName, _auraCharacter, nullptr);
 	OnPlayerAbsorbingBlood();
 
 }

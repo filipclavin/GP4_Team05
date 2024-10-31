@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "AuraCharacter.h"
+#include "BloodPuddle.h"
 #include "GameplayTagAssetInterface.h"
 #include "NativeGameplayTags.h"
 #include "BaseEnemyClass.generated.h"
 
+class ABloodPuddle;
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Spawned)
 UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Alive)
 
@@ -31,6 +33,8 @@ class GP4_TEAM05_API ABaseEnemyClass : public AAuraCharacter, public IGameplayTa
 
 public:
 	ABaseEnemyClass();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) TSubclassOf<ABloodPuddle> PuddleClass = ABloodPuddle::StaticClass();
 	
 protected:
 	UPROPERTY(VisibleAnywhere) UBoxComponent* _meleeHitbox = nullptr;

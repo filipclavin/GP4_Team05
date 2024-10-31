@@ -38,6 +38,9 @@ protected:
 	int32 _healingPercent;
 	UPROPERTY(EditAnywhere) float _puddleTickInterval = 1.0f;;
 
+	UPROPERTY(EditDefaultsOnly) FString BloodOfferAuraName = "Blood Offer";
+
+	
 	float _opacity;	
 	bool  _bPlayerOnPuddle;
 	float _puddleTickDuration = 0.0f;  
@@ -58,7 +61,6 @@ protected:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UFUNCTION(BlueprintImplementableEvent, Category = "Puddle")
 	void OnPlayerAbsorbingBlood();
-
 
 
 	void FadeOut(float DeltaTime);
