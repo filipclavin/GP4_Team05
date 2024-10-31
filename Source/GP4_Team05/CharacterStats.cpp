@@ -83,13 +83,14 @@ void UCharacterStats::QueueHeal(int amount)
 	_intakeQueue.Add(data);
 }
 
-void UCharacterStats::QueueDamage(int amount, ElementTypes element, UCharacterStats* stats, bool selfDamageTaken)
+void UCharacterStats::QueueDamage(int amount, ElementTypes element, bool crit, AAuraCharacter* attacker, bool selfDamageTaken)
 {
 	IntakeData data;
-	data._amount = amount;
-	data._type = IntakeData::Type::Damage;
-	data._element = element;
-	data._stats = stats;
+	data._amount   = amount;
+	data._type     = IntakeData::Type::Damage;
+	data._element  = element;
+	data._isCrit   = crit;
+	data._attacker = attacker;
 	data._selfDamageTaken = selfDamageTaken;
 	_intakeQueue.Add(data);
 }
@@ -129,22 +130,17 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		
 			float newAmount   = 0.0f;
 			int roundedAmount = 0;
-			bool crit = false;
 			switch (intake._type)
 			{
 			case IntakeData::Type::Damage:
-				if(intake._stats)
-					newAmount = (intake._stats->CalculateDamage(intake._amount, intake._element, crit) * _elementDamageTaken[intake._element]) * _allDamageTaken;
-				else
-					newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
-				
+				newAmount = (intake._amount * _elementDamageTaken[intake._element]) * _allDamageTaken;
 				roundedAmount = FMath::RoundToInt(newAmount);
 				_currentHealth -= roundedAmount;
 				if(!intake._selfDamageTaken)
 				{
-					_parent->OnDamageIntake(roundedAmount, intake._element, crit);
-					if(intake._stats)
-						_parent->UpdateAurasOnDamageTaken(intake._stats->_parent);		
+					_parent->OnDamageIntake(roundedAmount, intake._element, intake._isCrit);
+					if(intake._attacker)
+						_parent->UpdateAurasOnDamageTaken(intake._attacker);		
 				}
 				break;
 			case IntakeData::Type::Heal:

@@ -35,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable) float CalculateDamage(int damage, ElementTypes element, bool& isCrit);
 
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
-	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats, bool selfDamageTaken = false);
+	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, bool crit, AAuraCharacter* attacker, bool selfDamageTaken = false);
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool  _isInvincible     = false;
@@ -91,10 +91,11 @@ protected:
 			Heal,
 		};
 
+		AAuraCharacter*  _attacker = nullptr;
 		bool			 _selfDamageTaken = false; 
 		Type		     _type;
 		ElementTypes     _element;
-		UCharacterStats* _stats = nullptr;
+		bool			 _isCrit = false;
 		int			     _amount;
 	};
 			

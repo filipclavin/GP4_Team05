@@ -172,12 +172,11 @@ void AProjectileBaseClass::DealDamage(TArray<AActor*> hitCharacter)
     		{
     			//TODO change to lightning when its ready
     			AAuraCharacter* hitCharacter = Cast<AAuraCharacter>(hitActor);
-    			hitCharacter->QueueDamage(_projectileDamage, ElementTypes::LIGHTNING, _owningPlayer->GetStats());
-    			_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, LIGHTNING_ATTACK, _projectileDamage);
+    			int damage = hitCharacter->QueueDamage(_projectileDamage, ElementTypes::LIGHTNING, _owningPlayer);
+    			_owningPlayer->UpdateAurasOnAttackHits(hitCharacter, LIGHTNING_ATTACK, damage);
     			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, hitActor->GetName() + " hit");
     			numberOfForks++;
-    			
-    			
+    				
     			if (numberOfForks >= _projectileForking)
     			{
     			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Yellow, "limit Reached");

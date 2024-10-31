@@ -5,6 +5,7 @@
 #include "AuraDataInclude.h"
 #include "DamageDisplay.generated.h"
 
+class UBorder;
 class UTextBlock;
 class UCanvasPanel;
 class UCanvasPanelSlot;
@@ -25,9 +26,10 @@ protected:
 
 	struct DamageText {
 		UTextBlock*       _text			   = nullptr;
-		UCanvasPanelSlot* _slot			   = nullptr;
+		//UCanvasPanelSlot* _slot			   = nullptr;
 		FVector2D		  _position        = { 0.0f, 0.0f };
 		bool			  _isActive        = false;
+		bool			  _inUse           = false;
 		float			  _currentDuration = 0.0f;
 	};
 
@@ -35,16 +37,22 @@ protected:
 	TArray<INT32>       _activeDamageTexts;
 
 	//UPROPERTY(EditAnywhere) TArray<UTextBlock*> _textBlocks;
-	UPROPERTY(EditAnywhere, meta = (BindWidget)) UCanvasPanel* _canvas = nullptr;
+	UPROPERTY(EditAnywhere, meta = (BindWidget)) UCanvasPanel* _canvas    = nullptr;
+	//UPROPERTY(EditAnywhere, meta = (BindWidget)) UBorder*      _spawnArea = nullptr;
+
 
 	UPROPERTY(EditAnywhere) FColor _physicalColor;
 	UPROPERTY(EditAnywhere) FColor _fireColor;
 	UPROPERTY(EditAnywhere) FColor _lightningColor;
 	UPROPERTY(EditAnywhere) FColor _bloodColor;
 
-	UPROPERTY(EditAnywhere) int   _textPoolSize   = 10;
-	UPROPERTY(EditAnywhere) float _textSpawnSpeed = 0.1f;
-	UPROPERTY(EditAnywhere) float _textDuration   = 2.0f;
-	UPROPERTY(EditAnywhere) float _textSpeed      = 1.0f;
-	UPROPERTY(EditAnywhere) float _textSize       = 40.0f;
+	UPROPERTY(EditAnywhere) FVector2D _spawnAreaSize	 = { 200.0f, 20.0f };
+	UPROPERTY(EditAnywhere) int		  _textPoolSize      = 10;
+	UPROPERTY(EditAnywhere) float	  _textSpawnSpeed    = 0.1f;
+	UPROPERTY(EditAnywhere) float	  _textDuration      = 2.0f;
+	UPROPERTY(EditAnywhere) float	  _textSpeed         = 1.0f;
+	UPROPERTY(EditAnywhere) float	  _textSize          = 40.0f;
+	UPROPERTY(EditAnywhere) float	  _critTextIncrease  = 2.0f;
+
+	float _nextSpawnDuration = 0.0f;
 };

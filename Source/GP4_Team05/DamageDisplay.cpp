@@ -19,7 +19,6 @@ void UDamageDisplay::DisplayDamage(int amount, ElementTypes type, bool crit)
 	if (index == -1)
 		return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, TEXT("Damage is Added!"));
 	DamageText& dmgText = _pooledDamageTexts[index];
 
 	FString damage = "";
@@ -47,13 +46,20 @@ void UDamageDisplay::DisplayDamage(int amount, ElementTypes type, bool crit)
 	dmgText._text->SetColorAndOpacity(color);
 	dmgText._text->SetRenderOpacity(1.0f);
 	if (crit)
-		dmgText._text->Font.Size *= 1.5f;
+		dmgText._text->Font.Size *= _critTextIncrease;
 	else
 		dmgText._text->Font.Size = _textSize;
 
 	dmgText._isActive        = true;
+	//dmgText._inUse			 = true;
 	dmgText._currentDuration = _textDuration;
-	dmgText._position        = { 0.0f, 0.0f };
+	
+	float xSpawn = _spawnAreaSize.X / 2.0f;
+	float ySpawn = _spawnAreaSize.Y / 2.0f;
+
+	xSpawn = FMath::RandRange(-xSpawn, xSpawn);
+	ySpawn = FMath::RandRange(-ySpawn, ySpawn);
+	dmgText._position        = { xSpawn, ySpawn };
 
 	_activeDamageTexts.Add(index);
 }
@@ -70,39 +76,49 @@ void UDamageDisplay::SetUpDamageDipslay()
 		FString index = "";
 		index.AppendInt(i);
 		_pooledDamageTexts[i]._text = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), FName(FString("Damage Text " + index)));
-		//_pooledDamageTexts[i]._text->SetText(FText(FText::FromString("TEXT HERE!")));
 		_pooledDamageTexts[i]._text->SetJustification(ETextJustify::Center);
 		_pooledDamageTexts[i]._text->SetRenderOpacity(0.0f);
 		_pooledDamageTexts[i]._text->Font.Size = _textSize;
+		_pooledDamageTexts[i]._isActive = false;
 		UCanvasPanelSlot* panel = _canvas->AddChildToCanvas(_pooledDamageTexts[i]._text);
 		panel->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
 		panel->SetPosition({ 0.0f, 0.0f });
 		panel->SetAlignment({ 0.5f, 0.5f });
-		_pooledDamageTexts[i]._slot = panel;
-		_pooledDamageTexts[i]._text->SetRenderTransform(_canvas->GetRenderTransform());
 	}
 }
 
 void UDamageDisplay::TickDamageDisplays(const float deltaTime)
 {
+	_nextSpawnDuration -= deltaTime;
+
 	for (INT32 i = 0; i < _activeDamageTexts.Num(); i++)
 	{
 		DamageText& dmgText = _pooledDamageTexts[_activeDamageTexts[i]];
-		if (!dmgText._isActive)
-			continue;
 
-		//dmgText._text->SetRenderTransform(_canvas->GetRenderTransform());
+		if (!dmgText._isActive)
+		{
+			continue;
+			//if (_nextSpawnDuration <= 0.0f)
+			//{
+			//	dmgText._isActive  = true;
+			//	_nextSpawnDuration = _textSpawnSpeed;
+			//	dmgText._text->SetRenderOpacity(1.0f);
+			//}
+		}
+		
 		dmgText._position.Y += deltaTime * _textSpeed;
-		dmgText._slot->SetPosition(dmgText._position);
+		dmgText._text->SetRenderTranslation(dmgText._position);
 
 		if (dmgText._currentDuration <= 0.0f)
 		{
 			dmgText._isActive = false;
+			dmgText._inUse    = false;
 			dmgText._text->SetRenderOpacity(0.0f);
 			RemoveTextFromActiveList(i);
 		}
 		else
 			dmgText._currentDuration -= deltaTime;	
+		
 	}
 }
 

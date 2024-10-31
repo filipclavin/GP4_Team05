@@ -30,7 +30,7 @@ public:
 
 	// Queus damage into a list that gets handled at the end of the frame
 	UFUNCTION(BlueprintCallable) void QueueHeal(int amount);
-	UFUNCTION(BlueprintCallable) void QueueDamage(int amount, ElementTypes element, UCharacterStats* stats = nullptr, bool selfDamageTaken = false);
+	UFUNCTION(BlueprintCallable) int QueueDamage(int amount, ElementTypes element, AAuraCharacter* attacker = nullptr, bool selfDamageTaken = false);
 
 	UFUNCTION(BlueprintCallable) UCharacterStats* GetStats()     { return _combinedStats; }
 	UFUNCTION(BlueprintCallable) UCharacterStats* GetBaseStats() { return _baseStats; }

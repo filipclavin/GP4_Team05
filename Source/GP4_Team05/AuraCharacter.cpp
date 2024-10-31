@@ -50,9 +50,18 @@ void AAuraCharacter::QueueHeal(int amount)
 	_combinedStats->QueueHeal(amount);
 }
 
-void AAuraCharacter::QueueDamage(int amount, ElementTypes element, UCharacterStats* stats, bool selfDamageTaken)
+int AAuraCharacter::QueueDamage(int amount, ElementTypes element, AAuraCharacter* attacker, bool selfDamageTaken)
 {
-	_combinedStats->QueueDamage(amount, element, stats, selfDamageTaken);
+	bool isCrit = false;
+	float newDamage = 0.0f;
+	if (attacker)
+		newDamage = attacker->GetStats()->CalculateDamage(amount, element, isCrit);
+	else
+		newDamage = amount;
+
+	int newAmount = FMath::RoundToInt(newDamage);
+	_combinedStats->QueueDamage(newAmount, element, isCrit, attacker, selfDamageTaken);
+	return newAmount;
 }
 
 void AAuraCharacter::UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackType attackType, int damageDone)
