@@ -14,6 +14,7 @@ ALichProjectile::ALichProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 	_projectileCollider = CreateDefaultSubobject<USphereComponent>("collider");
 	RootComponent = _projectileCollider;
+	
 }
 
 // Called when the game starts or when spawned

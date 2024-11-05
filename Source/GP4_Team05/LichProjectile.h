@@ -14,15 +14,11 @@ class GP4_TEAM05_API ALichProjectile : public AActor
 	GENERATED_BODY()
 	
 	FVector _startLocation;
-
-	
-	
 	
 	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _projectileSpeed	= 5000;
 	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _projectileRange	= 50000;
 	UPROPERTY(EditDefaultsOnly, Category="Projectile Stats") int _projectileDamage	= 10;
 
-	 
 public:	
 	// Sets default values for this actor's properties
 	ALichProjectile();
