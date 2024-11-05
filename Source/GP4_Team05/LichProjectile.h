@@ -24,7 +24,7 @@ public:
 	ALichProjectile();
 
 	UFUNCTION(BlueprintCallable) virtual void SpawnProjectile  ();
-	virtual void DespawnProjectile();
+	UFUNCTION(BlueprintCallable) virtual void DespawnProjectile();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
