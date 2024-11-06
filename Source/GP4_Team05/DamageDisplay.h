@@ -25,12 +25,11 @@ protected:
 	void RemoveTextFromActiveList(INT32 index);
 
 	struct DamageText {
-		UTextBlock*       _text			   = nullptr;
-		//UCanvasPanelSlot* _slot			   = nullptr;
-		FVector2D		  _position        = { 0.0f, 0.0f };
-		bool			  _isActive        = false;
-		bool			  _inUse           = false;
-		float			  _currentDuration = 0.0f;
+		UTextBlock* _text			 = nullptr;
+		FVector2D	_position        = { 0.0f, 0.0f };
+		bool		_isActive        = false;
+		bool		_inUse           = false;
+		float		_currentDuration = 0.0f;
 	};
 
 	TArray<DamageText>  _pooledDamageTexts;

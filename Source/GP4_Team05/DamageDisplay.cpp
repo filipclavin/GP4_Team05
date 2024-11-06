@@ -45,13 +45,13 @@ void UDamageDisplay::DisplayDamage(int amount, ElementTypes type, bool crit)
 
 	dmgText._text->SetColorAndOpacity(color);
 	dmgText._text->SetRenderOpacity(1.0f);
+	dmgText._text->Font.Size = _textSize;
+	
 	if (crit)
 		dmgText._text->Font.Size *= _critTextIncrease;
-	else
-		dmgText._text->Font.Size = _textSize;
+	
 
 	dmgText._isActive        = true;
-	//dmgText._inUse			 = true;
 	dmgText._currentDuration = _textDuration;
 	
 	float xSpawn = _spawnAreaSize.X / 2.0f;
@@ -59,7 +59,7 @@ void UDamageDisplay::DisplayDamage(int amount, ElementTypes type, bool crit)
 
 	xSpawn = FMath::RandRange(-xSpawn, xSpawn);
 	ySpawn = FMath::RandRange(-ySpawn, ySpawn);
-	dmgText._position        = { xSpawn, ySpawn };
+	dmgText._position     = { xSpawn, ySpawn };
 
 	_activeDamageTexts.Add(index);
 }
