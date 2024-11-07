@@ -1,6 +1,7 @@
+
+
 [/Script/EngineSettings.GeneralProjectSettings]
 ProjectID=D151289A49269F1AFF31E8A40ABE0898
-ProjectName=Exsanguis
 
 [StartupActions]
 bAddPacks=True
@@ -108,3 +109,4 @@ bSkipMovies=False
 +MapsToCook=(FilePath="/Game/Rooms/POIrooms/RM_POI_Boss_End_Room")
 bRetainStagedDirectory=False
 CustomStageCopyHandler=
+
