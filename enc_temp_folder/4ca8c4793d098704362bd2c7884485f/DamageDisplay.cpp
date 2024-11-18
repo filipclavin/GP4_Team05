@@ -167,8 +167,6 @@ void UDamageDisplay::CritTextMovement(DamageText& dmgText, const float deltTime)
 	float alpha = 0.0f;
 	if(dmgText._currentDuration != 0.0f)
 		alpha = dmgText._currentDuration / _critLerpDuration;
-	else
-		dmgText._position.Y -= _critYPositionIncrease;
 
 	float size = FMath::Lerp(_critStartSize, _critTextIncrease, FMath::Clamp(alpha, 0.0f, 1.0f));
 	dmgText._text->SetRenderScale({ size, size });
@@ -179,9 +177,9 @@ void UDamageDisplay::CritTextMovement(DamageText& dmgText, const float deltTime)
 void UDamageDisplay::RegularTextMovement(DamageText& dmgText, const float deltTime)
 {
 	if (dmgText._position.X < 0.0f)
-		dmgText._position.X += (_textSpeed * 0.5f) * deltTime;
+		dmgText._position.X += (_textSpeed) * deltTime;
 	else
-		dmgText._position.X -= (_textSpeed* 0.5f) * deltTime;
+		dmgText._position.X -= (_textSpeed) * deltTime;
 
 	dmgText._position.Y += dmgText._textSpeed * deltTime;
 

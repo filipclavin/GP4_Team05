@@ -52,8 +52,8 @@ void ABaseEnemyClass::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	UpdateAuras(DeltaSeconds);
-	UpdateTickInterval();
 	_damageDisplayWidget->TickDamageDisplays(DeltaSeconds);
+	UpdateTickInterval();
 }
 
 void ABaseEnemyClass::InitSpawned(AEnemySpawner* spawner)

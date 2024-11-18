@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable) void SetUpDamageDipslay();
 	UFUNCTION(BlueprintCallable) void TickDamageDisplays(const float deltaTime);
 
+	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
+
 protected:
 	void RemoveTextFromActiveList(INT32 index);
 
@@ -28,9 +31,13 @@ protected:
 		UTextBlock* _text			 = nullptr;
 		FVector2D	_position        = { 0.0f, 0.0f };
 		bool		_isActive        = false;
-		bool		_inUse           = false;
+		bool        _isCrit          = false;
+		float       _textSpeed       = 0.0f;
 		float		_currentDuration = 0.0f;
 	};
+	
+	void CritTextMovement(DamageText& dmgText, const float deltTime);
+	void RegularTextMovement(DamageText& dmgText, const float deltTime);
 
 	TArray<DamageText>  _pooledDamageTexts;
 	TArray<INT32>       _activeDamageTexts;
@@ -50,6 +57,15 @@ protected:
 	UPROPERTY(EditAnywhere) float	  _textSpeed         = 1.0f;
 	UPROPERTY(EditAnywhere) float	  _textSize          = 40.0f;
 	UPROPERTY(EditAnywhere) float	  _critTextIncrease  = 2.0f;
+
+	UPROPERTY(EditAnywhere) float _critYPositionIncrease = 50.0f;
+	UPROPERTY(EditAnywhere) float _critLerpDuration		 = 0.1f;
+	UPROPERTY(EditAnywhere) float _critMovement			 = 0.5f;
+
+	UPROPERTY(EditAnywhere) float _textGravityStrength   = 10.0f;
+	
+	
+	float _critStartSize = 0.01f;
 
 	float _nextSpawnDuration = 0.0f;
 };
