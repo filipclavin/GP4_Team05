@@ -55,6 +55,7 @@ void UCharacterStats::ScaleAttackSpeed(float scaling)
 
 void UCharacterStats::ScaleMovmementSpeed(float scaling)
 {
+	_movementSpeed *= scaling;
 }
 
 void UCharacterStats::IncreaseCriticalStrikeChance(int amount)

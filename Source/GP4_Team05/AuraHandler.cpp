@@ -28,19 +28,7 @@ void AAuraHandler::CastAuraByID(const int id, AAuraCharacter* target, AAuraChara
 {
 	if (id >= 0 && id < _auraList.Num()) 
 	{
-		UAura* affectedAura = target->AffectedByAura(id);
-		if(affectedAura)
-		{
-			affectedAura->OnAuraCast(caster);
-			affectedAura->OnAuraExists();
-		}
-		else 
-		{
-			UAura* aura = GetPooledAura(_auraList[id]);
-			aura->Activate();
-			aura->OnAuraCast(caster);
-			target->AddAura(aura);
-		}
+		CastAuraByName(_auraList[id]->AuraName(), target, caster);
 	}
 	else
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Invalid Aura ID or AuraList is empty!"));
@@ -62,11 +50,12 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 				// Stacks are handled automatically
 				affectedAura->_currentStack++;
 				affectedAura->_currentStack = affectedAura->_currentStack > affectedAura->_maxStackCount ? affectedAura->_maxStackCount : affectedAura->_currentStack;
+				
 				// Effects call OnAuraCast on abilities instead.
 				if(affectedAura->GetType() != EFFECT && affectedAura->GetType() != INTAKE)
 					affectedAura->OnAuraCast(caster);
+
 				affectedAura->OnAuraExists();
-			
 			}
 			else
 			{
@@ -157,7 +146,7 @@ void AAuraHandler::FetchAllAurasAttached()
 		if (aura->_auraSpawnAsInteractable)
 			_auraSpawnList.Add(aura->AuraName());
 
-		// check what poolCount is higher, id aura->_poolCount is less than Minimun than it will override it!
+		// check what poolCount is higher. If aura->_poolCount is less than Minimun than it will override it!
 		int poolCount = aura->_poolCount < _minimunPoolCount ? _minimunPoolCount : aura->_poolCount;
 		aura->_auraPool.Reserve(poolCount); // reserve pool list
 		for (size_t j = 0; j < poolCount; j++)

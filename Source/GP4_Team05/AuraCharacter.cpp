@@ -108,16 +108,19 @@ void AAuraCharacter::UpdateAuras(const float deltaTime)
 		TArray<UAura*>& list = _auraList[i];
 		for (INT32 j = 0; j < list.Num(); j++)
 		{
+			if (list[j]->GetDuration() <= 0.0f || list[j]->IsAuraActive() == false) {
+				list[j]->OnAuraTick();
+				RemoveAura(j, AuraType(i));
+				continue;
+			}
+			
 			list[j]->DecreaseDuration(deltaTime);
 			if(i != AuraType::EFFECT)
 			{
 				list[j]->OnAuraUpdate(deltaTime);
 				if (list[j]->GetTickDuration() <= 0.0f)
 					list[j]->OnAuraTick();
-			}
-		
-			if (list[j]->GetDuration() <= 0.0f || list[j]->IsAuraActive() == false)
-				RemoveAura(j, AuraType(i));
+			}	
 		}
 	}
 

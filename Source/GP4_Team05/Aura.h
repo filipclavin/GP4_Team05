@@ -18,7 +18,7 @@ public:
 
 	// Called when aura is casted.
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraCast(AAuraCharacter* caster); 
-	// Called when the aura is added in buff/debuff list. 
+	// Called when the aura is added to a AuraCharacter. 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraAdd(AAuraCharacter*  affectedChar);
 	// Called every frame when active on an AuraCharacter.
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void OnAuraUpdate(const float deltaTime);
@@ -74,43 +74,43 @@ protected:
 	bool _isActive  = false;
 	// General Aura values, These values do not need to be used by all auras
 
-	// If true this aura has a chance to spawn as an Interactable pickup at room completion. 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)  bool _auraSpawnAsInteractable = false;
 	// Name of aura.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraName = "";
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString					   _auraName = "";
 	// Description of Aura
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString _auraDescription = "";
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) FString					   _auraDescription = "";
 	// Icon of the aura, used for UI, Auras with no icon will not appear in the UI.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) UTexture2D* _icon = nullptr;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) UTexture2D*				   _icon = nullptr;
 	// Auras updates in the order of Buff -> Debuffs and to differentiate them in UI 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<AuraType> _type = AuraType::BUFF;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<AuraType>	   _type = AuraType::BUFF;
 	// This is only for ON_HIT auras, BUFF and DEBUFF are not affected by this. 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<AuraAttackType> _onAttackType    = AuraAttackType::MELEE;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<AuraAttackType> _onAttackType = AuraAttackType::MELEE;
+	// Duration of aura, FLT_MAX = Infinite duration.
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float					   _duration = FLT_MAX; 	
+	// Tick Counter for how many times the aura should tick during it's duration.
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) int						   _tickCounter = 0;    
+	UPROPERTY(BlueprintReadOnly)				AAuraHandler*			   _auraHandler;
+	// The tick duration of the aura, decided by Duration / TickCounter (if aura is infinite then define TickDuration manually) 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float				       _tickDuration = FLT_MAX;
+	// Current duration of the aura
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) float				   _currentDuration = 0.0f;
+	// Current tick of the aura, when it reachers 0 OnAuraTick is called
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) float				   _currentTick = 0.0f;
+	 // How many stacks the aura has
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) int					       _maxStackCount = 1;
+	UPROPERTY(BlueprintReadWrite)				int					       _currentStack = 0;
+
+	
+	// If true this aura has a chance to spawn as an Interactable pickup at room completion. 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)  bool		_auraSpawnAsInteractable = false;
+	// Check to see if aura can stack, mostly used for InteractableSelector to decide if we can spawn duplicates.
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) bool           _canStack = true;
 	// This is for when spawning as AuraInteractable to set it's color and effect for players to understand what type of element it affects. 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere) TEnumAsByte<ElementTypes>   _auraElementType = ElementTypes::MAGIC;
-	// Duration of aura, FLT_MAX = Infinite duration.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float         _duration = FLT_MAX; 	
-	// Tick Counter for how many times the aura should tick during it's duration.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) int           _tickCounter = 0;    
-	UPROPERTY(BlueprintReadOnly)				AAuraHandler* _auraHandler;
-	// Check to see if aura can stack, mostly used for InteractableSelector to decide if we can spawn duplicates.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) bool        _canStack = true;
-	// Private aura values, used to affect the target entity after a certain duration.
-
-	// The tick duration of the aura, decided by Duration / TickCounter (if aura is infinite then define TickDuration manually) 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)    float    _tickDuration  = FLT_MAX;
-	// Current duration of the aura
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) float    _currentDuration = 0.0f;
-	// Current tick of the aura, used to make the aura do something when a tick has reached 0
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere) float    _currentTick     = 0.0f;
-	 // How many stacks the aura has
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)    int      _maxStackCount	  = 1;
-	UPROPERTY(BlueprintReadWrite)				   int      _currentStack = 0;
-
+		
 	// Pooling information
 	// How much of this aura AuraHandler will pool, auras that appear less or are much shorter should have a lower pool count.
 	UPROPERTY(EditAnywhere) int _poolCount = 10;
-	TArray<UAura*> _auraPool;
+	TArray<UAura*>				_auraPool;
 	void ResetAura(const UAura* aura);
 
 private:
