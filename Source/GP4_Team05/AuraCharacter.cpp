@@ -66,27 +66,29 @@ int AAuraCharacter::QueueDamage(int amount, ElementTypes element, AAuraCharacter
 
 void AAuraCharacter::UpdateAurasOnAttackHits(AAuraCharacter* target, AuraAttackType attackType, int damageDone)
 {
-	TArray<UAura*>& auras = _auraList[EFFECT];
+	TArray<UAura*>& auras = _auraList[EFFECT]; // Fetch all Auras with type Effect
 	for (INT32 i = 0; i < _auraList[EFFECT].Num(); i++)
 	{
-		if(attackType == auras[i]->GetAuraAttackType())
-			auras[i]->OnAuraAttackHit(target, damageDone);		
+		// Check if this Effect AttackType matches the one that the player casted. 
+		if(attackType == auras[i]->GetAuraAttackType())   
+			auras[i]->OnAuraAttackHit(target, damageDone); // Call OnAuraAttackHit if it is.
 	}
 }
 
 void AAuraCharacter::UpdateAurasOnAttackCast(AuraAttackType attackType)
 {
-	TArray<UAura*>& auras = _auraList[EFFECT];
+	TArray<UAura*>& auras = _auraList[EFFECT]; // Fetch all Auras with type Effect.
 	for (INT32 i = 0; i < _auraList[EFFECT].Num(); i++)
 	{
+		// If attack casted matches an Effect AttackType.
 		if (attackType == auras[i]->GetAuraAttackType())
-			auras[i]->OnAuraCast(this);
+			auras[i]->OnAuraCast(this); // Call OnAuraCast if it is.
 	}
 }
 
 void AAuraCharacter::UpdateAurasOnDamageTaken(AAuraCharacter* attacker)
 {
-	if(attacker)
+	if(attacker) // Only call if attacker isn't NULL
 		for (size_t i = 0; i < _auraList[INTAKE].Num(); i++)
 			_auraList[INTAKE][i]->OnAuraDamageTaken(attacker);
 }
@@ -110,7 +112,7 @@ void AAuraCharacter::UpdateAuras(const float deltaTime)
 		{
 			if (list[j]->GetDuration() <= 0.0f || list[j]->IsAuraActive() == false) {
 				list[j]->OnAuraTick();
-				RemoveAura(j, AuraType(i));
+				RemoveAura(j, AuraType(i)); // Calls OnAuraRemoved
 				continue;
 			}
 			

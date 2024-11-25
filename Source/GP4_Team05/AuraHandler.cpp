@@ -44,8 +44,8 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 	{
 		if (target->GetStats()->_isAlive) {
 			INT32 id = _auraNameMap[name];
-			UAura* affectedAura = target->AffectedByAura(id);
-			if (affectedAura)
+			UAura* affectedAura = target->AffectedByAura(id); // Check if AuraCharacter already has this Aura
+			if (affectedAura) // If it already exists we increase it's stacks and call OnAuraExist if it isn't an EFFECT.
 			{
 				// Stacks are handled automatically
 				affectedAura->_currentStack++;
@@ -59,13 +59,14 @@ void AAuraHandler::CastAuraByName(FString name, AAuraCharacter* target, AAuraCha
 			}
 			else
 			{
-				UAura* aura = GetPooledAura(_auraList[id]);
+				UAura* aura = GetPooledAura(_auraList[id]); // Fetch a pooled aura, will return NULL if there are no available auras in the pool.
 				if (aura) 
 				{
-					aura->ActivateAura();
-					if(aura->GetType() != EFFECT && aura->GetType() != INTAKE)
+					aura->ActivateAura(); // Sets Aura to active and resets all values to default.
+					if(aura->GetType() != EFFECT && aura->GetType() != INTAKE) // EFFECT and INTAKE don't call OnAuraCast in here.
 						aura->OnAuraCast(caster);
 
+					// Increase stack by 1 and add the Aura to affected AuraCharacter.
 					aura->_currentStack++;
 					target->AddAura(aura);
 				}
@@ -140,7 +141,7 @@ void AAuraHandler::FetchAllAurasAttached()
 		UAura* aura = _auraList[i];
 		aura->_id = i;
 		aura->InitializeBasicProperties();
-		_auraNameMap.Add(aura->_auraName, i);
+		_auraNameMap.Add(aura->_auraName, i); // Add Aura ID to string map, used by CastAuraByName.
 
 		// Add Aura to spawn interactable list if it is set 
 		if (aura->_auraSpawnAsInteractable)

@@ -72,6 +72,7 @@ public:
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<float>  _elementDamageDealt	= {};
 
+	
 	UPROPERTY(BlueprintReadOnly)  bool _isAlive = true;
 	
 	UPROPERTY(EditAnywhere) float _healthScaling          = 1.0f;
